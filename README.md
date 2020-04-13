@@ -1,1 +1,2 @@
-### Messaging application.
+### Clone
+Social network for cooks.
