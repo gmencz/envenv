@@ -1,8 +1,13 @@
 # dependencies
-/node_modules
+node_modules
 
 # production
-/build
+build
+dist
+
+# dev
+lerna-debug.log
+npm-debug.log
 
 # misc
 .DS_Store
