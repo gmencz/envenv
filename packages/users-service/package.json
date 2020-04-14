@@ -12,7 +12,8 @@
   "dependencies": {
     "graphql": "^15.0.0",
     "reflect-metadata": "^0.1.13",
-    "type-graphql": "^0.17.6"
+    "type-graphql": "^0.17.6",
+    "typeorm": "^0.2.24"
   },
   "devDependencies": {
     "@types/graphql": "^14.5.0"
