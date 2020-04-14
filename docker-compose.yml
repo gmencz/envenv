@@ -21,7 +21,7 @@ services:
             - ./packages/chat-service:/chat-service
             - ./chat-service/node_modules
         ports: 
-            '5001:5001'
+            - '5001:5001'
         env_file: 
             - ./packages/chat-service/development.env
         environment: 
@@ -34,7 +34,7 @@ services:
             - ./packages/logging-service:/logging-service
             - ./logging-service/node_modules
         ports: 
-            '5002:5002'
+            - '5002:5002'
         env_file: 
             - ./packages/logging-service/development.env
         environment: 
@@ -47,7 +47,7 @@ services:
             - ./packages/recipes-service:/recipes-service
             - ./recipes-service/node_modules
         ports: 
-            '5003:5003'
+            - '5003:5003'
         env_file: 
             - ./packages/recipes-service/development.env
         environment: 
@@ -60,7 +60,7 @@ services:
             - ./packages/search-engine-service:/search-engine-service
             - ./search-engine-service/node_modules
         ports: 
-            '5004:5004'
+            - '5004:5004'
         env_file: 
             - ./packages/search-engine-service/development.env
         environment: 
@@ -73,7 +73,7 @@ services:
             - ./packages/users-service:/users-service
             - ./users-service/node_modules
         ports: 
-            '5005:5005'
+            - '5005:5005'
         env_file: 
             - ./packages/users-service/development.env
         environment: 
@@ -86,7 +86,7 @@ services:
             - ./packages/web-app-service:/web-app
             - ./web-app/node_modules
         ports: 
-            '5006:5006'
+            - '5006:5006'
         env_file: 
             - ./packages/web-app/development.env
         environment: 
@@ -108,5 +108,3 @@ services:
         environment:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: V6>'?a5aspGa{
-        volumes:
-          - postgres:/var/lib/postgresql/data
