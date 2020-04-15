@@ -1,5 +1,18 @@
 version: '3.7'
 services:
+  api-gateway:
+    build:
+      context: ./packages/api-gateway
+      dockerfile: Dockerfile.dev
+    volumes:
+      - ./packages/api-gateway:/api-gateway
+      - /api-gateway/node_modules
+    ports:
+      - '7000:7000'
+    env_file:
+      - ./packages/api-gateway/development.env
+    environment:
+      - NODE_ENV=development
   auth-service:
     build:
       context: ./packages/auth-service
@@ -89,19 +102,6 @@ services:
       - '5006:5006'
     env_file:
       - ./packages/web-app/development.env
-    environment:
-      - NODE_ENV=development
-  api-gateway-service:
-    build:
-      context: ./packages/api-gateway-service
-      dockerfile: Dockerfile.dev
-    volumes:
-      - ./packages/api-gateway-service:/api-gateway-service
-      - /api-gateway-service/node_modules
-    ports:
-      - '5007:5007'
-    env_file:
-      - ./packages/api-gateway-service/development.env
     environment:
       - NODE_ENV=development
   mongo-service:
