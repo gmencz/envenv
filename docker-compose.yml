@@ -91,6 +91,19 @@ services:
             - ./packages/web-app/development.env
         environment: 
             - NODE_ENV=development
+    api-gateway-service:
+        build: 
+            context: ./packages/api-gateway-service
+            dockerfile: Dockerfile.dev
+        volumes:
+            - ./packages/api-gateway-service:/api-gateway-service
+            - /api-gateway-service/node_modules
+        ports: 
+            - '5007:5007'
+        env_file:
+            - ./packages/api-gateway-service/development.env
+        environment: 
+            - NODE_ENV=development
     mongo-service:
         image: 
             mongo
