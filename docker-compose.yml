@@ -1,110 +1,122 @@
 version: '3.7'
-services: 
-    auth-service:
-        build: 
-            context: ./packages/auth-service
-            dockerfile: Dockerfile.dev
-        volumes:
-            - ./packages/auth-service:/auth-service
-            - /auth-service/node_modules
-        ports: 
-            - '5000:5000'
-        env_file:
-            - ./packages/auth-service/development.env
-        environment: 
-            - NODE_ENV=development
-    chat-service:
-        build: 
-            context: ./packages/chat-service
-            dockerfile: Dockerfile.dev
-        volumes:
-            - ./packages/chat-service:/chat-service
-            - ./chat-service/node_modules
-        ports: 
-            - '5001:5001'
-        env_file: 
-            - ./packages/chat-service/development.env
-        environment: 
-            - NODE_ENV=development
-    logging-service: 
-        build: 
-            context: ./packages/logging-service
-            dockerfile: Dockerfile.dev
-        volumes:
-            - ./packages/logging-service:/logging-service
-            - ./logging-service/node_modules
-        ports: 
-            - '5002:5002'
-        env_file: 
-            - ./packages/logging-service/development.env
-        environment: 
-            - NODE_ENV=development
-    recipes-service:
-        build: 
-            context: ./packages/recipes-service
-            dockerfile: Dockerfile.dev
-        volumes:
-            - ./packages/recipes-service:/recipes-service
-            - ./recipes-service/node_modules
-        ports: 
-            - '5003:5003'
-        env_file: 
-            - ./packages/recipes-service/development.env
-        environment: 
-            - NODE_ENV=development
-    search-engine-service:
-        build: 
-            context: ./packages/search-engine-service
-            dockerfile: Dockerfile.dev
-        volumes:
-            - ./packages/search-engine-service:/search-engine-service
-            - ./search-engine-service/node_modules
-        ports: 
-            - '5004:5004'
-        env_file: 
-            - ./packages/search-engine-service/development.env
-        environment: 
-            - NODE_ENV=development
-    users-service:
-        build: 
-            context: ./packages/users-service
-            dockerfile: Dockerfile.dev
-        volumes:
-            - ./packages/users-service:/users-service
-            - ./users-service/node_modules
-        ports: 
-            - '5005:5005'
-        env_file: 
-            - ./packages/users-service/development.env
-        environment: 
-            - NODE_ENV=development
-    web-app:
-        build: 
-            context: ./packages/web-app
-            dockerfile: Dockerfile.dev
-        volumes:
-            - ./packages/web-app-service:/web-app
-            - ./web-app/node_modules
-        ports: 
-            - '5006:5006'
-        env_file: 
-            - ./packages/web-app/development.env
-        environment: 
-            - NODE_ENV=development
-    mongo-service:
-        image: 
-            mongo
-        environment:
-            MONGO_INITDB_ROOT_USERNAME: mongo
-            MONGO_INITDB_ROOT_PASSWORD: V6>'?a5aspGa{
-        ports:
-            - '27017:27017'
-        restart: always
-    postgres-service:
-        image: postgres:10.3
-        restart: always
-        ports:
-          - '5432:5432'
-        environment:
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: V6>'?a5aspGa{
+services:
+  api-gateway:
+    build:
+      context: ./packages/api-gateway
+      dockerfile: Dockerfile.dev
+    volumes:
+      - ./packages/api-gateway:/api-gateway
+      - /api-gateway/node_modules
+    ports:
+      - '7000:7000'
+    env_file:
+      - ./packages/api-gateway/development.env
+    environment:
+      - NODE_ENV=development
+  auth-service:
+    build:
+      context: ./packages/auth-service
+      dockerfile: Dockerfile.dev
+    volumes:
+      - ./packages/auth-service:/auth-service
+      - /auth-service/node_modules
+    ports:
+      - '5000:5000'
+    env_file:
+      - ./packages/auth-service/development.env
+    environment:
+      - NODE_ENV=development
+  chat-service:
+    build:
+      context: ./packages/chat-service
+      dockerfile: Dockerfile.dev
+    volumes:
+      - ./packages/chat-service:/chat-service
+      - ./chat-service/node_modules
+    ports:
+      - '5001:5001'
+    env_file:
+      - ./packages/chat-service/development.env
+    environment:
+      - NODE_ENV=development
+  logging-service:
+    build:
+      context: ./packages/logging-service
+      dockerfile: Dockerfile.dev
+    volumes:
+      - ./packages/logging-service:/logging-service
+      - ./logging-service/node_modules
+    ports:
+      - '5002:5002'
+    env_file:
+      - ./packages/logging-service/development.env
+    environment:
+      - NODE_ENV=development
+  recipes-service:
+    build:
+      context: ./packages/recipes-service
+      dockerfile: Dockerfile.dev
+    volumes:
+      - ./packages/recipes-service:/recipes-service
+      - ./recipes-service/node_modules
+    ports:
+      - '5003:5003'
+    env_file:
+      - ./packages/recipes-service/development.env
+    environment:
+      - NODE_ENV=development
+  search-engine-service:
+    build:
+      context: ./packages/search-engine-service
+      dockerfile: Dockerfile.dev
+    volumes:
+      - ./packages/search-engine-service:/search-engine-service
+      - ./search-engine-service/node_modules
+    ports:
+      - '5004:5004'
+    env_file:
+      - ./packages/search-engine-service/development.env
+    environment:
+      - NODE_ENV=development
+  users-service:
+    build:
+      context: ./packages/users-service
+      dockerfile: Dockerfile.dev
+    volumes:
+      - ./packages/users-service:/users-service
+      - ./users-service/node_modules
+    ports:
+      - '5005:5005'
+    env_file:
+      - ./packages/users-service/development.env
+    environment:
+      - NODE_ENV=development
+  web-app:
+    build:
+      context: ./packages/web-app
+      dockerfile: Dockerfile.dev
+    volumes:
+      - ./packages/web-app-service:/web-app
+      - ./web-app/node_modules
+    ports:
+      - '5006:5006'
+    env_file:
+      - ./packages/web-app/development.env
+    environment:
+      - NODE_ENV=development
+  mongo-service:
+    image: mongo
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: mongo
+      MONGO_INITDB_ROOT_PASSWORD: V6>'?a5aspGa{
+    ports:
+      - '27017:27017'
+    restart: always
+  postgres-service:
+    image: postgres:10.3
+    restart: always
+    ports:
+      - '5432:5432'
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: V6>'?a5aspGa{
