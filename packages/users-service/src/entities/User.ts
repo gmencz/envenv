@@ -15,7 +15,7 @@ export default class User {
   name: string;
 
   @Field()
-  birthDate: string;
+  birthDate: Date;
 }
 
 export async function resolveUserReference(
