@@ -7,6 +7,6 @@ export default class RecipesResolver {
   @Query(() => Recipe)
   me(): Recipe {
     // @ts-ignore
-    return re[0];
+    return recipes[0];
   }
 }
