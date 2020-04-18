@@ -79,11 +79,12 @@ services:
     volumes:
       - ./packages/api-gateway:/api-gateway
     ports:
-      - '5007:5007'
+      - '7000:7000'
     env_file:
       - ./packages/api-gateway/development.env
     environment:
       - NODE_ENV=development
+    restart: on-failure
   mongo-service:
     image: mongo
     environment:
