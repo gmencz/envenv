@@ -1,3 +1,4 @@
+import 'reflect-metadata';
 import { ApolloServer } from 'apollo-server';
 import { buildFederatedSchema } from './helpers/buildFederatedSchema';
 import Message, { resolveMessageReference } from './entities/Message';

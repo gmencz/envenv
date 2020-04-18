@@ -8,27 +8,27 @@ async function initGateway() {
   const serviceList: IGatewayService[] = [
     {
       name: 'auth-service',
-      url: process.env.AUTH_SERVICE_URL!,
+      url: process.env.AUTH_SERVICE_URL as string,
     },
     {
       name: 'chat-service',
-      url: process.env.CHAT_SERVICE_URL!,
+      url: process.env.CHAT_SERVICE_URL as string,
     },
     {
       name: 'logging-service',
-      url: process.env.LOGGING_SERVICE_URL!,
+      url: process.env.LOGGING_SERVICE_URL as string,
     },
     {
       name: 'recipes-service',
-      url: process.env.RECIPES_SERVICE_URL!,
+      url: process.env.RECIPES_SERVICE_URL as string,
     },
     {
       name: 'search-engine-service',
-      url: process.env.SEARCH_ENGINE_SERVICE_URL!,
+      url: process.env.SEARCH_ENGINE_SERVICE_URL as string,
     },
     {
       name: 'users-service',
-      url: process.env.USERS_SERVICE_URL!,
+      url: process.env.USERS_SERVICE_URL as string,
     },
   ];
 
