@@ -9,14 +9,14 @@ export default class User {
   id: string;
 
   @Directive('@external')
-  @Field()
+  @Field(() => String)
   username: string;
 
   @Directive('@external')
-  @Field()
+  @Field(() => String)
   name: string;
 
   @Directive('@external')
-  @Field()
+  @Field(() => Date)
   birthDate: Date;
 }

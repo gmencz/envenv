@@ -11,10 +11,10 @@ export default class Search {
   @Field(() => User)
   searchedBy: User;
 
-  @Field()
+  @Field(() => String)
   searchQueryString: string;
 
-  @Field()
+  @Field(() => Date)
   searchedAt: Date;
 }
 

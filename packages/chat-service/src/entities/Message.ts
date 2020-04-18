@@ -8,10 +8,10 @@ export default class Message {
   @Field(() => ID)
   id: string;
 
-  @Field()
+  @Field(() => Date)
   sentAt: Date;
 
-  @Field()
+  @Field(() => String)
   message: string;
 
   @Field(() => User)

@@ -2,10 +2,10 @@
 import 'reflect-metadata';
 import { ApolloGateway } from '@apollo/gateway';
 import { ApolloServer } from 'apollo-server';
-import { IGatewayService } from './types';
+import { GatewayService } from './types';
 
 async function initGateway() {
-  const serviceList: IGatewayService[] = [
+  const serviceList: GatewayService[] = [
     {
       name: 'auth-service',
       url: process.env.AUTH_SERVICE_URL as string,
