@@ -14,12 +14,12 @@ export default class Message {
   @Field()
   message: string;
 
-  @Field()
+  @Field(() => User)
   sentBy: User;
 }
 
 export async function resolveMessageReference(
   reference: Pick<Message, 'id'>
 ): Promise<Message> {
-  return messages.find(msg => msg.id === reference.id)!;
+  return messages.find(msg => msg.id === reference.id) as Message;
 }
