@@ -5,7 +5,7 @@ import { messages } from '../data';
 @Resolver(() => Message)
 export default class MessageResolver {
   @Query(() => [Message])
-  messages(): Message[] {
+  testChat(): Message[] {
     return [...messages];
   }
 }

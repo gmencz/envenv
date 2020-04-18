@@ -5,7 +5,7 @@ import Recipe from '../entities/Recipe';
 @Resolver(() => Recipe)
 export default class RecipesResolver {
   @Query(() => Recipe)
-  me(): Recipe {
+  testRecipes(): Recipe {
     return recipes[0];
   }
 }

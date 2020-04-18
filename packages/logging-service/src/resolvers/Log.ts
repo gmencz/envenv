@@ -5,7 +5,7 @@ import Log from '../entities/Log';
 @Resolver(() => Log)
 export default class LogsResolver {
   @Query(() => Log)
-  me(): Log {
+  testLogs(): Log {
     return logs[0];
   }
 }

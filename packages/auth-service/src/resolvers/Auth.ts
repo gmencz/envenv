@@ -5,7 +5,7 @@ import Auth from '../entities/Auth';
 @Resolver(() => Auth)
 export default class AuthResolver {
   @Query(() => Auth)
-  me(): Auth {
+  testAuth(): Auth {
     return auth[0];
   }
 }

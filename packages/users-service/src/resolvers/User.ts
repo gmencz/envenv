@@ -5,7 +5,7 @@ import User from '../entities/User';
 @Resolver(() => User)
 export default class UsersResolver {
   @Query(() => User)
-  me(): User {
+  testUsers(): User {
     return users[0];
   }
 }

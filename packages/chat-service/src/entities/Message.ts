@@ -14,6 +14,7 @@ export default class Message {
   @Field(() => String)
   message: string;
 
+  @Directive(`@provides(fields: "id username name birthDate")`)
   @Field(() => User)
   sentBy: User;
 }

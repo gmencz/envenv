@@ -4,7 +4,7 @@ import { ApolloGateway } from '@apollo/gateway';
 import { ApolloServer } from 'apollo-server';
 import { GatewayService } from './types';
 
-async function initGateway() {
+async function initGateway(): Promise<void> {
   const serviceList: GatewayService[] = [
     {
       name: 'auth-service',
