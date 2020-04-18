@@ -1,12 +1,11 @@
 import { Resolver, Query } from 'type-graphql';
-import Log from './log';
 import { logs } from '../data';
+import Log from '../entities/Log';
 
 @Resolver(() => Log)
 export default class LogsResolver {
   @Query(() => Log)
-  me(): Log {
-    // @ts-ignore
+  testLogs(): Log {
     return logs[0];
   }
 }

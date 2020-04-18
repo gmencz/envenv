@@ -7,18 +7,18 @@ export default class Auth {
   @Field(() => ID)
   id: string;
 
-  @Field()
+  @Field(() => String)
   userId: string;
 
-  @Field()
+  @Field(() => String)
   token: string;
 
-  @Field()
+  @Field(() => Date)
   createdAt: Date;
 }
 
 export async function resolveAuthReference(
   reference: Pick<Auth, 'id'>
 ): Promise<Auth> {
-  return auth.find(u => u.id === reference.id)!;
+  return auth.find(u => u.id === reference.id) as Auth;
 }

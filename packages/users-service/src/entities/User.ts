@@ -8,18 +8,18 @@ export default class User {
   @Field(() => ID)
   id: string;
 
-  @Field()
+  @Field(() => String)
   username: string;
 
-  @Field()
+  @Field(() => String)
   name: string;
 
-  @Field()
+  @Field(() => Date)
   birthDate: Date;
 }
 
 export async function resolveUserReference(
   reference: Pick<User, 'id'>
 ): Promise<User> {
-  return users.find(u => u.id === reference.id)!;
+  return users.find(u => u.id === reference.id) as User;
 }

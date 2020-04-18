@@ -4,7 +4,7 @@ import { buildFederatedSchema } from './helpers/buildFederatedSchema';
 import Log, { resolveLogReference } from './entities/Log';
 import LogResolver from './resolvers/Log';
 
-(async () => {
+(async (): Promise<void> => {
   const schema = await buildFederatedSchema(
     {
       resolvers: [LogResolver],

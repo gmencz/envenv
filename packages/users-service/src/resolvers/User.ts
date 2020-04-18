@@ -1,12 +1,11 @@
 import { Resolver, Query } from 'type-graphql';
-import User from './user';
 import { users } from '../data';
+import User from '../entities/User';
 
 @Resolver(() => User)
 export default class UsersResolver {
   @Query(() => User)
-  me(): User {
-    // @ts-ignore
+  testUsers(): User {
     return users[0];
   }
 }
