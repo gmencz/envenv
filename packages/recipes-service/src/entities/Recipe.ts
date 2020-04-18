@@ -1,24 +1,24 @@
 import { Field, ObjectType, Directive, ID } from 'type-graphql';
-import { recipes } from '../data'
+import { recipes } from '../data';
 
 @Directive(`@key(fields: "id")`)
 @ObjectType()
-export default class Recipe{
-    @Field(() => ID)
-    id: string;
+export default class Recipe {
+  @Field(() => ID)
+  id: string;
 
-    @Field()
-    name: string;
-    
-    @Field()
-    createdAt: string;
-    
-    @Field()
-    createdBy: string;
-} 
+  @Field(() => String)
+  name: string;
+
+  @Field(() => String)
+  createdAt: string;
+
+  @Field(() => String)
+  createdBy: string;
+}
 
 export async function resolveRecipeReference(
-    reference: Pick<Recipe, 'id'>
+  reference: Pick<Recipe, 'id'>
 ): Promise<Recipe> {
-    return recipes.find(u => u.id === reference.id)!;
+  return recipes.find(u => u.id === reference.id)!;
 }

@@ -7,15 +7,15 @@ export default class Log {
   @Field(() => ID)
   id: string;
 
-  @Field()
+  @Field(() => Date)
   createdAt: Date;
 
-  @Field()
+  @Field(() => String)
   message: string;
 }
 
 export async function resolveLogReference(
   reference: Pick<Log, 'id'>
 ): Promise<Log> {
-  return logs.find(l => l.id === reference.id)!;
+  return logs.find(l => l.id === reference.id) as Log;
 }

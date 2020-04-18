@@ -6,7 +6,6 @@ services:
       dockerfile: Dockerfile.dev
     volumes:
       - ./packages/auth-service:/auth-service
-      - /auth-service/node_modules
     ports:
       - '5000:5000'
     env_file:
@@ -19,7 +18,6 @@ services:
       dockerfile: Dockerfile.dev
     volumes:
       - ./packages/chat-service:/chat-service
-      - /chat-service/node_modules
     ports:
       - '5001:5001'
     env_file:
@@ -32,7 +30,6 @@ services:
       dockerfile: Dockerfile.dev
     volumes:
       - ./packages/logging-service:/logging-service
-      - /logging-service/node_modules
     ports:
       - '5002:5002'
     env_file:
@@ -45,7 +42,6 @@ services:
       dockerfile: Dockerfile.dev
     volumes:
       - ./packages/recipes-service:/recipes-service
-      - /recipes-service/node_modules
     ports:
       - '5003:5003'
     env_file:
@@ -58,7 +54,6 @@ services:
       dockerfile: Dockerfile.dev
     volumes:
       - ./packages/search-engine-service:/search-engine-service
-      - /search-engine-service/node_modules
     ports:
       - '5004:5004'
     env_file:
@@ -71,7 +66,6 @@ services:
       dockerfile: Dockerfile.dev
     volumes:
       - ./packages/users-service:/users-service
-      - /users-service/node_modules
     ports:
       - '5005:5005'
     env_file:
@@ -84,13 +78,13 @@ services:
       dockerfile: Dockerfile.dev
     volumes:
       - ./packages/api-gateway:/api-gateway
-      - /api-gateway/node_modules
     ports:
-      - '5007:5007'
+      - '7000:7000'
     env_file:
       - ./packages/api-gateway/development.env
     environment:
       - NODE_ENV=development
+    restart: on-failure
   mongo-service:
     image: mongo
     environment:

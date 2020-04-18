@@ -1,4 +1,4 @@
-export interface IGatewayService {
+export interface GatewayService {
   name: string;
   url: string;
 }

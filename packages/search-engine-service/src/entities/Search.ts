@@ -8,13 +8,14 @@ export default class Search {
   @Field(() => ID)
   id: string;
 
+  @Directive(`@provides(fields: "id username name birthDate")`)
   @Field(() => User)
   searchedBy: User;
 
-  @Field()
+  @Field(() => String)
   searchQueryString: string;
 
-  @Field()
+  @Field(() => Date)
   searchedAt: Date;
 }
 

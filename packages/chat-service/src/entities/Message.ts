@@ -8,12 +8,13 @@ export default class Message {
   @Field(() => ID)
   id: string;
 
-  @Field()
+  @Field(() => Date)
   sentAt: Date;
 
-  @Field()
+  @Field(() => String)
   message: string;
 
+  @Directive(`@provides(fields: "id username name birthDate")`)
   @Field(() => User)
   sentBy: User;
 }
