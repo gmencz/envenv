@@ -20,6 +20,6 @@ import RecipeResolver from './resolvers/Recipe';
     playground: true,
   });
 
-  const { url } = await server.listen({ port: 5003 });
+  const { url } = await server.listen({ port: process.env.SERVICE_PORT });
   console.log(`Recipes service listening on ${url}`);
 })();

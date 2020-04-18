@@ -18,7 +18,6 @@
     "graphql": "^15.0.0",
     "graphql-tag": "^2.10.3",
     "reflect-metadata": "^0.1.13",
-    "ts-node-dev": "^1.0.0-pre.44",
     "type-graphql": "^0.18.0-beta.16"
   }
 }

@@ -20,6 +20,6 @@ import LogResolver from './resolvers/Log';
     playground: true,
   });
 
-  const { url } = await server.listen({ port: 5002 });
+  const { url } = await server.listen({ port: process.env.SERVICE_PORT });
   console.log(`Logging service listening on ${url}`);
 })();

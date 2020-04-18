@@ -20,6 +20,6 @@ import AuthResolver from './resolvers/Auth';
     playground: true,
   });
 
-  const { url } = await server.listen({ port: 5000 });
+  const { url } = await server.listen({ port: process.env.SERVICE_PORT });
   console.log(`Auth service listening on ${url}`);
 })();

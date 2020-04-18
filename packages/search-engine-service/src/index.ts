@@ -20,6 +20,6 @@ import Search, { resolveSearchReference } from './entities/Search';
     playground: true,
   });
 
-  const { url } = await server.listen({ port: 5004 });
+  const { url } = await server.listen({ port: process.env.SERVICE_PORT });
   console.log(`Search service listening on ${url}`);
 })();

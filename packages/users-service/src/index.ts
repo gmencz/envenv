@@ -20,6 +20,6 @@ import UsersResolver from './resolvers/User';
     playground: true,
   });
 
-  const { url } = await server.listen({ port: 5005 });
+  const { url } = await server.listen({ port: process.env.SERVICE_PORT });
   console.log(`Users service listening on ${url}`);
 })();

@@ -20,6 +20,6 @@ import MessageResolver from './resolvers/Message';
     playground: true,
   });
 
-  const { url } = await server.listen({ port: 5001 });
+  const { url } = await server.listen({ port: process.env.SERVICE_PORT });
   console.log(`Chat service listening on ${url}`);
 })();
