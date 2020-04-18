@@ -21,5 +21,5 @@ import MessageResolver from './resolvers/Message';
   });
 
   const { url } = await server.listen({ port: 5001 });
-  console.log(`Users service listening on ${url}`);
+  console.log(`Chat service listening on ${url}`);
 })();
