@@ -62,7 +62,7 @@ import {
 
   app.listen(process.env.SERVICE_PORT, function () {
     console.log(
-      'Node server running on http://localhost:' + process.env.SERVICE_PORT
+      `Node server running on http://localhost:${process.env.SERVICE_PORT}`
     );
   });
 })();
