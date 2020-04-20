@@ -31,6 +31,7 @@ import {
     '/auth/google/callback',
     passport.authenticate('google', { failureRedirect: '/login' }),
     function (req, res) {
+      console.log(req);
       res.redirect('/');
     }
   );

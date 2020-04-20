@@ -27,6 +27,8 @@
     "type-graphql": "^0.18.0-beta.16"
   },
   "devDependencies": {
+    "@types/passport-facebook": "^2.1.9",
+    "@types/passport-google-oauth": "^1.0.41",
     "ts-node-dev": "^1.0.0-pre.44",
     "typescript": "^3.8.3"
   }
