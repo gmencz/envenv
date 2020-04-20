@@ -1,6 +1,6 @@
 import { Field, ObjectType, Directive, ID } from 'type-graphql';
 import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
-import { Model } from '../helpers/Model';
+import { Model } from '../../helpers/Model';
 
 @Entity('users')
 @Directive(`@key(fields: "id")`)
@@ -21,7 +21,7 @@ export default class User extends Model {
   @Field(() => String)
   @Column('character varying', {
     nullable: false,
-    length: 20,
+    length: 60,
   })
   name: string;
 
