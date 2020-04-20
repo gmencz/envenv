@@ -10,6 +10,6 @@
     "logging": true,
     "synchronize": true,
     "dropSchema": true,
-    "entities": ["./src/entities/*.ts"]
+    "entities": ["./src/entities/**/*.ts"]
   }
 ]
