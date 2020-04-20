@@ -94,10 +94,9 @@ services:
       - '27017:27017'
     restart: always
   postgres-service:
-    image: postgres:10.3
+    image: postgres:11.6-alpine
     restart: always
     ports:
       - '5432:5432'
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: V6>'?a5aspGa{
+    env_file:
+      - ./postgres.env
