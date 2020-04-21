@@ -21,6 +21,8 @@ import {
   app.use(helmet());
   app.use(express.json());
   app.use(rateLimiter);
+  app.use(passport.initialize());
+  app.use(passport.session());
   app.get(
     '/auth/google',
     passport.authenticate('google', {
@@ -43,6 +45,14 @@ import {
       failureRedirect: '/login',
     })
   );
+  //TODO fix success routes, types and serialize/deserialize functions
+  passport.serializeUser(function (user, done) {
+    done(null, user);
+  });
+
+  passport.deserializeUser(function (user, done) {
+    done(null, user);
+  });
 
   const schema = await buildFederatedSchema(
     {

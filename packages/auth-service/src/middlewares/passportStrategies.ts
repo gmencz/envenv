@@ -13,7 +13,7 @@ export const GoogleStrategyObj = new GoogleStrategy(
     console.log(refreshToken);
     console.log(profile);
     //TODO send this message only if the code before not fails
-    done(null, false);
+    done(null, { userId: profile.id });
   }
 );
 
@@ -28,6 +28,6 @@ export const FacebookStrategyObj = new FacebookStrategy(
     console.log(refreshToken);
     console.log(profile);
     //TODO send this message only if the code before not fails
-    done(null, false);
+    done(null);
   }
 );
