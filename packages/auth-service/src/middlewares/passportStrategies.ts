@@ -12,7 +12,8 @@ export const GoogleStrategyObj = new GoogleStrategy(
     console.log(accessToken);
     console.log(refreshToken);
     console.log(profile);
-    done();
+    //TODO send this message only if the code before not fails
+    done(null, false);
   }
 );
 
@@ -26,6 +27,7 @@ export const FacebookStrategyObj = new FacebookStrategy(
     console.log(accessToken);
     console.log(refreshToken);
     console.log(profile);
-    done();
+    //TODO send this message only if the code before not fails
+    done(null, false);
   }
 );
