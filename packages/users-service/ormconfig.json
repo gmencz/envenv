@@ -9,7 +9,7 @@
     "database": "cloneDB",
     "logging": true,
     "synchronize": true,
-    "dropSchema": true,
+    "dropSchema": false,
     "entities": ["./src/entities/**/*.ts"]
   }
 ]
