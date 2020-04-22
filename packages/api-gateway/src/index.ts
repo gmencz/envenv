@@ -4,16 +4,18 @@ import { ApolloGateway, RemoteGraphQLDataSource } from '@apollo/gateway';
 import { ApolloServer } from 'apollo-server-express';
 import { GatewayService } from './types';
 import express, { Request, Response } from 'express';
+import cookieParser from 'cookie-parser';
 
 class CustomDataSource extends RemoteGraphQLDataSource {
   willSendRequest({ request, context }): void {
-    console.log(context.req);
+    request.http.headers.set('cookies', JSON.stringify(context.req?.cookies));
   }
 }
 
 async function initGateway(): Promise<void> {
   try {
     const app = express();
+    app.use(cookieParser());
 
     const serviceList: GatewayService[] = [
       {

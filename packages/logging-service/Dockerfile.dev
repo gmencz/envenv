@@ -1,5 +1,5 @@
 FROM node:alpine
-WORKDIR /login-service
+WORKDIR /logging-service
 
 COPY ./package*.json ./
 RUN npm install

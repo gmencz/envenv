@@ -53,10 +53,16 @@ export default class UsersResolver {
     @Arg('newUserData') newUserData: ExternalProviderInput,
     @Ctx() { req }: ApolloContext
   ): Promise<boolean> {
-    console.log(req.headers);
-    console.log(newUserData);
+    const cookies = JSON.parse(req.headers.cookies as string);
     const password = generate({ length: 19, symbols: true, numbers: true });
-    console.log(password);
+
+    const userData = {
+      ...newUserData,
+      ...cookies.NewUserData,
+      password: await hash(password, 12),
+    };
+
+    console.log(userData);
     return true;
   }
 

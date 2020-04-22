@@ -66,6 +66,16 @@ import cookieParser from 'cookie-parser';
     schema,
     tracing: false,
     playground: true,
+    context: ({
+      req,
+      res,
+    }: {
+      req: Request;
+      res: Response;
+    }): { req: Request; res: Response } => ({
+      req,
+      res,
+    }),
   });
   server.applyMiddleware({ app });
 

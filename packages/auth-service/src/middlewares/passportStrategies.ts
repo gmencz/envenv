@@ -14,7 +14,7 @@ export const GoogleStrategyObj = new GoogleStrategy(
     { provider, id, _json: { name, picture } },
     done
   ) => {
-    done(null, { picture, provider, name, id, accessToken, refreshToken });
+    done(null, { picture, provider, name, id });
   }
 );
 

@@ -1,10 +1,13 @@
 import 'reflect-metadata';
-import { ApolloServer } from 'apollo-server';
+import { ApolloServer } from 'apollo-server-express';
+import express from 'express';
 import { buildFederatedSchema } from './helpers/buildFederatedSchema';
 import Log, { resolveLogReference } from './entities/Log';
 import LogResolver from './resolvers/Log';
 
 (async (): Promise<void> => {
+  const app = express();
+
   const schema = await buildFederatedSchema(
     {
       resolvers: [LogResolver],
@@ -19,8 +22,23 @@ import LogResolver from './resolvers/Log';
     schema,
     tracing: false,
     playground: true,
+    context: ({
+      req,
+      res,
+    }: {
+      req: Request;
+      res: Response;
+    }): { req: Request; res: Response } => ({
+      req,
+      res,
+    }),
   });
 
-  const { url } = await server.listen({ port: process.env.SERVICE_PORT });
-  console.log(`Logging service listening on ${url}`);
+  server.applyMiddleware({ app });
+
+  app.listen(process.env.SERVICE_PORT, () => {
+    console.log(
+      `Logging service listening on http://localhost:${process.env.SERVICE_PORT}/`
+    );
+  });
 })();

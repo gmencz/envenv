@@ -13,10 +13,12 @@
     "@apollo/gateway": "^0.14.1",
     "apollo-server": "^2.12.0",
     "apollo-server-express": "^2.12.0",
+    "cookie-parser": "^1.4.5",
     "graphql": "^15.0.0",
     "reflect-metadata": "^0.1.13"
   },
   "devDependencies": {
+    "@types/cookie-parser": "^1.4.2",
     "@types/graphql": "^14.5.0",
     "ts-node-dev": "^1.0.0-pre.44",
     "typescript": "^3.8.3"

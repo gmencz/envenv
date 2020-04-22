@@ -23,8 +23,6 @@ export const callbackGoogleAuth = async (
       picture: string;
       provider: string;
       name: string;
-      accessToken: string;
-      refreshToken: string | undefined;
     };
 
     await request('http://users-service:5005/graphql', query, {
