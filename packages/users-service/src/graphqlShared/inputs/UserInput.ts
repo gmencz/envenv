@@ -2,6 +2,9 @@ import { InputType, Field } from 'type-graphql';
 
 @InputType('UserInput')
 export default class UserInput {
+  @Field({ nullable: true })
+  id: string;
+
   @Field()
   username: string;
 
@@ -9,14 +12,14 @@ export default class UserInput {
   name: string;
 
   @Field()
-  email: string;
-
-  @Field()
   password: string;
 
-  @Field()
+  @Field({ nullable: true })
   role: string;
 
   @Field()
   birthDate: Date;
+
+  @Field({ nullable: true })
+  picture: string;
 }

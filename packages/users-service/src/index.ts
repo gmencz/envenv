@@ -8,6 +8,8 @@ import {
   getConnectionOptions,
   ConnectionOptions,
 } from 'typeorm';
+import { v4 } from 'uuid';
+import { ApolloContext } from './graphqlShared/interfaces';
 
 (async (): Promise<void> => {
   try {
@@ -25,6 +27,10 @@ import {
       schema,
       tracing: false,
       playground: true,
+      context: ({ req, res }: ApolloContext): ApolloContext => ({
+        req,
+        res,
+      }),
     });
 
     const connectionOptions: ConnectionOptions = await getConnectionOptions(
@@ -39,16 +45,16 @@ import {
         .into(User)
         .values([
           {
+            id: v4(),
             username: 'gabrielmendezc',
             name: 'Gabriel',
-            email: 'yo@gabrielmendezc.com',
             password: 'Gabriel123',
             birthDate: new Date('2002-8-24'),
           },
           {
+            id: v4(),
             username: 'pexugadepollo',
             name: 'Blas',
-            email: 'blas@blas.com',
             password: 'Blas123',
             birthDate: new Date('2000'),
           },

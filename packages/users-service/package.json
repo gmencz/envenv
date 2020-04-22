@@ -16,16 +16,20 @@
     "bcryptjs": "^2.4.3",
     "class-transformer": "^0.2.3",
     "class-validator": "^0.11.1",
+    "cookie-parser": "^1.4.5",
+    "generate-password": "^1.5.1",
     "graphql": "^14.6.0",
     "graphql-tag": "^2.10.3",
     "pg": "^8.0.2",
     "reflect-metadata": "^0.1.13",
     "type-graphql": "^0.18.0-beta.16",
     "typeorm": "^0.2.24",
+    "uuid": "^7.0.3",
     "yup": "^0.28.4"
   },
   "devDependencies": {
     "@types/bcryptjs": "^2.4.2",
+    "@types/uuid": "^7.0.2",
     "@types/yup": "^0.26.37",
     "ts-node-dev": "^1.0.0-pre.44",
     "typescript": "^3.8.3"

@@ -1,5 +1,5 @@
 import { Field, ObjectType, Directive, ID } from 'type-graphql';
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import { Entity, Column, PrimaryColumn } from 'typeorm';
 import { Model } from '../../helpers/Model';
 
 @Entity('users')
@@ -7,8 +7,23 @@ import { Model } from '../../helpers/Model';
 @ObjectType()
 export default class User extends Model {
   @Field(() => ID)
-  @PrimaryGeneratedColumn('uuid')
+  @PrimaryColumn()
   id: string;
+
+  @Field(() => String)
+  @Column('character varying', {
+    nullable: false,
+    default:
+      'https://www.pinclipart.com/picdir/middle/157-1578186_user-profile-default-image-png-clipart.png',
+  })
+  picture: string;
+
+  @Field(() => String)
+  @Column('character varying', {
+    default: 'none',
+    nullable: false,
+  })
+  provider: string; // google, facebook, etc
 
   @Field(() => String)
   @Column('character varying', {
@@ -28,13 +43,6 @@ export default class User extends Model {
   @Field(() => String)
   @Column('character varying', {
     nullable: false,
-    length: 40,
-  })
-  email: string;
-
-  @Field(() => String)
-  @Column('character varying', {
-    nullable: false,
     length: 255,
   })
   password: string;
@@ -43,7 +51,7 @@ export default class User extends Model {
   @Column('character varying', {
     nullable: false,
     length: 30,
-    default: () => 'user',
+    default: 'user',
   })
   role: string;
 

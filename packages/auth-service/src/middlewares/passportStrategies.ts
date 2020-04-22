@@ -8,12 +8,13 @@ export const GoogleStrategyObj = new GoogleStrategy(
     clientSecret: process.env.SECRET_GOOGLE as string,
     callbackURL: 'http://localhost:5000/auth/google/callback',
   },
-  function (accessToken, refreshToken, profile, done) {
-    console.log(accessToken);
-    console.log(refreshToken);
-    console.log(profile);
-    //TODO send this message only if the code before not fails
-    done(null, { userId: profile.id });
+  (
+    accessToken,
+    refreshToken,
+    { provider, id, _json: { name, picture } },
+    done
+  ) => {
+    done(null, { picture, provider, name, id, accessToken, refreshToken });
   }
 );
 
