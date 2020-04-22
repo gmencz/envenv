@@ -7,7 +7,6 @@ import express from 'express';
 import { rateLimiter } from './middlewares/rateLimit';
 import helmet from 'helmet';
 import passport from 'passport';
-import { Request } from 'express';
 import {
   GoogleStrategyObj,
   FacebookStrategyObj,
@@ -72,7 +71,7 @@ import cookieParser from 'cookie-parser';
 
   app.listen(process.env.SERVICE_PORT, function () {
     console.log(
-      `Node server running on http://localhost:${process.env.SERVICE_PORT}`
+      `Auth service listening on http://localhost:${process.env.SERVICE_PORT}/`
     );
   });
 })();

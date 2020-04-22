@@ -1,5 +1,5 @@
 import 'reflect-metadata';
-import { ApolloServer } from 'apollo-server';
+import { ApolloServer } from 'apollo-server-express';
 import { buildFederatedSchema } from './helpers/buildFederatedSchema';
 import User, { resolveUserReference } from './entities/User';
 import UsersResolver from './resolvers/User';
@@ -10,9 +10,14 @@ import {
 } from 'typeorm';
 import { v4 } from 'uuid';
 import { ApolloContext } from './graphqlShared/interfaces';
+import express from 'express';
+import cookieParser from 'cookie-parser';
 
 (async (): Promise<void> => {
   try {
+    const app = express();
+    app.use(cookieParser());
+
     const schema = await buildFederatedSchema(
       {
         resolvers: [UsersResolver],
@@ -32,6 +37,8 @@ import { ApolloContext } from './graphqlShared/interfaces';
         res,
       }),
     });
+
+    server.applyMiddleware({ app });
 
     const connectionOptions: ConnectionOptions = await getConnectionOptions(
       'cloneMainDatabase'
@@ -62,9 +69,11 @@ import { ApolloContext } from './graphqlShared/interfaces';
         .execute();
     }
 
-    const { url } = await server.listen({ port: process.env.SERVICE_PORT });
-
-    console.log(`Users service listening on ${url}`);
+    app.listen(process.env.SERVICE_PORT, () => {
+      console.log(
+        `Users service listening on http://localhost:${process.env.SERVICE_PORT}/`
+      );
+    });
   } catch (error) {
     console.error(error);
   }
