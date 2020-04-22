@@ -1,11 +1,20 @@
 // Entrypoint file for our API Gateway
 import 'reflect-metadata';
-import { ApolloGateway } from '@apollo/gateway';
-import { ApolloServer } from 'apollo-server';
+import { ApolloGateway, RemoteGraphQLDataSource } from '@apollo/gateway';
+import { ApolloServer } from 'apollo-server-express';
 import { GatewayService } from './types';
+import express, { Request, Response } from 'express';
+
+class CustomDataSource extends RemoteGraphQLDataSource {
+  willSendRequest({ request, context }): void {
+    console.log(context.req);
+  }
+}
 
 async function initGateway(): Promise<void> {
   try {
+    const app = express();
+
     const serviceList: GatewayService[] = [
       {
         name: 'auth-service',
@@ -36,7 +45,12 @@ async function initGateway(): Promise<void> {
     /*
       Create a new instance of ApolloGateway and wait until loaded
     */
-    const gateway = new ApolloGateway({ serviceList });
+    const gateway = new ApolloGateway({
+      serviceList,
+      buildService({ url }): CustomDataSource {
+        return new CustomDataSource({ url });
+      },
+    });
     const { schema, executor } = await gateway.load();
 
     /*
@@ -47,17 +61,28 @@ async function initGateway(): Promise<void> {
       executor,
       tracing: false,
       playground: true,
+      context: ({
+        req,
+        res,
+      }: {
+        req: Request;
+        res: Response;
+      }): { req: Request; res: Response } => ({
+        req,
+        res,
+      }),
     });
+
+    server.applyMiddleware({ app });
 
     /*
       Expose our Gateway so we can make requests to it
     */
-    const gatewayServer = await server.listen({
-      port: process.env.API_GATEWAY_PORT,
+    app.listen(process.env.API_GATEWAY_PORT, () => {
+      console.log(
+        `API Gateway listening on http://localhost:${process.env.API_GATEWAY_PORT}/`
+      );
     });
-    console.log(`
-      API Gateway available at ${gatewayServer.url}
-    `);
   } catch (error) {
     console.error(error);
     process.exit(1); // We do this so our container tries to restart

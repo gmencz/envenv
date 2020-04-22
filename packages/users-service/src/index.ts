@@ -17,6 +17,7 @@ import cookieParser from 'cookie-parser';
   try {
     const app = express();
     app.use(cookieParser());
+    app.use(express.json());
 
     const schema = await buildFederatedSchema(
       {

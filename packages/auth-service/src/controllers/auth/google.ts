@@ -27,7 +27,7 @@ export const callbackGoogleAuth = async (
       refreshToken: string | undefined;
     };
 
-    await request('http://users-service:5005', query, {
+    await request('http://users-service:5005/graphql', query, {
       providerUserId: id,
     });
 
@@ -41,6 +41,7 @@ export const callbackGoogleAuth = async (
   } catch (error) {
     // Check if the error comes from our graphql request
     if (!error?.response.data && error?.request) {
+      console.log(error);
       res.redirect('/signup/googleAccountExistsError');
     }
 

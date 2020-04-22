@@ -12,6 +12,7 @@
   "dependencies": {
     "@apollo/gateway": "^0.14.1",
     "apollo-server": "^2.12.0",
+    "apollo-server-express": "^2.12.0",
     "graphql": "^15.0.0",
     "reflect-metadata": "^0.1.13"
   },
