@@ -29,7 +29,11 @@ export const callbackGoogleAuth = async (
       providerUserId: id,
     });
 
-    res.cookie('NewUserData', { ...req.user }, { httpOnly: true });
+    res.cookie(
+      'NewUserData',
+      { ...req.user },
+      { httpOnly: true, maxAge: 600000 }
+    );
     /* 
       Redirect to route where the user will fill out 
       needed information like their username, after doing that

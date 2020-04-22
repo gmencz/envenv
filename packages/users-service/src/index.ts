@@ -46,7 +46,7 @@ import cookieParser from 'cookie-parser';
     );
     await createConnection({ ...connectionOptions, name: 'default' });
 
-    if (connectionOptions.synchronize) {
+    if (connectionOptions.synchronize && connectionOptions.dropSchema) {
       // Populate our users database for dev.
       await User.createQueryBuilder()
         .insert()
