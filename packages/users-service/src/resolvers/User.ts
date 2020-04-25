@@ -10,13 +10,13 @@ import AuthResponse from '../graphqlShared/types/AuthResponse';
 import ExternalProviderInput from '../graphqlShared/inputs/ExternalProviderInput';
 import { generate } from 'generate-password';
 import { createAccessToken } from '../helpers/auth';
-import axios from 'axios';
 
 @Resolver(() => User)
 export default class UsersResolver {
   @Query(() => [User])
-  async getUsers(): Promise<User[]> {
+  async getUsers(@Ctx() { res }: ApolloContext): Promise<User[]> {
     const users = await User.find();
+    res.cookie('test', 'test cookie');
     return users;
   }
 
