@@ -1,5 +1,12 @@
 version: '3.7'
 services:
+  nginx:
+    restart: always
+    build:
+      context: ./packages/nginx
+      dockerfile: Dockerfile.dev
+    ports:
+      - '8080:80'
   auth-service:
     build:
       context: ./packages/auth-service
@@ -85,6 +92,14 @@ services:
     environment:
       - NODE_ENV=development
     restart: on-failure
+  client:
+    build:
+      context: ./packages/client
+      dockerfile: Dockerfile.dev
+    volumes:
+      - ./packages/client:/app
+    ports:
+      - '3000:3000'
   mongo-service:
     image: mongo
     environment:
