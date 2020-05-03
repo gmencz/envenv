@@ -10,6 +10,12 @@ class CustomDataSource extends RemoteGraphQLDataSource {
   willSendRequest({ request, context }): void {
     request.http.headers.set('cookies', JSON.stringify(context.req?.cookies));
   }
+
+  didReceiveResponse({ request, response }): typeof response {
+    console.log(response.http.headers);
+
+    return response;
+  }
 }
 
 async function initGateway(): Promise<void> {
