@@ -7,15 +7,7 @@ import { Response } from 'express';
 export default class LogsResolver {
   @Query(() => Log)
   testLogs(@Ctx() { res }: { res: Response }): Log {
-    res.cookie('al', 'la', {
-      domain: '',
-      expires: new Date('2021'),
-      httpOnly: true,
-      maxAge: 360000,
-      path: '/pp',
-      sameSite: true,
-      secure: true,
-    });
+    res.clearCookie('al');
     return logs[0];
   }
 }

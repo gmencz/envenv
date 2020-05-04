@@ -97,6 +97,21 @@ describe('Cookie parser tests', () => {
     });
   });
 
+  test('clears cookie if its value is set as empty in set-cookie header', () => {
+    const parsedCookies = parseCookies(
+      'mockName=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT'
+    );
+    expect(parsedCookies).toHaveLength(1);
+    expect(parsedCookies[0]).toMatchObject({
+      cookieName: 'mockName',
+      cookieValue: '',
+      options: {
+        path: '/',
+        expires: new Date('1970-01-01T00:00:00.000Z'),
+      },
+    });
+  });
+
   test('throws error if invalid cookie (invalid set-cookie header) is provided', () => {
     try {
       parseCookies('');
