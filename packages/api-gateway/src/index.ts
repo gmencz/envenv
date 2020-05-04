@@ -7,6 +7,12 @@ import cookieParser from 'cookie-parser';
 import parseCookies from './helpers/parseCookies';
 
 class CustomDataSource extends RemoteGraphQLDataSource {
+  willSendRequest({ request, context }) {
+    if (context && context.req) {
+      request.http.headers.set('Cookie', JSON.stringify(context.req.cookies));
+    }
+  }
+
   didReceiveResponse({ response, context }): typeof response {
     const rawCookies = response.http.headers.get('set-cookie') as string | null;
 

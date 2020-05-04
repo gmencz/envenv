@@ -55,7 +55,9 @@ export default class UsersResolver {
     @Ctx() { req, res }: ApolloContext
   ): Promise<AuthResponse> {
     try {
-      const cookies = JSON.parse(req.headers.cookies as string);
+      const cookies = req.headers.cookie;
+      console.log(cookies);
+      throw new Error('testing');
       const password = generate({ length: 19, symbols: true, numbers: true });
 
       const userData = {
