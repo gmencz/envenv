@@ -1,6 +1,5 @@
 type CookieOptions = {
   maxAge?: number;
-  signed?: boolean;
   expires?: Date;
   httpOnly?: boolean;
   path?: string;
