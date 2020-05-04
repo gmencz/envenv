@@ -46,7 +46,7 @@ export default function parseCookies(rawCookies: string): ParsedCookie[] {
         return `${rawCookie}${ref[index + 1]}`;
       }
 
-      if (hasExpiresField(ref[index - 1])) return 'invalid';
+      if (index > 0 && hasExpiresField(ref[index - 1])) return 'invalid';
 
       return rawCookie;
     })
@@ -69,8 +69,6 @@ export default function parseCookies(rawCookies: string): ParsedCookie[] {
         return 'httpOnly=true';
       } else if (sanitizedPropertyName === 'samesite') {
         return `sameSite=${propertyValue}`;
-      } else if (sanitizedPropertyName === 'expires') {
-        return `expires=${new Date(propertyValue)}`;
       }
 
       if (!propertyValue) {
@@ -96,6 +94,11 @@ export default function parseCookies(rawCookies: string): ParsedCookie[] {
 
     objectifyedCookieProperties.forEach(objectifyedCookieProperty => {
       Object.entries(objectifyedCookieProperty).forEach(([key, value]) => {
+        if (key === 'expires') {
+          options[key] = new Date(value as string);
+          return;
+        }
+
         options[key] = value;
       });
     });
