@@ -34,6 +34,7 @@ export default function parseCookies(rawCookies: string): ParsedCookie[] {
       'Invalid raw cookies, look at the format of a set-cookie header string and provide something similar.'
     );
   }
+
   /*
     Cookie format: "name=value; Path=/; HttpOnly; Secure"
     Multiple cookies format: "name=value; Path=/; HttpOnly; Secure, name2=value2"
@@ -67,7 +68,7 @@ export default function parseCookies(rawCookies: string): ParsedCookie[] {
       } else if (sanitizedPropertyName === 'httponly') {
         return 'httpOnly=true';
       } else if (sanitizedPropertyName === 'samesite') {
-        return `sameSite=${propertyValue}`;
+        return `sameSite=${propertyValue.toLowerCase()}`;
       }
 
       if (!propertyValue) {
@@ -98,13 +99,18 @@ export default function parseCookies(rawCookies: string): ParsedCookie[] {
           return;
         }
 
+        if (key === 'maxAge') {
+          options[key] = Number(value as string);
+          return;
+        }
+
         options[key] = value;
       });
     });
 
     return {
-      cookieName,
-      cookieValue,
+      cookieName: cookieName.trim(),
+      cookieValue: cookieValue.trim(),
       options,
     };
   });
