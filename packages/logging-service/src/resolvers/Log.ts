@@ -6,9 +6,7 @@ import { Request, Response } from 'express';
 @Resolver(() => Log)
 export default class LogsResolver {
   @Query(() => Log)
-  testLogs(@Ctx() { req, res }: { req: Request; res: Response }): Log {
-    console.log(req);
-    res.cookie('lol', 'lmao');
+  testLogs(): Log {
     return logs[0];
   }
 }
