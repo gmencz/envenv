@@ -11,10 +11,14 @@ class CustomDataSource extends RemoteGraphQLDataSource {
     const rawCookies = response.http.headers.get('set-cookie') as string | null;
 
     if (rawCookies) {
-      console.log(parseCookies(rawCookies));
+      const cookies = parseCookies(rawCookies);
+      cookies.forEach(({ cookieName, cookieValue, options }) => {
+        if (context && context.res) {
+          context.res.cookie(cookieName, cookieValue, { ...options });
+        }
+      });
     }
 
-    context?.res?.cookie('elemao', 'yup');
     return response;
   }
 }

@@ -69,6 +69,8 @@ export default function parseCookies(rawCookies: string): ParsedCookie[] {
         return 'httpOnly=true';
       } else if (sanitizedPropertyName === 'samesite') {
         return `sameSite=${propertyValue}`;
+      } else if (sanitizedPropertyName === 'expires') {
+        return `expires=${new Date(propertyValue)}`;
       }
 
       if (!propertyValue) {
