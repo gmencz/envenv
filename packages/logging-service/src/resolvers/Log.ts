@@ -7,8 +7,15 @@ import { Request, Response } from 'express';
 export default class LogsResolver {
   @Query(() => Log)
   testLogs(@Ctx() { req, res }: { req: Request; res: Response }): Log {
-    console.log(req);
-    res.cookie('lol', 'lmao');
+    res.cookie('lol', 'lmao', {
+      httpOnly: true,
+      secure: true,
+      expires: new Date(),
+      maxAge: 3000000,
+      domain: '',
+      sameSite: true,
+    });
+    res.cookie('lol2', 'lmao2');
     return logs[0];
   }
 }

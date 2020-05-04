@@ -1,19 +1,20 @@
-// Entrypoint file for our API Gateway
 import 'reflect-metadata';
 import { ApolloGateway, RemoteGraphQLDataSource } from '@apollo/gateway';
 import { ApolloServer } from 'apollo-server-express';
 import { GatewayService } from './types';
 import express, { Request, Response } from 'express';
 import cookieParser from 'cookie-parser';
+import parseCookies from './helpers/parseCookies';
 
 class CustomDataSource extends RemoteGraphQLDataSource {
-  willSendRequest({ request, context }): void {
-    request.http.headers.set('cookies', JSON.stringify(context.req?.cookies));
-  }
+  didReceiveResponse({ response, context }): typeof response {
+    const rawCookies = response.http.headers.get('set-cookie') as string | null;
 
-  didReceiveResponse({ request, response }): typeof response {
-    console.log(response.http.headers);
+    if (rawCookies) {
+      console.log(parseCookies(rawCookies));
+    }
 
+    context?.res?.cookie('elemao', 'yup');
     return response;
   }
 }
