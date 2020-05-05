@@ -82,6 +82,16 @@ export default class UsersResolver {
         );
       }
 
+      const usernameUnavailable = await User.findOne({
+        where: { username: newUserData.username },
+      });
+
+      if (usernameUnavailable) {
+        throw new ApolloError(
+          `That username is taken, please choose a different one!`
+        );
+      }
+
       const user = await new User({ ...userData }).save();
 
       const sessionQuery = `

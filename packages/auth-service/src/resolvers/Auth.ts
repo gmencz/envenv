@@ -1,8 +1,9 @@
-import { Resolver, Mutation, Arg } from 'type-graphql';
+import { Resolver, Mutation, Arg, Query, Ctx } from 'type-graphql';
 import redisClient from '../helpers/redisClient';
 import { ApolloError } from 'apollo-server';
-import { v4 } from 'uuid';
 import SessionResponse from '../graphqlShared/types/SessionResponse';
+import { Request } from 'express';
+import { generate as generateUniqueId } from 'shortid';
 
 @Resolver()
 export default class AuthResolver {
@@ -10,8 +11,8 @@ export default class AuthResolver {
   async createSession(@Arg('userId') userId: string): Promise<SessionResponse> {
     try {
       const sessionInfo = {
-        sessionId: v4(),
-        csrfToken: v4(),
+        sessionId: `${generateUniqueId()}${generateUniqueId()}`,
+        csrfToken: `${generateUniqueId()}${generateUniqueId()}`,
         userId,
       };
 
@@ -36,5 +37,30 @@ export default class AuthResolver {
         '500'
       );
     }
+  }
+
+  @Query(() => String)
+  async getSessionInfo(@Ctx() { req }: { req: Request }): Promise<string> {
+    const cookies = JSON.parse(req.headers.cookie as string);
+
+    if (!cookies.SID) {
+      throw new ApolloError('Please log in');
+    }
+
+    const getSessionFromRedis = (): Promise<unknown> =>
+      new Promise((res, rej) => {
+        redisClient.get(`session_${cookies.SID}`, (err, reply) => {
+          if (err) rej(err);
+          res(reply);
+        });
+      });
+
+    const sessionInfo = await getSessionFromRedis();
+
+    if (!sessionInfo) {
+      throw new ApolloError('Log user out...');
+    }
+
+    return sessionInfo as string;
   }
 }
