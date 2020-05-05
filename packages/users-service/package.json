@@ -23,6 +23,7 @@
     "express": "^4.17.1",
     "generate-password": "^1.5.1",
     "graphql": "^14.6.0",
+    "graphql-request": "^1.8.2",
     "graphql-tag": "^2.10.3",
     "jsonwebtoken": "^8.5.1",
     "pg": "^8.0.2",

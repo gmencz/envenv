@@ -10,13 +10,13 @@ import AuthResponse from '../graphqlShared/types/AuthResponse';
 import ExternalProviderInput from '../graphqlShared/inputs/ExternalProviderInput';
 import { generate } from 'generate-password';
 import { createAccessToken } from '../helpers/auth';
+import { request } from 'graphql-request';
 
 @Resolver(() => User)
 export default class UsersResolver {
   @Query(() => [User])
-  async getUsers(@Ctx() { res }: ApolloContext): Promise<User[]> {
+  async getUsers(): Promise<User[]> {
     const users = await User.find();
-    res.cookie('test', 'test cookie');
     return users;
   }
 
@@ -55,9 +55,14 @@ export default class UsersResolver {
     @Ctx() { req, res }: ApolloContext
   ): Promise<AuthResponse> {
     try {
-      const cookies = req.headers.cookie;
-      console.log(cookies);
-      throw new Error('testing');
+      const cookies = JSON.parse(req.headers.cookie as string);
+
+      if (!cookies.NewUserData) {
+        throw new ApolloError(
+          'Your time to sign up has expired, please proceed to sign up with your provider of choice (google/facebook)'
+        );
+      }
+
       const password = generate({ length: 19, symbols: true, numbers: true });
 
       const userData = {
@@ -65,6 +70,8 @@ export default class UsersResolver {
         ...cookies.NewUserData,
         password: await hash(password, 12),
       };
+
+      await newUserValidation.validate({ ...userData });
 
       const userExists = await User.findOne({ where: { id: userData.id } });
 
@@ -75,11 +82,32 @@ export default class UsersResolver {
         );
       }
 
-      await newUserValidation.validate({ ...userData });
-
       const user = await new User({ ...userData }).save();
 
-      return { user, accessToken: createAccessToken(user) };
+      const sessionQuery = `
+        mutation createSession($userId: String!) {
+          createSession(userId: $userId) {
+            sessionId
+            csrfToken
+          }
+        }
+      `;
+
+      const data = await request(
+        'http://auth-service:5000/graphql',
+        sessionQuery,
+        { userId: user.id }
+      );
+
+      res.cookie('SID', data.createSession.sessionId, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        maxAge: Number(process.env.SESSION_COOKIE_EXPIRY as string),
+      });
+
+      res.clearCookie('NewUserData');
+
+      return { user, csrfToken: data.createSession.csrfToken };
     } catch (error) {
       console.log(error);
       if (error.name === 'ValidationError') {
@@ -120,7 +148,7 @@ export default class UsersResolver {
         id: newUserData.id || v4(),
       }).save();
 
-      return { user, accessToken: createAccessToken(user) };
+      return { user, csrfToken: '' };
     } catch (error) {
       if (error.name === 'ValidationError') {
         throw new ApolloError(error.message, '400');

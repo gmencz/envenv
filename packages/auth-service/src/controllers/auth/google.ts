@@ -37,16 +37,24 @@ export const callbackGoogleAuth = async (
     */
     res.redirect(
       process.env.NODE_ENV === 'production'
-        ? '/signup/lastStep'
-        : 'http://localhost:8080/signup/lastStep'
+        ? '/auth/signup/lastStep'
+        : 'http://localhost:8080/auth/signup/lastStep'
     );
   } catch (error) {
     // Check if the error comes from our graphql request
     if (!error?.response.data && error?.request) {
       console.log(error);
-      res.redirect('/signup/googleAccountExistsError');
+      res.redirect(
+        process.env.NODE_ENV === 'production'
+          ? '/auth/signup/error/googleAccountExists'
+          : 'http://localhost:8080/auth/signup/error/googleAccountExists'
+      );
     }
 
-    res.redirect('/signup/googleAccountUnknownError');
+    res.redirect(
+      process.env.NODE_ENV === 'production'
+        ? '/auth/signup/error/googleAccountUnknownError'
+        : 'http://localhost:8080/auth/signup/error/googleAccountUnknownError'
+    );
   }
 };
