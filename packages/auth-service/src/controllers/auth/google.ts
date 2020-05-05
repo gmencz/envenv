@@ -1,6 +1,7 @@
 import passport from 'passport';
 import { Request, Response } from 'express';
 import { request } from 'graphql-request';
+import createSession from '../../helpers/createSession';
 
 export const scopeFn = () =>
   passport.authenticate('google', {
@@ -42,13 +43,31 @@ export const callbackGoogleAuth = async (
     );
   } catch (error) {
     // Check if the error comes from our graphql request
-    if (!error?.response.data && error?.request) {
-      console.log(error);
-      res.redirect(
-        process.env.NODE_ENV === 'production'
-          ? '/auth/signup/error/googleAccountExists'
-          : 'http://localhost:8080/auth/signup/error/googleAccountExists'
+    if (!error?.response.data && error.request) {
+      const googleAccountExists = error.response.errors.some(
+        error =>
+          error.message === 'Your google account is already registered with us!'
       );
+
+      if (googleAccountExists) {
+        const { id } = req.user as {
+          id: string;
+        };
+
+        res.cookie('TemporaryUserId', id, {
+          httpOnly: true,
+          secure: process.env.NODE_ENV === 'production',
+          maxAge: 60000,
+        });
+
+        // redirect to route on the client which will make a graphql
+        // request to a mutation which will automate the login
+        return res.redirect(
+          process.env.NODE_ENV === 'production'
+            ? '/auth/automateLoginProcess'
+            : 'http://localhost:8080/auth/automateLoginProcess'
+        );
+      }
     }
 
     res.redirect(

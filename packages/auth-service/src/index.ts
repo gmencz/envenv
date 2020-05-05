@@ -9,6 +9,7 @@ import passport from 'passport';
 import { GoogleStrategyObj } from './middlewares/passportStrategies';
 import { scopeFn, callbackGoogleAuth } from './controllers/auth/google';
 import cookieParser from 'cookie-parser';
+import User from './entities/User';
 
 //TODO integrate passport callbacks with Apollo
 
@@ -45,7 +46,7 @@ import cookieParser from 'cookie-parser';
   const schema = await buildFederatedSchema(
     {
       resolvers: [AuthResolver],
-      orphanedTypes: [],
+      orphanedTypes: [User],
     }
     // {
     //   Auth: { __resolveReference: resolveAuthReference },

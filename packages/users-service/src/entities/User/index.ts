@@ -56,7 +56,7 @@ export default class User extends Model {
   role: string;
 
   @Field(() => Date)
-  @Column('character varying', {
+  @Column('timestamp without time zone', {
     nullable: false,
   })
   birthDate: Date;

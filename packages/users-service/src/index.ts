@@ -8,10 +8,11 @@ import {
   getConnectionOptions,
   ConnectionOptions,
 } from 'typeorm';
-import { v4 } from 'uuid';
 import { ApolloContext } from './graphqlShared/interfaces';
 import express from 'express';
 import cookieParser from 'cookie-parser';
+import { generate as generateUniqueId } from 'shortid';
+import { hash } from 'bcryptjs';
 
 (async (): Promise<void> => {
   try {
@@ -53,17 +54,17 @@ import cookieParser from 'cookie-parser';
         .into(User)
         .values([
           {
-            id: v4(),
+            id: `${generateUniqueId()}${generateUniqueId()}`,
             username: 'gabrielmendezc',
             name: 'Gabriel',
-            password: 'Gabriel123',
+            password: await hash('Gabriel123', 12),
             birthDate: new Date('2002-8-24'),
           },
           {
-            id: v4(),
+            id: `${generateUniqueId()}${generateUniqueId()}`,
             username: 'pexugadepollo',
             name: 'Blas',
-            password: 'Blas123',
+            password: await hash('Blas123', 12),
             birthDate: new Date('2000'),
           },
         ])

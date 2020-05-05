@@ -4,20 +4,36 @@ import UserInput from '../graphqlShared/inputs/UserInput';
 import { ApolloError } from 'apollo-server';
 import { newUserValidation } from '../entities/User/validation';
 import { hash } from 'bcryptjs';
-import { v4 } from 'uuid';
 import { ApolloContext } from '../graphqlShared/interfaces';
 import AuthResponse from '../graphqlShared/types/AuthResponse';
 import ExternalProviderInput from '../graphqlShared/inputs/ExternalProviderInput';
 import { generate } from 'generate-password';
-import { createAccessToken } from '../helpers/auth';
 import { request } from 'graphql-request';
+import { generate as generateUniqueId } from 'shortid';
+import { Response } from 'express';
 
 @Resolver(() => User)
 export default class UsersResolver {
-  @Query(() => [User])
-  async getUsers(): Promise<User[]> {
-    const users = await User.find();
-    return users;
+  @Query(() => User)
+  async checkUserId(@Arg('userId') userId: string): Promise<User> {
+    try {
+      const user = await User.findOne({ where: { id: userId } });
+
+      if (!user) {
+        throw new ApolloError('Invalid user id', '400');
+      }
+
+      return user;
+    } catch (error) {
+      if (error instanceof ApolloError) {
+        throw error;
+      }
+
+      throw new ApolloError(
+        `Something went wrong on our side, we're working on it!`,
+        '500'
+      );
+    }
   }
 
   @Query(() => Boolean)
@@ -59,7 +75,8 @@ export default class UsersResolver {
 
       if (!cookies.NewUserData) {
         throw new ApolloError(
-          'Your time to sign up has expired, please proceed to sign up with your provider of choice (google/facebook)'
+          'Your time to sign up has expired, please proceed to sign up with your provider of choice (google/facebook)',
+          '400'
         );
       }
 
@@ -88,7 +105,8 @@ export default class UsersResolver {
 
       if (usernameUnavailable) {
         throw new ApolloError(
-          `That username is taken, please choose a different one!`
+          `That username is taken, please choose a different one!`,
+          '400'
         );
       }
 
@@ -137,7 +155,8 @@ export default class UsersResolver {
 
   @Mutation(() => AuthResponse)
   async signup(
-    @Arg('newUserData') newUserData: UserInput
+    @Arg('newUserData') newUserData: UserInput,
+    @Ctx() { res }: { res: Response }
   ): Promise<AuthResponse> {
     try {
       await newUserValidation.validate({ ...newUserData });
@@ -147,7 +166,10 @@ export default class UsersResolver {
       });
 
       if (usernameAlreadyExists) {
-        throw new ApolloError('That username is taken!', '400');
+        throw new ApolloError(
+          'That username is taken, please choose a different one!',
+          '400'
+        );
       }
 
       const password = await hash(newUserData.password, 12);
@@ -155,10 +177,31 @@ export default class UsersResolver {
       const user = await new User({
         ...newUserData,
         password,
-        id: newUserData.id || v4(),
+        id: newUserData.id || `${generateUniqueId()}${generateUniqueId()}`,
       }).save();
 
-      return { user, csrfToken: '' };
+      const sessionQuery = `
+        mutation createSession($userId: String!) {
+          createSession(userId: $userId) {
+            sessionId
+            csrfToken
+          }
+        }
+      `;
+
+      const data = await request(
+        'http://auth-service:5000/graphql',
+        sessionQuery,
+        { userId: user.id }
+      );
+
+      res.cookie('SID', data.createSession.sessionId, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        maxAge: Number(process.env.SESSION_COOKIE_EXPIRY as string),
+      });
+
+      return { user, csrfToken: data.createSession.csrfToken };
     } catch (error) {
       if (error.name === 'ValidationError') {
         throw new ApolloError(error.message, '400');
