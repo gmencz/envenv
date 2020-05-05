@@ -6,13 +6,10 @@ import express from 'express';
 import { rateLimiter } from './middlewares/rateLimit';
 import helmet from 'helmet';
 import passport from 'passport';
-import {
-  GoogleStrategyObj,
-  FacebookStrategyObj,
-} from './middlewares/passportStrategies';
+import { GoogleStrategyObj } from './middlewares/passportStrategies';
 import { scopeFn, callbackGoogleAuth } from './controllers/auth/google';
-import { callbackFacebookAuth } from './controllers/auth/facebook';
 import cookieParser from 'cookie-parser';
+import User from './entities/User';
 
 //TODO integrate passport callbacks with Apollo
 
@@ -27,7 +24,6 @@ import cookieParser from 'cookie-parser';
 
   // Passport middlewares
   passport.use(GoogleStrategyObj);
-  passport.use(FacebookStrategyObj);
   app.use(passport.initialize());
   app.use(passport.session());
 
@@ -39,10 +35,6 @@ import cookieParser from 'cookie-parser';
     callbackGoogleAuth
   );
 
-  app.get('/auth/facebook', passport.authenticate('facebook'));
-  app.get('/auth/facebook/callback', callbackFacebookAuth);
-
-  //TODO fix success routes, types and serialize/deserialize functions
   passport.serializeUser(function (user, done) {
     done(null, user);
   });
@@ -54,7 +46,7 @@ import cookieParser from 'cookie-parser';
   const schema = await buildFederatedSchema(
     {
       resolvers: [AuthResolver],
-      orphanedTypes: [],
+      orphanedTypes: [User],
     }
     // {
     //   Auth: { __resolveReference: resolveAuthReference },
