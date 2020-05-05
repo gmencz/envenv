@@ -7,5 +7,5 @@ export default class AuthResponse {
   user: User;
 
   @Field()
-  accessToken: string;
+  csrfToken: string;
 }

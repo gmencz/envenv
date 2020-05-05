@@ -1,7 +1,6 @@
 import 'reflect-metadata';
 import { ApolloServer } from 'apollo-server-express';
 import { buildFederatedSchema } from './helpers/buildFederatedSchema';
-import Auth, { resolveAuthReference } from './entities/Auth';
 import AuthResolver from './resolvers/Auth';
 import express from 'express';
 import { rateLimiter } from './middlewares/rateLimit';
@@ -55,11 +54,11 @@ import cookieParser from 'cookie-parser';
   const schema = await buildFederatedSchema(
     {
       resolvers: [AuthResolver],
-      orphanedTypes: [Auth],
-    },
-    {
-      Auth: { __resolveReference: resolveAuthReference },
+      orphanedTypes: [],
     }
+    // {
+    //   Auth: { __resolveReference: resolveAuthReference },
+    // }
   );
 
   const server = new ApolloServer({

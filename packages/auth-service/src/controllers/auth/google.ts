@@ -29,24 +29,32 @@ export const callbackGoogleAuth = async (
       providerUserId: id,
     });
 
-    res.cookie(
-      'NewUserData',
-      { ...req.user },
-      { httpOnly: true, maxAge: 600000 }
-    );
+    res.cookie('NewUserData', { ...req.user }, { httpOnly: true });
     /* 
       Redirect to route where the user will fill out 
       needed information like their username, after doing that
       we can create the user but this step is needed.
     */
-    res.redirect('/signup/lastStep');
+    res.redirect(
+      process.env.NODE_ENV === 'production'
+        ? '/auth/signup/lastStep'
+        : 'http://localhost:8080/auth/signup/lastStep'
+    );
   } catch (error) {
     // Check if the error comes from our graphql request
     if (!error?.response.data && error?.request) {
       console.log(error);
-      res.redirect('/signup/googleAccountExistsError');
+      res.redirect(
+        process.env.NODE_ENV === 'production'
+          ? '/auth/signup/error/googleAccountExists'
+          : 'http://localhost:8080/auth/signup/error/googleAccountExists'
+      );
     }
 
-    res.redirect('/signup/googleAccountUnknownError');
+    res.redirect(
+      process.env.NODE_ENV === 'production'
+        ? '/auth/signup/error/googleAccountUnknownError'
+        : 'http://localhost:8080/auth/signup/error/googleAccountUnknownError'
+    );
   }
 };

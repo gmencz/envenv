@@ -8,12 +8,7 @@ export const GoogleStrategyObj = new GoogleStrategy(
     clientSecret: process.env.SECRET_GOOGLE as string,
     callbackURL: 'http://localhost:5000/auth/google/callback',
   },
-  (
-    accessToken,
-    refreshToken,
-    { provider, id, _json: { name, picture } },
-    done
-  ) => {
+  (_, __, { provider, id, _json: { name, picture } }, done) => {
     done(null, { picture, provider, name, id });
   }
 );

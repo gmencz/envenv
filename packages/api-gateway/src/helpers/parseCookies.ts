@@ -1,6 +1,5 @@
 type CookieOptions = {
   maxAge?: number;
-  signed?: boolean;
   expires?: Date;
   httpOnly?: boolean;
   path?: string;
@@ -35,6 +34,7 @@ export default function parseCookies(rawCookies: string): ParsedCookie[] {
       'Invalid raw cookies, look at the format of a set-cookie header string and provide something similar.'
     );
   }
+
   /*
     Cookie format: "name=value; Path=/; HttpOnly; Secure"
     Multiple cookies format: "name=value; Path=/; HttpOnly; Secure, name2=value2"
@@ -46,7 +46,7 @@ export default function parseCookies(rawCookies: string): ParsedCookie[] {
         return `${rawCookie}${ref[index + 1]}`;
       }
 
-      if (hasExpiresField(ref[index - 1])) return 'invalid';
+      if (index > 0 && hasExpiresField(ref[index - 1])) return 'invalid';
 
       return rawCookie;
     })
@@ -68,9 +68,7 @@ export default function parseCookies(rawCookies: string): ParsedCookie[] {
       } else if (sanitizedPropertyName === 'httponly') {
         return 'httpOnly=true';
       } else if (sanitizedPropertyName === 'samesite') {
-        return `sameSite=${propertyValue}`;
-      } else if (sanitizedPropertyName === 'expires') {
-        return `expires=${new Date(propertyValue)}`;
+        return `sameSite=${propertyValue.toLowerCase()}`;
       }
 
       if (!propertyValue) {
@@ -96,13 +94,23 @@ export default function parseCookies(rawCookies: string): ParsedCookie[] {
 
     objectifyedCookieProperties.forEach(objectifyedCookieProperty => {
       Object.entries(objectifyedCookieProperty).forEach(([key, value]) => {
+        if (key === 'expires') {
+          options[key] = new Date(value as string);
+          return;
+        }
+
+        if (key === 'maxAge') {
+          options[key] = Number(value as string);
+          return;
+        }
+
         options[key] = value;
       });
     });
 
     return {
-      cookieName,
-      cookieValue,
+      cookieName: cookieName.trim(),
+      cookieValue: cookieValue.trim(),
       options,
     };
   });
