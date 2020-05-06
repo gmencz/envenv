@@ -11,16 +11,41 @@ import { generate } from 'generate-password';
 import { request } from 'graphql-request';
 import { generate as generateUniqueId } from 'shortid';
 import { Response } from 'express';
+import { QueryUserBy } from '../graphqlShared/enums/UserBy';
 
 @Resolver(() => User)
 export default class UsersResolver {
   @Query(() => User)
-  async checkUserId(@Arg('userId') userId: string): Promise<User> {
+  async queryUser(
+    @Arg('by', () => QueryUserBy) by: QueryUserBy,
+    @Arg('byValue') byValue: string
+  ): Promise<User> {
     try {
-      const user = await User.findOne({ where: { id: userId } });
+      const byPossibilities = ['id', 'username'];
+
+      const validBy = byPossibilities.find(
+        byPossibility => byPossibility === by
+      );
+
+      if (!validBy) {
+        throw new ApolloError(
+          `Cannot query user by ${by}, available query fields are: ${byPossibilities.join(
+            ', '
+          )}`,
+          '400'
+        );
+      }
+
+      const user = await User.findOne({ where: { [by]: byValue } });
 
       if (!user) {
-        throw new ApolloError('Invalid user id', '400');
+        throw new ApolloError(
+          `Could not find an user with ${by} ${byValue}`,
+          '404',
+          {
+            errorCode: 'user_not_found',
+          }
+        );
       }
 
       return user;
