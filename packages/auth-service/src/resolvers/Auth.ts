@@ -23,7 +23,10 @@ export default class AuthResolver {
 
       throw new ApolloError(
         `Something went wrong on our side, we're working on it!`,
-        '500'
+        '500',
+        {
+          errorCode: 'server_error',
+        }
       );
     }
   }
@@ -36,7 +39,9 @@ export default class AuthResolver {
       const cookies = JSON.parse(req.headers.cookie as string);
 
       if (!cookies.TemporaryUserId) {
-        throw new ApolloError('Forbidden, cannot automate login', '403');
+        throw new ApolloError('Forbidden, cannot automate login', '403', {
+          errorCode: 'forbidden',
+        });
       }
 
       const checkUserQuery = `
@@ -83,7 +88,10 @@ export default class AuthResolver {
 
       throw new ApolloError(
         `Something went wrong on our side, we're working on it!`,
-        '500'
+        '500',
+        {
+          errorCode: 'server_error',
+        }
       );
     }
   }
@@ -125,7 +133,9 @@ export default class AuthResolver {
       const validPassword = await compare(password, user.password);
 
       if (!validPassword) {
-        throw new ApolloError('Invalid credentials', '400');
+        throw new ApolloError('Invalid credentials', '400', {
+          errorCode: 'invalid_credentials',
+        });
       }
 
       if (cookies.SID) {
@@ -143,7 +153,9 @@ export default class AuthResolver {
           return { user, csrfToken: newSession.csrfToken };
         }
 
-        throw new ApolloError('You are already logged in', '403');
+        throw new ApolloError('You are already logged in', '403', {
+          errorCode: 'already_logged_in',
+        });
       }
 
       const newSession = createSession(user.id);
@@ -162,7 +174,9 @@ export default class AuthResolver {
         );
 
         if (userNotFound) {
-          throw new ApolloError('Invalid credentials', '400');
+          throw new ApolloError('Invalid credentials', '400', {
+            errorCode: 'invalid_credentials',
+          });
         }
 
         throw new ApolloError(
@@ -177,7 +191,10 @@ export default class AuthResolver {
 
       throw new ApolloError(
         `Something went wrong on our side, we're working on it!`,
-        '500'
+        '500',
+        {
+          errorCode: 'server_error',
+        }
       );
     }
   }
