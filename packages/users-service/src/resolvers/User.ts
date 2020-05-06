@@ -11,16 +11,44 @@ import { generate } from 'generate-password';
 import { request } from 'graphql-request';
 import { generate as generateUniqueId } from 'shortid';
 import { Response } from 'express';
+import { QueryUserBy } from '../graphqlShared/enums/UserBy';
 
 @Resolver(() => User)
 export default class UsersResolver {
   @Query(() => User)
-  async checkUserId(@Arg('userId') userId: string): Promise<User> {
+  async queryUser(
+    @Arg('by', () => QueryUserBy) by: QueryUserBy,
+    @Arg('byValue') byValue: string
+  ): Promise<User> {
     try {
-      const user = await User.findOne({ where: { id: userId } });
+      const byPossibilities = ['id', 'username'];
+
+      const validBy = byPossibilities.find(
+        byPossibility => byPossibility === by
+      );
+
+      if (!validBy) {
+        throw new ApolloError(
+          `Cannot query user by ${by}, available query fields are: ${byPossibilities.join(
+            ', '
+          )}`,
+          '400',
+          {
+            errorCode: 'invalid_by_parameter',
+          }
+        );
+      }
+
+      const user = await User.findOne({ where: { [by]: byValue } });
 
       if (!user) {
-        throw new ApolloError('Invalid user id', '400');
+        throw new ApolloError(
+          `Could not find an user with ${by} ${byValue}`,
+          '404',
+          {
+            errorCode: 'user_not_found',
+          }
+        );
       }
 
       return user;
@@ -31,7 +59,10 @@ export default class UsersResolver {
 
       throw new ApolloError(
         `Something went wrong on our side, we're working on it!`,
-        '500'
+        '500',
+        {
+          errorCode: 'server_error',
+        }
       );
     }
   }
@@ -48,7 +79,10 @@ export default class UsersResolver {
       if (isUnavailable) {
         throw new ApolloError(
           'Your google account is already registered with us!',
-          '400'
+          '400',
+          {
+            errorCode: 'already_registered',
+          }
         );
       }
 
@@ -60,7 +94,10 @@ export default class UsersResolver {
 
       throw new ApolloError(
         `Something went wrong on our side, we're working on it!`,
-        '500'
+        '500',
+        {
+          errorCode: 'server_error',
+        }
       );
     }
   }
@@ -76,7 +113,10 @@ export default class UsersResolver {
       if (!cookies.NewUserData) {
         throw new ApolloError(
           'Your time to sign up has expired, please proceed to sign up with your provider of choice (google/facebook)',
-          '400'
+          '400',
+          {
+            errorCode: 'expired_signup',
+          }
         );
       }
 
@@ -95,7 +135,10 @@ export default class UsersResolver {
       if (userExists) {
         throw new ApolloError(
           `That ${userData.provider} account is already registered with us!`,
-          '400'
+          '400',
+          {
+            errorCode: 'already_registered',
+          }
         );
       }
 
@@ -106,7 +149,10 @@ export default class UsersResolver {
       if (usernameUnavailable) {
         throw new ApolloError(
           `That username is taken, please choose a different one!`,
-          '400'
+          '400',
+          {
+            errorCode: 'username_taken',
+          }
         );
       }
 
@@ -139,7 +185,9 @@ export default class UsersResolver {
     } catch (error) {
       console.log(error);
       if (error.name === 'ValidationError') {
-        throw new ApolloError(error.message, '400');
+        throw new ApolloError(error.message, '400', {
+          errorCode: 'validation_error',
+        });
       }
 
       if (error instanceof ApolloError) {
@@ -148,7 +196,10 @@ export default class UsersResolver {
 
       throw new ApolloError(
         `Something went wrong on our side, we're working on it!`,
-        '500'
+        '500',
+        {
+          errorCode: 'server_error',
+        }
       );
     }
   }
@@ -168,7 +219,10 @@ export default class UsersResolver {
       if (usernameAlreadyExists) {
         throw new ApolloError(
           'That username is taken, please choose a different one!',
-          '400'
+          '400',
+          {
+            errorCode: 'username_taken',
+          }
         );
       }
 
@@ -204,7 +258,9 @@ export default class UsersResolver {
       return { user, csrfToken: data.createSession.csrfToken };
     } catch (error) {
       if (error.name === 'ValidationError') {
-        throw new ApolloError(error.message, '400');
+        throw new ApolloError(error.message, '400', {
+          errorCode: 'validation_error',
+        });
       }
 
       if (error instanceof ApolloError) {
@@ -213,7 +269,10 @@ export default class UsersResolver {
 
       throw new ApolloError(
         `Something went wrong on our side, we're working on it!`,
-        '500'
+        '500',
+        {
+          errorCode: 'server_error',
+        }
       );
     }
   }

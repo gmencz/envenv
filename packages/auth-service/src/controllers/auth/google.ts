@@ -11,7 +11,7 @@ export const scopeFn = () =>
 export const callbackGoogleAuth = async (
   req: Request,
   res: Response
-): Promise<Response<any> | void> => {
+): Promise<void> => {
   try {
     const query = `
       query checkExternalProviderUserAvailability($providerUserId: String!) {
@@ -36,7 +36,7 @@ export const callbackGoogleAuth = async (
       needed information like their username, after doing that
       we can create the user but this step is needed.
     */
-    res.redirect(
+    return res.redirect(
       process.env.NODE_ENV === 'production'
         ? '/auth/signup/lastStep'
         : 'http://localhost:8080/auth/signup/lastStep'
@@ -70,7 +70,7 @@ export const callbackGoogleAuth = async (
       }
     }
 
-    res.redirect(
+    return res.redirect(
       process.env.NODE_ENV === 'production'
         ? '/auth/signup/error/googleAccountUnknownError'
         : 'http://localhost:8080/auth/signup/error/googleAccountUnknownError'
