@@ -1,4 +1,4 @@
-import { Resolver, Mutation, Arg, Ctx } from 'type-graphql';
+import { Resolver, Mutation, Arg, Ctx, Query } from 'type-graphql';
 import { ApolloError } from 'apollo-server';
 import SessionResponse from '../graphqlShared/types/SessionResponse';
 import { Response, Request } from 'express';
@@ -78,7 +78,7 @@ export default class AuthResolver {
         createUser: User;
       };
 
-      const newSession = createSession(newUser.id);
+      const newSession = await createSession(newUser.id);
 
       res.cookie('SID', newSession.sessionId, {
         httpOnly: true,
@@ -219,7 +219,7 @@ export default class AuthResolver {
       createUser: User;
     };
 
-    const newSession = createSession(newUser.id);
+    const newSession = await createSession(newUser.id);
 
     res.cookie('SID', newSession.sessionId, {
       httpOnly: true,
@@ -235,7 +235,7 @@ export default class AuthResolver {
   @Mutation(() => SessionResponse)
   async createSession(@Arg('userId') userId: string): Promise<SessionResponse> {
     try {
-      const session = createSession(userId);
+      const session = await createSession(userId);
       return session;
     } catch (error) {
       if (error instanceof ApolloError) {
@@ -300,7 +300,7 @@ export default class AuthResolver {
         );
       }
 
-      const session = createSession(user.id);
+      const session = await createSession(user.id);
 
       res.cookie('SID', session.sessionId, {
         httpOnly: true,
@@ -378,7 +378,7 @@ export default class AuthResolver {
         const session = await getSession(cookies.SID);
 
         if (!session) {
-          const newSession = createSession(user.id);
+          const newSession = await createSession(user.id);
 
           res.cookie('SID', newSession.sessionId, {
             httpOnly: true,
@@ -394,7 +394,7 @@ export default class AuthResolver {
         });
       }
 
-      const newSession = createSession(user.id);
+      const newSession = await createSession(user.id);
 
       res.cookie('SID', newSession.sessionId, {
         httpOnly: true,
