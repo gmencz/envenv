@@ -8,10 +8,231 @@ import createSession from '../helpers/createSession';
 import request from 'graphql-request';
 import getSession from '../helpers/getSession';
 import { compare } from 'bcryptjs';
+import UserInput from '../graphqlShared/inputs/UserInput';
+import { newUserValidation } from '../entities/User/validation';
+import ExternalProviderInput from '../graphqlShared/inputs/ExternalProviderInput';
+import { generate } from 'generate-password';
 
 @Resolver()
 export default class AuthResolver {
-  @Mutation(() => SessionResponse) // returns csrf token
+  @Mutation(() => AuthResponse)
+  async signup(
+    @Arg('newUserData') newUserData: UserInput,
+    @Ctx() { res }: { res: Response }
+  ): Promise<AuthResponse> {
+    try {
+      await newUserValidation.validate({ ...newUserData });
+
+      const checkUsernameQuery = `
+        query queryUserByUsername($username: String!) {
+          queryUser(by: username, byValue: $username) {
+            id
+          }
+        }
+      `;
+
+      const data = await request(
+        'http://users-service:5005/graphql',
+        checkUsernameQuery,
+        {
+          username: newUserData.username,
+        }
+      );
+
+      const { queryUser: user } = data as { queryUser: User | null };
+
+      if (user) {
+        throw new ApolloError(
+          'That username is taken, please choose a different one!',
+          '400',
+          {
+            errorCode: 'username_taken',
+          }
+        );
+      }
+
+      const createUserMutation = `
+        mutation createUser($newUserData: UserInput!) {
+          createUser(newUserData: $newUserData) {
+            id
+            picture
+            provider
+            username
+            name
+            password
+            role
+            birthDate
+          }
+        }
+      `;
+
+      const createUserResponse = await request(
+        'http://users-service:5005/graphql',
+        createUserMutation,
+        {
+          newUserData,
+        }
+      );
+
+      const { createUser: newUser } = createUserResponse as {
+        createUser: User;
+      };
+
+      const newSession = createSession(newUser.id);
+
+      res.cookie('SID', newSession.sessionId, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        maxAge: Number(process.env.SESSION_REDIS_EXPIRY as string),
+      });
+
+      return { user: newUser, csrfToken: newSession.csrfToken };
+    } catch (error) {
+      if (error.name === 'ValidationError') {
+        throw new ApolloError(error.message, '400', {
+          errorCode: 'validation_error',
+        });
+      }
+
+      if (error instanceof ApolloError) {
+        throw error;
+      }
+
+      throw new ApolloError(
+        `Something went wrong on our side, we're working on it!`,
+        '500',
+        {
+          errorCode: 'server_error',
+        }
+      );
+    }
+  }
+
+  @Mutation(() => AuthResponse)
+  async signupWithExternalProvider(
+    @Arg('newUserData') newUserData: ExternalProviderInput,
+    @Ctx() { req, res }: { req: Request; res: Response }
+  ): Promise<AuthResponse> {
+    const cookies = JSON.parse(req.headers.cookie as string);
+
+    // Turn this cookie thing where we pass data to a JWT cookie instead
+    // makes more sense and it eliminates the slight chances we might
+    // have had with JSON.stringify and JSON.parse'ing it.
+    if (!cookies.NewUserData) {
+      throw new ApolloError(
+        'Your time to sign up has expired, please proceed to sign up with your provider of choice (google/facebook)',
+        '400',
+        {
+          errorCode: 'expired_signup',
+        }
+      );
+    }
+
+    const checkUserQuery = `
+      query queryUserById($id: String!) {
+        queryUser(by: id, byValue: $id) {
+          id
+        }
+      }
+    `;
+
+    const checkUserResponse = await request(
+      'http://users-service:5005/graphql',
+      checkUserQuery,
+      {
+        id: cookies.NewUserData.id,
+      }
+    );
+
+    const { queryUser: user } = checkUserResponse as { queryUser: User | null };
+
+    if (user) {
+      throw new ApolloError(
+        `That ${cookies.NewUserData.provider} account is already registered with us!`,
+        '400',
+        {
+          errorCode: 'already_registered',
+        }
+      );
+    }
+
+    const checkUsernameQuery = `
+      query queryUserByUsername($username: String!) {
+        queryUser(by: username, byValue: $username) {
+          id
+        }
+      }
+    `;
+
+    const checkUsernameResponse = await request(
+      'http://users-service:5005/graphql',
+      checkUsernameQuery,
+      {
+        username: newUserData.username,
+      }
+    );
+
+    const { queryUser: userFound } = checkUsernameResponse as {
+      queryUser: User | null;
+    };
+
+    if (userFound) {
+      throw new ApolloError(
+        `That username is taken, please choose a different one!`,
+        '400',
+        {
+          errorCode: 'username_taken',
+        }
+      );
+    }
+
+    const password = generate({ length: 19, symbols: true, numbers: true });
+
+    const createUserMutation = `
+      mutation createUser($newUserData: UserInput!) {
+        createUser(newUserData: $newUserData) {
+          id
+          picture
+          provider
+          username
+          name
+          password
+          role
+          birthDate
+        }
+      }
+    `;
+
+    const createUserResponse = await request(
+      'http://users-service:5005/graphql',
+      createUserMutation,
+      {
+        newUserData: {
+          ...newUserData,
+          ...cookies.NewUserData,
+          password,
+        },
+      }
+    );
+
+    const { createUser: newUser } = createUserResponse as {
+      createUser: User;
+    };
+
+    const newSession = createSession(newUser.id);
+
+    res.cookie('SID', newSession.sessionId, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      maxAge: Number(process.env.SESSION_REDIS_EXPIRY as string),
+    });
+
+    res.clearCookie('NewUserData');
+
+    return { user: newUser, csrfToken: newSession.csrfToken };
+  }
+
+  @Mutation(() => SessionResponse)
   async createSession(@Arg('userId') userId: string): Promise<SessionResponse> {
     try {
       const session = createSession(userId);
@@ -23,7 +244,10 @@ export default class AuthResolver {
 
       throw new ApolloError(
         `Something went wrong on our side, we're working on it!`,
-        '500'
+        '500',
+        {
+          errorCode: 'server_error',
+        }
       );
     }
   }
@@ -36,7 +260,9 @@ export default class AuthResolver {
       const cookies = JSON.parse(req.headers.cookie as string);
 
       if (!cookies.TemporaryUserId) {
-        throw new ApolloError('Forbidden, cannot automate login', '403');
+        throw new ApolloError('Forbidden, cannot automate login', '403', {
+          errorCode: 'forbidden',
+        });
       }
 
       const checkUserQuery = `
@@ -62,7 +288,17 @@ export default class AuthResolver {
         }
       );
 
-      const { queryUser: user } = data as { queryUser: User };
+      const { queryUser: user } = data as { queryUser: User | null };
+
+      if (!user) {
+        throw new ApolloError(
+          `Invalid user id (${cookies.TemporaryUserId})`,
+          '400',
+          {
+            errorCode: 'invalid_user_id',
+          }
+        );
+      }
 
       const session = createSession(user.id);
 
@@ -76,14 +312,16 @@ export default class AuthResolver {
 
       return { user, csrfToken: session.csrfToken };
     } catch (error) {
-      console.log(error);
       if (error instanceof ApolloError) {
         throw error;
       }
 
       throw new ApolloError(
         `Something went wrong on our side, we're working on it!`,
-        '500'
+        '500',
+        {
+          errorCode: 'server_error',
+        }
       );
     }
   }
@@ -120,12 +358,20 @@ export default class AuthResolver {
         }
       );
 
-      const { queryUser: user } = data as { queryUser: User };
+      const { queryUser: user } = data as { queryUser: User | null };
+
+      if (!user) {
+        throw new ApolloError('Invalid credentials', '400', {
+          errorCode: 'invalid_credentials',
+        });
+      }
 
       const validPassword = await compare(password, user.password);
 
       if (!validPassword) {
-        throw new ApolloError('Invalid credentials', '400');
+        throw new ApolloError('Invalid credentials', '400', {
+          errorCode: 'invalid_credentials',
+        });
       }
 
       if (cookies.SID) {
@@ -143,7 +389,9 @@ export default class AuthResolver {
           return { user, csrfToken: newSession.csrfToken };
         }
 
-        throw new ApolloError('You are already logged in', '403');
+        throw new ApolloError('You are already logged in', '403', {
+          errorCode: 'already_logged_in',
+        });
       }
 
       const newSession = createSession(user.id);
@@ -156,28 +404,16 @@ export default class AuthResolver {
 
       return { user, csrfToken: newSession.csrfToken };
     } catch (error) {
-      if (error.response && Array.isArray(error.response.errors)) {
-        const userNotFound = error.response.errors.find(
-          error => error.extensions.errorCode === 'user_not_found'
-        );
-
-        if (userNotFound) {
-          throw new ApolloError('Invalid credentials', '400');
-        }
-
-        throw new ApolloError(
-          error.response.errors[0].message,
-          error.response.errors[0].code
-        );
-      }
-
       if (error instanceof ApolloError) {
         throw error;
       }
 
       throw new ApolloError(
         `Something went wrong on our side, we're working on it!`,
-        '500'
+        '500',
+        {
+          errorCode: 'server_error',
+        }
       );
     }
   }

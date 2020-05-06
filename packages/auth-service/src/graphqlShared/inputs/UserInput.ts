@@ -1,6 +1,6 @@
 import { InputType, Field } from 'type-graphql';
 
-@InputType('UserInput')
+@InputType('UserCustomInput')
 export default class UserInput {
   @Field({ nullable: true })
   id: string;
@@ -18,10 +18,10 @@ export default class UserInput {
   role: string;
 
   @Field()
-  birthDate: Date;
+  provider: string;
 
   @Field()
-  provider: string;
+  birthDate: Date;
 
   @Field({ nullable: true })
   picture: string;
