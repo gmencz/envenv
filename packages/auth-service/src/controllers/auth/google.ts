@@ -1,21 +1,26 @@
 import passport from 'passport';
 import { Request, Response } from 'express';
 import { request } from 'graphql-request';
-import createSession from '../../helpers/createSession';
+import User from '../../entities/User';
+import { sign } from 'jsonwebtoken';
 
 export const scopeFn = () =>
   passport.authenticate('google', {
     scope: ['https://www.googleapis.com/auth/plus.login'],
   });
 
+//Make this use JWT
+
 export const callbackGoogleAuth = async (
   req: Request,
   res: Response
 ): Promise<void> => {
   try {
-    const query = `
-      query checkExternalProviderUserAvailability($providerUserId: String!) {
-        checkExternalProviderUserAvailability(providerUserId: $providerUserId)
+    const checkUserQuery = `
+      query queryUserById($userId: String!) {
+        queryUser(by: id, byValue: $userId) {
+          id
+        }
       }
     `;
 
@@ -26,11 +31,49 @@ export const callbackGoogleAuth = async (
       name: string;
     };
 
-    await request('http://users-service:5005/graphql', query, {
-      providerUserId: id,
+    const checkUserResponse = await request(
+      'http://users-service:5005/graphql',
+      checkUserQuery,
+      {
+        userId: id,
+      }
+    );
+
+    const { queryUser: user } = checkUserResponse as { queryUser: User | null };
+
+    if (user) {
+      res.cookie('TemporaryUserId', id, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+      });
+
+      // redirect to route on the client which will make a graphql
+      // request to a mutation which will automate the login
+      return res.redirect(
+        process.env.NODE_ENV === 'production'
+          ? '/auth/automateLoginProcess'
+          : 'http://localhost:8080/auth/automateLoginProcess'
+      );
+    }
+
+    const signedNewUserData = await new Promise((resolve, reject) => {
+      sign(
+        { ...req.user },
+        process.env.SESSION_INFO_SECRET as string,
+        {
+          expiresIn: '1m',
+        },
+        (error, data) => {
+          if (error) {
+            reject(error);
+          }
+
+          resolve(data);
+        }
+      );
     });
 
-    res.cookie('NewUserData', { ...req.user }, { httpOnly: true });
+    res.cookie('NewUserData', signedNewUserData, { httpOnly: true });
     /* 
       Redirect to route where the user will fill out 
       needed information like their username, after doing that
@@ -42,34 +85,6 @@ export const callbackGoogleAuth = async (
         : 'http://localhost:8080/auth/signup/lastStep'
     );
   } catch (error) {
-    // Check if the error comes from our graphql request
-    if (!error?.response.data && error.request) {
-      const googleAccountExists = error.response.errors.some(
-        error =>
-          error.message === 'Your google account is already registered with us!'
-      );
-
-      if (googleAccountExists) {
-        const { id } = req.user as {
-          id: string;
-        };
-
-        res.cookie('TemporaryUserId', id, {
-          httpOnly: true,
-          secure: process.env.NODE_ENV === 'production',
-          maxAge: 60000,
-        });
-
-        // redirect to route on the client which will make a graphql
-        // request to a mutation which will automate the login
-        return res.redirect(
-          process.env.NODE_ENV === 'production'
-            ? '/auth/automateLoginProcess'
-            : 'http://localhost:8080/auth/automateLoginProcess'
-        );
-      }
-    }
-
     return res.redirect(
       process.env.NODE_ENV === 'production'
         ? '/auth/signup/error/googleAccountUnknownError'

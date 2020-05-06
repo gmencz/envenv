@@ -19,6 +19,7 @@
     "cookie-parser": "^1.4.5",
     "express": "^4.17.1",
     "express-rate-limit": "^5.1.1",
+    "generate-password": "^1.5.1",
     "graphql": "^14.6.0",
     "graphql-request": "^1.8.2",
     "graphql-tag": "^2.10.3",
@@ -30,7 +31,8 @@
     "redis": "^3.0.2",
     "reflect-metadata": "^0.1.13",
     "shortid": "^2.2.15",
-    "type-graphql": "^0.18.0-beta.16"
+    "type-graphql": "^0.18.0-beta.16",
+    "yup": "^0.28.5"
   },
   "devDependencies": {
     "@types/bcryptjs": "^2.4.2",
@@ -40,6 +42,7 @@
     "@types/passport-google-oauth": "^1.0.41",
     "@types/redis": "^2.8.19",
     "@types/shortid": "^0.0.29",
+    "@types/yup": "^0.28.0",
     "ts-node-dev": "^1.0.0-pre.44",
     "typescript": "^3.8.3"
   }

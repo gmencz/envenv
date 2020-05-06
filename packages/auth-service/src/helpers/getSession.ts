@@ -1,4 +1,6 @@
 import redisClient from './redisClient';
+import { verify } from 'jsonwebtoken';
+import SessionResponse from '../graphqlShared/types/SessionResponse';
 
 export interface RedisSession {
   sessionId: string;
@@ -24,9 +26,23 @@ export default async function getSession(
       return null;
     }
 
-    const sessionInfo = JSON.parse(redisResponse as string) as RedisSession;
+    const sessionEncoded = redisResponse as string;
 
-    return sessionInfo;
+    const sessionInfo = await new Promise((resolve, reject) => {
+      verify(
+        sessionEncoded,
+        process.env.SESSION_INFO_SECRET as string,
+        (error, sessionInfo) => {
+          if (error) {
+            reject(error);
+          }
+
+          resolve(sessionInfo);
+        }
+      );
+    });
+
+    return sessionInfo as RedisSession;
   } catch (error) {
     console.log(error);
     return null;
