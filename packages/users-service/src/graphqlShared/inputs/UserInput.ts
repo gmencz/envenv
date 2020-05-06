@@ -20,7 +20,7 @@ export default class UserInput {
   @Field()
   birthDate: Date;
 
-  @Field()
+  @Field({ nullable: true })
   provider: string;
 
   @Field({ nullable: true })

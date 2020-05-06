@@ -17,7 +17,7 @@ export default class UserInput {
   @Field({ nullable: true })
   role: string;
 
-  @Field()
+  @Field({ nullable: true })
   provider: string;
 
   @Field()

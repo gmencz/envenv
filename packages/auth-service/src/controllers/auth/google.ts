@@ -2,11 +2,14 @@ import passport from 'passport';
 import { Request, Response } from 'express';
 import { request } from 'graphql-request';
 import User from '../../entities/User';
+import { sign } from 'jsonwebtoken';
 
 export const scopeFn = () =>
   passport.authenticate('google', {
     scope: ['https://www.googleapis.com/auth/plus.login'],
   });
+
+//Make this use JWT
 
 export const callbackGoogleAuth = async (
   req: Request,
@@ -42,7 +45,6 @@ export const callbackGoogleAuth = async (
       res.cookie('TemporaryUserId', id, {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
-        maxAge: 60000,
       });
 
       // redirect to route on the client which will make a graphql
@@ -54,7 +56,24 @@ export const callbackGoogleAuth = async (
       );
     }
 
-    res.cookie('NewUserData', { ...req.user }, { httpOnly: true });
+    const signedNewUserData = await new Promise((resolve, reject) => {
+      sign(
+        { ...req.user },
+        process.env.SESSION_INFO_SECRET as string,
+        {
+          expiresIn: '1m',
+        },
+        (error, data) => {
+          if (error) {
+            reject(error);
+          }
+
+          resolve(data);
+        }
+      );
+    });
+
+    res.cookie('NewUserData', signedNewUserData, { httpOnly: true });
     /* 
       Redirect to route where the user will fill out 
       needed information like their username, after doing that
