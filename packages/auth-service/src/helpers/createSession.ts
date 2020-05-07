@@ -1,11 +1,15 @@
 import SessionResponse from '../graphqlShared/types/SessionResponse';
-import redisClient from './redisClient';
 import { generate as generateUniqueId } from 'shortid';
 import { sign } from 'jsonwebtoken';
 import { ApolloError } from 'apollo-server';
+import { RedisClient } from 'redis';
 
 export default async function createSession(
-  userId: string
+  userId: string,
+  preferedRedisClient: RedisClient,
+  sessionSecret: string = process.env.SESSION_INFO_SECRET as string,
+  sessionExpiryTime: string | number = process.env
+    .SESSION_REDIS_EXPIRY as string
 ): Promise<SessionResponse> {
   try {
     const sessionInfo = {
@@ -17,9 +21,9 @@ export default async function createSession(
     const signedSessionInfo = await new Promise((resolve, reject) => {
       sign(
         { ...sessionInfo },
-        process.env.SESSION_INFO_SECRET as string,
+        sessionSecret,
         {
-          expiresIn: Number(process.env.SESSION_REDIS_EXPIRY),
+          expiresIn: Number(sessionExpiryTime),
         },
         (error, jwt) => {
           if (error) {
@@ -31,11 +35,11 @@ export default async function createSession(
       );
     });
 
-    redisClient.set(
+    preferedRedisClient.set(
       `session_${sessionInfo.sessionId}`,
       signedSessionInfo as string,
       'EX',
-      Number(process.env.SESSION_REDIS_EXPIRY as string)
+      Number(sessionExpiryTime)
     );
 
     return {
@@ -43,7 +47,6 @@ export default async function createSession(
       sessionId: sessionInfo.sessionId,
     };
   } catch (error) {
-    console.log(error);
     throw new ApolloError('Could not create session', '500', {
       errorCode: 'server_error',
     });

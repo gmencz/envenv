@@ -43,18 +43,6 @@ services:
       - ./packages/logging-service/development.env
     environment:
       - NODE_ENV=development
-  recipes-service:
-    build:
-      context: ./packages/recipes-service
-      dockerfile: Dockerfile.dev
-    volumes:
-      - ./packages/recipes-service:/recipes-service
-    ports:
-      - '5003:5003'
-    env_file:
-      - ./packages/recipes-service/development.env
-    environment:
-      - NODE_ENV=development
   search-engine-service:
     build:
       context: ./packages/search-engine-service
@@ -121,3 +109,10 @@ services:
     restart: always
     ports:
       - '6379:6379'
+  testable-postgres-service:
+    image: postgres:11.6-alpine
+    restart: always
+    ports:
+      - '5434:5432'
+    env_file:
+      - ./testable-postgres.env
