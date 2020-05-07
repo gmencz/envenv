@@ -7,6 +7,7 @@
   "author": "",
   "license": "ISC",
   "scripts": {
+    "dev": "ts-node-dev --no-deps --respawn --poll --interval 1000 src/index.ts",
     "test": "jest"
   },
   "dependencies": {
