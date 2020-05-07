@@ -1,4 +1,4 @@
-import { specifiedDirectives } from 'graphql';
+import { specifiedDirectives, GraphQLSchema } from 'graphql';
 import federationDirectives from '@apollo/federation/dist/directives';
 import gql from 'graphql-tag';
 import {
@@ -12,7 +12,7 @@ import { createResolversMap } from 'type-graphql/dist/utils/createResolversMap';
 export async function buildFederatedSchema(
   options: Omit<BuildSchemaOptions, 'skipCheck'>,
   referenceResolvers?: GraphQLResolverMap<any>
-) {
+): Promise<GraphQLSchema> {
   const schema = await buildSchema({
     ...options,
     directives: [
