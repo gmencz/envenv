@@ -1,12 +1,12 @@
 [
   {
-    "name": "cloneMainDatabase",
+    "name": "EnvenvMainDatabase",
     "type": "postgres",
     "host": "postgres-service",
     "port": 5432,
-    "username": "cloneAdmin",
+    "username": "EnvenvAdmin",
     "password": "ht!4S^9@*5Ritqq9ROOT%uNq0p&J7U41G!#vVZpylzaIjB4XL^",
-    "database": "cloneDB",
+    "database": "EnvenvDB",
     "logging": true,
     "synchronize": true,
     "dropSchema": false,

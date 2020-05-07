@@ -43,7 +43,7 @@ import { hash } from 'bcryptjs';
     server.applyMiddleware({ app });
 
     const connectionOptions: ConnectionOptions = await getConnectionOptions(
-      'cloneMainDatabase'
+      'EnvenvMainDatabase'
     );
     await createConnection({ ...connectionOptions, name: 'default' });
 
