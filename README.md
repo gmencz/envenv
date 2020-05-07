@@ -1,2 +1,2 @@
 ### Clone
-Collaborate with yor team without breaking a sweat.
+Collaborate with your team without breaking a sweat.
