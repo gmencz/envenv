@@ -1,18 +1,17 @@
 {
-  "name": "clone",
+  "name": "envenv",
   "version": "1.0.0",
-  "description": "Social network for cooks.",
+  "description": "Team collaboration made a breeze, share critical information without breaking a sweat.",
   "scripts": {},
   "repository": {
     "type": "git",
     "url": "git+https://github.com/gabrielmendezc/clone.git"
   },
   "keywords": [
-    "Social",
-    "network",
-    "cooks",
-    "recipes",
-    "shopping"
+    "Team",
+    "collaboration",
+    "security",
+    "env"
   ],
   "author": "Gabriel Méndez & Blas Santomé",
   "license": "MIT",

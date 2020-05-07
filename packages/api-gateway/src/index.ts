@@ -48,10 +48,6 @@ async function initGateway(): Promise<void> {
         url: process.env.LOGGING_SERVICE_URL as string,
       },
       {
-        name: 'recipes-service',
-        url: process.env.RECIPES_SERVICE_URL as string,
-      },
-      {
         name: 'search-engine-service',
         url: process.env.SEARCH_ENGINE_SERVICE_URL as string,
       },
