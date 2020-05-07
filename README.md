@@ -1,2 +1,2 @@
 ### Clone
-Social network for cooks.
+Collaborate with yor team without breaking a sweat.
