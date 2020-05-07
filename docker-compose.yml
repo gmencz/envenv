@@ -121,3 +121,10 @@ services:
     restart: always
     ports:
       - '6379:6379'
+  testable-postgres-service:
+    image: postgres:11.6-alpine
+    restart: always
+    ports:
+      - '5434:5432'
+    env_file:
+      - ./testable-postgres.env
