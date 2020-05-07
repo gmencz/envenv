@@ -43,18 +43,6 @@ services:
       - ./packages/logging-service/development.env
     environment:
       - NODE_ENV=development
-  recipes-service:
-    build:
-      context: ./packages/recipes-service
-      dockerfile: Dockerfile.dev
-    volumes:
-      - ./packages/recipes-service:/recipes-service
-    ports:
-      - '5003:5003'
-    env_file:
-      - ./packages/recipes-service/development.env
-    environment:
-      - NODE_ENV=development
   search-engine-service:
     build:
       context: ./packages/search-engine-service
@@ -78,7 +66,7 @@ services:
     env_file:
       - ./packages/users-service/development.env
     environment:
-      - NODE_ENV=development
+      - NODE_ENV=test
   api-gateway:
     build:
       context: ./packages/api-gateway

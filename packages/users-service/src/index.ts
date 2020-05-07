@@ -42,9 +42,14 @@ import { hash } from 'bcryptjs';
 
     server.applyMiddleware({ app });
 
-    const connectionOptions: ConnectionOptions = await getConnectionOptions(
-      'cloneMainDatabase'
+    let connectionOptions: ConnectionOptions = await getConnectionOptions(
+      'EnvenvMainDatabase'
     );
+
+    if (process.env.NODE_ENV === 'test') {
+      connectionOptions = await getConnectionOptions('EnvenvMockDatabase');
+    }
+
     await createConnection({ ...connectionOptions, name: 'default' });
 
     if (connectionOptions.synchronize && connectionOptions.dropSchema) {
