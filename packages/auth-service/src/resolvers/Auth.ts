@@ -1,6 +1,5 @@
-import { Resolver, Mutation, Arg, Ctx, Query } from 'type-graphql';
+import { Resolver, Mutation, Arg, Ctx } from 'type-graphql';
 import { ApolloError } from 'apollo-server';
-import SessionResponse from '../graphqlShared/types/SessionResponse';
 import { Response, Request } from 'express';
 import AuthResponse from '../graphqlShared/types/AuthResponse';
 import User from '../entities/User';
@@ -13,6 +12,9 @@ import { newUserValidation } from '../entities/User/validation';
 import ExternalProviderInput from '../graphqlShared/inputs/ExternalProviderInput';
 import { generate } from 'generate-password';
 import { verify } from 'jsonwebtoken';
+import redisClient from '../helpers/redisClient';
+
+// TODO: Test all the codebase for this service and users service
 
 @Resolver()
 export default class AuthResolver {
@@ -79,7 +81,7 @@ export default class AuthResolver {
         createUser: User;
       };
 
-      const newSession = await createSession(newUser.id);
+      const newSession = await createSession(newUser.id, redisClient);
 
       res.cookie('SID', newSession.sessionId, {
         httpOnly: true,
@@ -240,7 +242,7 @@ export default class AuthResolver {
         createUser: User;
       };
 
-      const newSession = await createSession(newUser.id);
+      const newSession = await createSession(newUser.id, redisClient);
 
       res.cookie('SID', newSession.sessionId, {
         httpOnly: true,
@@ -314,7 +316,7 @@ export default class AuthResolver {
         );
       }
 
-      const session = await createSession(user.id);
+      const session = await createSession(user.id, redisClient);
 
       res.cookie('SID', session.sessionId, {
         httpOnly: true,
@@ -389,10 +391,10 @@ export default class AuthResolver {
       }
 
       if (cookies.SID) {
-        const session = await getSession(cookies.SID);
+        const session = await getSession(cookies.SID, redisClient);
 
         if (!session) {
-          const newSession = await createSession(user.id);
+          const newSession = await createSession(user.id, redisClient);
 
           res.cookie('SID', newSession.sessionId, {
             httpOnly: true,
@@ -408,7 +410,7 @@ export default class AuthResolver {
         });
       }
 
-      const newSession = await createSession(user.id);
+      const newSession = await createSession(user.id, redisClient);
 
       res.cookie('SID', newSession.sessionId, {
         httpOnly: true,

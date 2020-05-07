@@ -38,6 +38,8 @@
     "@types/jsonwebtoken": "^8.3.9",
     "@types/shortid": "^0.0.29",
     "@types/yup": "^0.26.37",
+    "jest": "^26.0.1",
+    "ts-jest": "^25.5.0",
     "ts-node-dev": "^1.0.0-pre.44",
     "typescript": "^3.8.3"
   }
