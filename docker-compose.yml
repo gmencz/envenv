@@ -89,6 +89,7 @@ services:
       - ./packages/client:/app
     ports:
       - '3000:3000'
+    stdin_open: true
   mongo-service:
     image: mongo
     environment:
