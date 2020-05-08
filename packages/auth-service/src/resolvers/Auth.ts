@@ -143,12 +143,12 @@ export default class AuthResolver {
       const { picture, provider, name, id } = userData;
 
       const checkUserQuery = `
-      query queryUserById($id: String!) {
-        queryUser(by: id, byValue: $id) {
-          id
+        query queryUserById($id: String!) {
+          queryUser(by: id, byValue: $id) {
+            id
+          }
         }
-      }
-    `;
+      `;
 
       const checkUserResponse = await request(
         'http://users-service:5005/graphql',
@@ -173,12 +173,12 @@ export default class AuthResolver {
       }
 
       const checkUsernameQuery = `
-      query queryUserByUsername($username: String!) {
-        queryUser(by: username, byValue: $username) {
-          id
+        query queryUserByUsername($username: String!) {
+          queryUser(by: username, byValue: $username) {
+            id
+          }
         }
-      }
-    `;
+      `;
 
       const checkUsernameResponse = await request(
         'http://users-service:5005/graphql',
@@ -205,18 +205,18 @@ export default class AuthResolver {
       const password = generate({ length: 19, symbols: true, numbers: true });
 
       const createUserMutation = `
-      mutation createUser($newUserData: UserInput!) {
-        createUser(newUserData: $newUserData) {
-          id
-          picture
-          provider
-          username
-          name
-          password
-          role
+        mutation createUser($newUserData: UserInput!) {
+          createUser(newUserData: $newUserData) {
+            id
+            picture
+            provider
+            username
+            name
+            password
+            role
+          }
         }
-      }
-    `;
+      `;
 
       const createUserResponse = await request(
         'http://users-service:5005/graphql',
@@ -344,6 +344,7 @@ export default class AuthResolver {
   ): Promise<AuthResponse> {
     try {
       const cookies = JSON.parse(req.headers.cookie as string);
+      console.log(cookies);
 
       const getUserQuery = `
         query queryUserByUsername($username: String!) {
@@ -357,7 +358,7 @@ export default class AuthResolver {
             role
           }
         }
-    `;
+      `;
 
       const data = await request(
         'http://users-service:5005/graphql',

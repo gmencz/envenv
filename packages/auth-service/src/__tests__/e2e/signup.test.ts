@@ -5,7 +5,7 @@ import { ApolloError } from 'apollo-server';
 import getSession from '../../helpers/getSession';
 import redisClient from '../../helpers/redisClient';
 
-const GATEWAY_ENDPOINT = 'http://api-gateway:7000/graphql';
+export const GATEWAY_ENDPOINT = 'http://api-gateway:7000/graphql';
 
 describe('Signup', () => {
   beforeAll(async () => {
