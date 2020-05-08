@@ -15,7 +15,7 @@ export default class Message {
   message: string;
 
   @Directive(
-    `@provides(fields: "id username name birthDate picture password role provider")`
+    `@provides(fields: "id username name picture password role provider")`
   )
   @Field(() => User)
   sentBy: User;

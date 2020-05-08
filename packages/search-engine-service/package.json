@@ -22,6 +22,7 @@
     "type-graphql": "^0.18.0-beta.16"
   },
   "devDependencies": {
+    "@types/jest": "^25.2.1",
     "jest": "^26.0.1",
     "ts-jest": "^25.5.0",
     "ts-node-dev": "^1.0.0-pre.44",

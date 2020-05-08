@@ -4,7 +4,4 @@ import { InputType, Field } from 'type-graphql';
 export default class ExternalProviderInput {
   @Field()
   username: string;
-
-  @Field(() => Date)
-  birthDate: Date;
 }
