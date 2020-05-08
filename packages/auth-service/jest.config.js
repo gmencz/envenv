@@ -1,4 +1,5 @@
 /* eslint-disable */
+
 module.exports = {
   'roots': ['<rootDir>/src'],
   'testMatch': [
@@ -9,5 +10,4 @@ module.exports = {
     '^.+\\.(ts|tsx)$': 'ts-jest',
   },
   'modulePathIgnorePatterns': ['<rootDir>/src/__tests__/mocks'],
-  'preset': 'jest-puppeteer',
 };

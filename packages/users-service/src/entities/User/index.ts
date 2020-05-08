@@ -54,12 +54,6 @@ export default class User extends Model {
     default: 'user',
   })
   role: string;
-
-  @Field(() => Date)
-  @Column('timestamp without time zone', {
-    nullable: false,
-  })
-  birthDate: Date;
 }
 
 export async function resolveUserReference(

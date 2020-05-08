@@ -89,4 +89,21 @@ export default class UsersResolver {
       );
     }
   }
+
+  @Mutation(() => Boolean)
+  async deleteAllUsers(): Promise<boolean> {
+    // Only available for testing purposes
+    if (process.env.NODE_ENV !== 'test') {
+      throw new ApolloError(
+        'Cannot delete, this operation is only available in a testing environment',
+        '403',
+        {
+          errorCode: 'forbidden',
+        }
+      );
+    }
+
+    await User.clear();
+    return true;
+  }
 }

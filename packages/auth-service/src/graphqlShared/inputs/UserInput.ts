@@ -20,9 +20,6 @@ export default class UserInput {
   @Field({ nullable: true })
   provider: string;
 
-  @Field()
-  birthDate: Date;
-
   @Field({ nullable: true })
   picture: string;
 }

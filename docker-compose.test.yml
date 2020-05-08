@@ -1,0 +1,23 @@
+version: '3.7'
+services:
+  auth-service:
+    environment:
+      - NODE_ENV=test
+  chat-service:
+    environment:
+      - NODE_ENV=test
+  logging-service:
+    environment:
+      - NODE_ENV=test
+  search-engine-service:
+    environment:
+      - NODE_ENV=test
+  users-service:
+    environment:
+      - NODE_ENV=test
+  api-gateway:
+    environment:
+      - NODE_ENV=test
+  client:
+    environment:
+      - NODE_ENV=test

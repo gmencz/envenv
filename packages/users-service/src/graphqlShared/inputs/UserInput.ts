@@ -17,9 +17,6 @@ export default class UserInput {
   @Field({ nullable: true })
   role: string;
 
-  @Field()
-  birthDate: Date;
-
   @Field({ nullable: true })
   provider: string;
 

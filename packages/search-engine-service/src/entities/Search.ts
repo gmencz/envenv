@@ -8,7 +8,7 @@ export default class Search {
   @Field(() => ID)
   id: string;
 
-  @Directive(`@provides(fields: "id username name birthDate")`)
+  @Directive(`@provides(fields: "id username name")`)
   @Field(() => User)
   searchedBy: User;
 

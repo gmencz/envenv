@@ -52,7 +52,11 @@ import { hash } from 'bcryptjs';
 
     await createConnection({ ...connectionOptions, name: 'default' });
 
-    if (connectionOptions.synchronize && connectionOptions.dropSchema) {
+    if (
+      connectionOptions.synchronize &&
+      connectionOptions.dropSchema &&
+      process.env.NODE_ENV === 'development'
+    ) {
       // Populate our users database for dev.
       await User.createQueryBuilder()
         .insert()
@@ -63,14 +67,12 @@ import { hash } from 'bcryptjs';
             username: 'gabrielmendezc',
             name: 'Gabriel',
             password: await hash('Gabriel123', 12),
-            birthDate: new Date('2002-8-24'),
           },
           {
             id: `${generateUniqueId()}${generateUniqueId()}`,
             username: 'pexugadepollo',
             name: 'Blas',
             password: await hash('Blas123', 12),
-            birthDate: new Date('2000'),
           },
         ])
         .execute();
