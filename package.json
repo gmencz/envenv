@@ -1,25 +1,24 @@
 {
-  "name": "clone",
+  "name": "envenv",
   "version": "1.0.0",
-  "description": "Social network for cooks.",
+  "description": "Team collaboration made a breeze, share critical information without breaking a sweat.",
   "scripts": {},
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/gabrielmendezc/clone.git"
+    "url": "git+https://github.com/gabrielmendezc/envenv.git"
   },
   "keywords": [
-    "Social",
-    "network",
-    "cooks",
-    "recipes",
-    "shopping"
+    "Team",
+    "collaboration",
+    "security",
+    "env"
   ],
   "author": "Gabriel Méndez & Blas Santomé",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/gabrielmendezc/clone/issues"
+    "url": "https://github.com/gabrielmendezc/envenv/issues"
   },
-  "homepage": "https://github.com/gabrielmendezc/clone#readme",
+  "homepage": "https://github.com/gabrielmendezc/envenv#readme",
   "devDependencies": {
     "@types/jest": "^25.2.1",
     "@types/node": "^13.11.1",
