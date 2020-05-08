@@ -11,5 +11,18 @@
     "synchronize": true,
     "dropSchema": false,
     "entities": ["./src/entities/**/*.ts"]
+  },
+  {
+    "name": "EnvenvMockDatabase",
+    "type": "postgres",
+    "host": "testable-postgres-service",
+    "port": 5432,
+    "username": "EnvenvTester",
+    "password": "rkFqessBZvRJYKP",
+    "database": "EnvenvMockDB",
+    "logging": true,
+    "synchronize": true,
+    "dropSchema": false,
+    "entities": ["./src/entities/**/*.ts"]
   }
 ]

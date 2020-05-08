@@ -46,6 +46,7 @@
     "@types/shortid": "^0.0.29",
     "@types/yup": "^0.28.0",
     "jest": "^26.0.1",
+    "jest-puppeteer": "^4.4.0",
     "redis-mock": "^0.49.0",
     "ts-jest": "^25.5.0",
     "ts-node-dev": "^1.0.0-pre.44",
