@@ -1,78 +1,78 @@
 version: '3.7'
 services:
-  nginx:
+  dev-nginx:
     restart: always
     build:
-      context: ./packages/nginx
+      context: ./packages/nginx/dev
       dockerfile: Dockerfile.dev
     ports:
       - '8080:80'
-  auth-service:
+  dev-auth-service:
     build:
       context: ./packages/auth-service
       dockerfile: Dockerfile.dev
     volumes:
-      - ./packages/auth-service:/auth-service
+      - ./packages/auth-service:/dev-auth-service
     ports:
       - '5000:5000'
     env_file:
       - ./packages/auth-service/development.env
     environment:
       - NODE_ENV=development
-  chat-service:
+  dev-chat-service:
     build:
       context: ./packages/chat-service
       dockerfile: Dockerfile.dev
     volumes:
-      - ./packages/chat-service:/chat-service
+      - ./packages/chat-service:/dev-chat-service
     ports:
       - '5001:5001'
     env_file:
       - ./packages/chat-service/development.env
     environment:
       - NODE_ENV=development
-  logging-service:
+  dev-logging-service:
     build:
       context: ./packages/logging-service
       dockerfile: Dockerfile.dev
     volumes:
-      - ./packages/logging-service:/logging-service
+      - ./packages/logging-service:/dev-logging-service
     ports:
       - '5002:5002'
     env_file:
       - ./packages/logging-service/development.env
     environment:
       - NODE_ENV=development
-  search-engine-service:
+  dev-search-engine-service:
     build:
       context: ./packages/search-engine-service
       dockerfile: Dockerfile.dev
     volumes:
-      - ./packages/search-engine-service:/search-engine-service
+      - ./packages/search-engine-service:/dev-search-engine-service
     ports:
       - '5004:5004'
     env_file:
       - ./packages/search-engine-service/development.env
     environment:
       - NODE_ENV=development
-  users-service:
+  dev-users-service:
     build:
       context: ./packages/users-service
       dockerfile: Dockerfile.dev
     volumes:
-      - ./packages/users-service:/users-service
+      - ./packages/users-service:/dev-users-service
     ports:
       - '5005:5005'
     env_file:
       - ./packages/users-service/development.env
     environment:
       - NODE_ENV=development
-  api-gateway:
+  dev-api-gateway:
     build:
       context: ./packages/api-gateway
       dockerfile: Dockerfile.dev
     volumes:
-      - ./packages/api-gateway:/api-gateway
+      - ./packages/api-gateway:/dev-api-gateway
     ports:
       - '7000:7000'
     env_file:
@@ -80,17 +80,17 @@ services:
     environment:
       - NODE_ENV=development
     restart: on-failure
-  client:
+  dev-client:
     restart: always
     build:
       context: ./packages/client
       dockerfile: Dockerfile.dev
     volumes:
-      - ./packages/client:/app
+      - ./packages/client:/dev-app
     ports:
       - '3000:3000'
     stdin_open: true
-  mongo-service:
+  dev-mongo-service:
     image: mongo
     environment:
       MONGO_INITDB_ROOT_USERNAME: mongo
@@ -98,22 +98,15 @@ services:
     ports:
       - '27017:27017'
     restart: always
-  postgres-service:
+  dev-postgres-service:
     image: postgres:11.6-alpine
     restart: always
     ports:
       - '5432:5432'
     env_file:
       - ./postgres.env
-  redis-service:
+  dev-redis-service:
     image: redis
     restart: always
     ports:
       - '6379:6379'
-  testable-postgres-service:
-    image: postgres:11.6-alpine
-    restart: always
-    ports:
-      - '5434:5432'
-    env_file:
-      - ./testable-postgres.env

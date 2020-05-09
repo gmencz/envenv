@@ -2,7 +2,7 @@
   {
     "name": "EnvenvMainDatabase",
     "type": "postgres",
-    "host": "postgres-service",
+    "host": "dev-postgres-service",
     "port": 5432,
     "username": "EnvenvAdmin",
     "password": "ht!4S^9@*5Ritqq9ROOT%uNq0p&J7U41G!#vVZpylzaIjB4XL^",
@@ -15,7 +15,7 @@
   {
     "name": "EnvenvMockDatabase",
     "type": "postgres",
-    "host": "testable-postgres-service",
+    "host": "test-postgres-service",
     "port": 5432,
     "username": "EnvenvTester",
     "password": "rkFqessBZvRJYKP",
