@@ -21,3 +21,15 @@ services:
   client:
     environment:
       - NODE_ENV=test
+  headless-auth-service:
+    build:
+      context: ./packages/auth-service
+      dockerfile: Dockerfile.test
+    volumes:
+      - ./packages/auth-service:/headless-auth-service
+    ports:
+      - '5010:5010'
+    env_file:
+      - ./packages/auth-service/development.env
+    environment:
+      - NODE_ENV=test

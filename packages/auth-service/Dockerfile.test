@@ -1,0 +1,9 @@
+FROM buildkite/puppeteer
+
+WORKDIR /headless-auth-service
+
+COPY ./package*.json ./
+RUN npm install
+COPY . .
+
+CMD ["npm", "run", "test"]

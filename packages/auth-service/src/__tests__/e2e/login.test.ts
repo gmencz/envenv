@@ -7,6 +7,8 @@ import redisClient from '../../helpers/redisClient';
 
 describe('Login', () => {
   beforeAll(async () => {
+    await page.goto('https://google.com');
+
     const truncateUsersTableQuery = `
       mutation {
         deleteAllUsers
@@ -32,6 +34,10 @@ describe('Login', () => {
     `;
 
     await request(GATEWAY_ENDPOINT, signupMutation);
+  });
+
+  it('should be google', async () => {
+    await expect(page.title()).resolves.toMatch('Google');
   });
 
   it('logs user in if credentials are valid and creates a valid and secure session', async () => {
