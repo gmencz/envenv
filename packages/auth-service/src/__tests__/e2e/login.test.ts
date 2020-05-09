@@ -4,11 +4,10 @@ import User from '../../entities/User';
 import { isValid } from 'shortid';
 import getSession from '../../helpers/getSession';
 import redisClient from '../../helpers/redisClient';
+import { ApolloError } from 'apollo-server';
 
 describe('Login', () => {
   beforeAll(async () => {
-    await page.goto('https://google.com');
-
     const truncateUsersTableQuery = `
       mutation {
         deleteAllUsers
@@ -34,10 +33,6 @@ describe('Login', () => {
     `;
 
     await request(GATEWAY_ENDPOINT, signupMutation);
-  });
-
-  it('should be google', async () => {
-    await expect(page.title()).resolves.toMatch('Google');
   });
 
   it('logs user in if credentials are valid and creates a valid and secure session', async () => {
@@ -74,7 +69,7 @@ describe('Login', () => {
 
       if (
         session?.userId === loginResponse.login.user.id &&
-        session.csrfToken === loginResponse.login.csrfToken
+        session?.csrfToken === loginResponse.login.csrfToken
       ) {
         return true;
       }
@@ -83,5 +78,79 @@ describe('Login', () => {
     });
 
     expect(validSessionWasCreated).toBe(true);
+  });
+
+  it('throws error if username/password do not meet security requirements', async () => {
+    const loginMutation = `
+      mutation {
+        login(username: "m", password: "mockPassword") {
+          user {
+            username
+          }
+          csrfToken
+        }
+      }
+    `;
+
+    await request(GATEWAY_ENDPOINT, loginMutation).catch(error => {
+      let validationError = false;
+
+      if (error.response && error.response.errors) {
+        validationError = error.response.errors.some(
+          (err: ApolloError) => err.message === 'That username is too short!'
+        );
+      }
+
+      expect(validationError).toBeTruthy();
+    });
+
+    const loginMutation2 = `
+      mutation {
+        login(username: "mockUsername", password: "123") {
+          user {
+            username
+          }
+          csrfToken
+        }
+      }
+    `;
+
+    await request(GATEWAY_ENDPOINT, loginMutation2).catch(error => {
+      let validationError = false;
+
+      if (error.response && error.response.errors) {
+        validationError = error.response.errors.some(
+          (err: ApolloError) => err.message === 'That password is too short!'
+        );
+      }
+
+      expect(validationError).toBeTruthy();
+    });
+  });
+
+  it('throws error if credentials are invalid', async () => {
+    const loginMutation = `
+      mutation {
+        login(username: "invalidUsername", password: "mockPassword") {
+          user {
+            username
+          }
+          csrfToken
+        }
+      }
+    `;
+
+    await request(GATEWAY_ENDPOINT, loginMutation).catch(error => {
+      let invalidCredentials = false;
+
+      if (error.response && error.response.errors) {
+        invalidCredentials = error.response.errors.some(
+          (err: ApolloError) =>
+            err.extensions.errorCode === 'invalid_credentials'
+        );
+      }
+
+      expect(invalidCredentials).toBe(true);
+    });
   });
 });
