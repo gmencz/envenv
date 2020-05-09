@@ -42,8 +42,6 @@ describe('Signup', () => {
         res();
       });
     });
-
-    redisClient.quit();
   });
 
   it('signs user up if provided data is valid and returns both the user and a valid csrf token', async () => {
