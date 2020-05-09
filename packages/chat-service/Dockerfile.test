@@ -1,5 +1,6 @@
-FROM node
-WORKDIR /dev-chat-service
+FROM buildkite/puppeteer
+
+WORKDIR /test-chat-service
 
 COPY ./package*.json ./
 RUN npm install

@@ -1,35 +1,104 @@
 version: '3.7'
 services:
-  auth-service:
+  test-nginx:
+    restart: always
+    build:
+      context: ./packages/nginx/test
+      dockerfile: Dockerfile.test
+    ports:
+      - '8080:80'
+  test-chat-service:
+    build:
+      context: ./packages/chat-service
+      dockerfile: Dockerfile.test
+    volumes:
+      - ./packages/chat-service:/test-chat-service
+    ports:
+      - '5001:5001'
+    env_file:
+      - ./packages/chat-service/test.env
     environment:
       - NODE_ENV=test
-  chat-service:
+  test-logging-service:
+    build:
+      context: ./packages/logging-service
+      dockerfile: Dockerfile.test
+    volumes:
+      - ./packages/logging-service:/test-logging-service
+    ports:
+      - '5002:5002'
+    env_file:
+      - ./packages/logging-service/test.env
     environment:
       - NODE_ENV=test
-  logging-service:
+  test-search-engine-service:
+    build:
+      context: ./packages/search-engine-service
+      dockerfile: Dockerfile.test
+    volumes:
+      - ./packages/search-engine-service:/test-search-engine-service
+    ports:
+      - '5004:5004'
+    env_file:
+      - ./packages/search-engine-service/test.env
     environment:
       - NODE_ENV=test
-  search-engine-service:
+  test-users-service:
+    build:
+      context: ./packages/users-service
+      dockerfile: Dockerfile.test
+    volumes:
+      - ./packages/users-service:/test-users-service
+    ports:
+      - '5005:5005'
+    env_file:
+      - ./packages/users-service/test.env
     environment:
       - NODE_ENV=test
-  users-service:
+  test-api-gateway:
+    build:
+      context: ./packages/api-gateway
+      dockerfile: Dockerfile.test
+    volumes:
+      - ./packages/api-gateway:/test-api-gateway
+    ports:
+      - '7000:7000'
+    env_file:
+      - ./packages/api-gateway/test.env
     environment:
       - NODE_ENV=test
-  api-gateway:
-    environment:
-      - NODE_ENV=test
-  client:
-    environment:
-      - NODE_ENV=test
-  headless-auth-service:
+    restart: on-failure
+  test-client:
+    restart: always
+    build:
+      context: ./packages/client
+      dockerfile: Dockerfile.test
+    volumes:
+      - ./packages/client:/test-app
+    ports:
+      - '3000:3000'
+    stdin_open: true
+  test-redis-service:
+    image: redis
+    restart: always
+    ports:
+      - '6379:6379'
+  test-postgres-service:
+    image: postgres:11.6-alpine
+    restart: always
+    ports:
+      - '5434:5432'
+    env_file:
+      - ./testable-postgres.env
+  test-auth-service:
     build:
       context: ./packages/auth-service
       dockerfile: Dockerfile.test
     volumes:
-      - ./packages/auth-service:/headless-auth-service
+      - ./packages/auth-service:/test-auth-service
     ports:
       - '5010:5010'
     env_file:
-      - ./packages/auth-service/development.env
+      - ./packages/auth-service/test.env
     environment:
       - NODE_ENV=test

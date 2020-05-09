@@ -1,5 +1,6 @@
 FROM node:alpine
-WORKDIR /api-gateway
+
+WORKDIR /dev-api-gateway
 
 COPY ./package*.json ./
 RUN npm install

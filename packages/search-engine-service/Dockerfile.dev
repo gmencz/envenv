@@ -1,5 +1,5 @@
 FROM node:alpine
-WORKDIR /search-engine-service
+WORKDIR /dev-search-engine-service
 
 COPY ./package*.json ./
 RUN npm install
