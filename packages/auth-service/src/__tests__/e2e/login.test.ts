@@ -4,6 +4,14 @@ import User from '../../entities/User';
 
 describe('Login', () => {
   beforeAll(async () => {
+    const truncateUsersTableQuery = `
+      mutation {
+        deleteAllUsers
+      }
+    `;
+
+    await request(GATEWAY_ENDPOINT, truncateUsersTableQuery);
+
     const signupMutation = `
       mutation {
         signup(newUserData: {

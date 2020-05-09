@@ -1,8 +1,0 @@
-FROM node:alpine
-WORKDIR /auth-service-test-environment
-
-COPY ./package*.json ./
-RUN npm install
-COPY . .
-
-CMD ["npm", "run", "test", "--", "--watchAll"]
