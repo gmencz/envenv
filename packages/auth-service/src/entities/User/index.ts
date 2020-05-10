@@ -31,4 +31,8 @@ export default class User {
   @Directive('@external')
   @Field(() => String)
   name: string;
+
+  @Directive('@external')
+  @Field(() => String)
+  email: string;
 }

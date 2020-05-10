@@ -49,7 +49,7 @@ export const callbackGoogleAuth = async (
       // request to a mutation which will automate the login
       return res.redirect(
         process.env.NODE_ENV === 'production'
-          ? '/auth/automateLoginProcess'
+          ? 'https://envenv.com/auth/automateLoginProcess'
           : 'http://localhost:8080/auth/automateLoginProcess'
       );
     }
@@ -79,13 +79,13 @@ export const callbackGoogleAuth = async (
     */
     return res.redirect(
       process.env.NODE_ENV === 'production'
-        ? '/auth/signup/lastStep'
+        ? 'https://envenv.com/auth/signup/lastStep'
         : 'http://localhost:8080/auth/signup/lastStep'
     );
   } catch (error) {
     return res.redirect(
       process.env.NODE_ENV === 'production'
-        ? '/auth/signup/error/googleAccountUnknownError'
+        ? 'https://envenv.com/auth/signup/error/googleAccountUnknownError'
         : 'http://localhost:8080/auth/signup/error/googleAccountUnknownError'
     );
   }
