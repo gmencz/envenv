@@ -66,12 +66,14 @@ import { hash } from 'bcryptjs';
             id: `${generateUniqueId()}${generateUniqueId()}`,
             username: 'gabrielmendezc',
             name: 'Gabriel',
+            email: 'gabriel@envenv.com',
             password: await hash('Gabriel123', 12),
           },
           {
             id: `${generateUniqueId()}${generateUniqueId()}`,
             username: 'pexugadepollo',
             name: 'Blas',
+            email: 'blas@envenv.com',
             password: await hash('Blas123', 12),
           },
         ])

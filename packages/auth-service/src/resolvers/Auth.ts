@@ -53,6 +53,34 @@ export default class AuthResolver {
         );
       }
 
+      const checkEmailQuery = `
+        query queryUserByUsername($email: String!) {
+          queryUser(by: email, byValue: $email) {
+            id
+          }
+        }
+      `;
+
+      const checkEmailResponse = await request(
+        process.env.USERS_SERVICE_URL as string,
+        checkEmailQuery,
+        {
+          email: newUserData.email,
+        }
+      );
+
+      const { queryUser } = checkEmailResponse as { queryUser: User | null };
+
+      if (queryUser) {
+        throw new ApolloError(
+          'That email is taken, please choose a different one!',
+          '400',
+          {
+            errorCode: 'email_taken',
+          }
+        );
+      }
+
       const createUserMutation = `
         mutation createUser($newUserData: UserInput!) {
           createUser(newUserData: $newUserData) {
@@ -61,6 +89,7 @@ export default class AuthResolver {
             provider
             username
             name
+            email
             password
             role
           }
@@ -139,9 +168,15 @@ export default class AuthResolver {
             resolve(sessionInfo);
           }
         );
-      })) as { picture: string; provider: string; name: string; id: string };
+      })) as {
+        picture: string;
+        provider: string;
+        name: string;
+        id: string;
+        email: string;
+      };
 
-      const { picture, provider, name, id } = userData;
+      const { picture, provider, name, id, email } = userData;
 
       const checkUserQuery = `
         query queryUserById($id: String!) {
@@ -213,6 +248,7 @@ export default class AuthResolver {
             provider
             username
             name
+            email
             password
             role
           }
@@ -230,6 +266,7 @@ export default class AuthResolver {
             name,
             id,
             password,
+            email,
           },
         }
       );
@@ -285,6 +322,7 @@ export default class AuthResolver {
             provider
             username
             name
+            email
             password
             role
           }
@@ -357,6 +395,7 @@ export default class AuthResolver {
             provider
             username
             name
+            email
             password
             role
           }

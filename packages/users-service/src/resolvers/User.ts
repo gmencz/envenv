@@ -15,7 +15,7 @@ export default class UsersResolver {
     @Arg('byValue') byValue: string
   ): Promise<User | null> {
     try {
-      const byPossibilities = ['id', 'username'];
+      const byPossibilities = ['id', 'username', 'email'];
 
       const validBy = byPossibilities.find(
         byPossibility => byPossibility === by

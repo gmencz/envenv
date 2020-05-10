@@ -9,6 +9,9 @@ export default class UserInput {
   username: string;
 
   @Field()
+  email: string;
+
+  @Field()
   name: string;
 
   @Field()

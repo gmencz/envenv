@@ -36,6 +36,14 @@ export default class User extends Model {
   @Field(() => String)
   @Column('character varying', {
     nullable: false,
+    unique: true,
+    length: 60,
+  })
+  email: string;
+
+  @Field(() => String)
+  @Column('character varying', {
+    nullable: false,
     length: 60,
   })
   name: string;

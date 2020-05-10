@@ -6,10 +6,8 @@ import { sign } from 'jsonwebtoken';
 
 export const scopeFn = () =>
   passport.authenticate('google', {
-    scope: ['https://www.googleapis.com/auth/plus.login'],
+    scope: ['profile', 'email'],
   });
-
-//Make this use JWT
 
 export const callbackGoogleAuth = async (
   req: Request,
@@ -79,7 +77,6 @@ export const callbackGoogleAuth = async (
       needed information like their username, after doing that
       we can create the user but this step is needed.
     */
-    console.log('we got here');
     return res.redirect(
       process.env.NODE_ENV === 'production'
         ? '/auth/signup/lastStep'
