@@ -97,7 +97,7 @@ services:
     volumes:
       - ./packages/auth-service:/test-auth-service
     ports:
-      - '5010:5010'
+      - '5000:5000'
     env_file:
       - ./packages/auth-service/test.env
     environment:

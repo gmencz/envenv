@@ -34,7 +34,7 @@ export default class AuthResolver {
       `;
 
       const data = await request(
-        'http://users-service:5005/graphql',
+        process.env.USERS_SERVICE_URL as string,
         checkUsernameQuery,
         {
           username: newUserData.username,
@@ -68,7 +68,7 @@ export default class AuthResolver {
       `;
 
       const createUserResponse = await request(
-        'http://users-service:5005/graphql',
+        process.env.USERS_SERVICE_URL as string,
         createUserMutation,
         {
           newUserData,
@@ -152,7 +152,7 @@ export default class AuthResolver {
       `;
 
       const checkUserResponse = await request(
-        'http://users-service:5005/graphql',
+        process.env.USERS_SERVICE_URL as string,
         checkUserQuery,
         {
           id: userData.id,
@@ -182,7 +182,7 @@ export default class AuthResolver {
       `;
 
       const checkUsernameResponse = await request(
-        'http://users-service:5005/graphql',
+        process.env.USERS_SERVICE_URL as string,
         checkUsernameQuery,
         {
           username: newUserData.username,
@@ -220,7 +220,7 @@ export default class AuthResolver {
       `;
 
       const createUserResponse = await request(
-        'http://users-service:5005/graphql',
+        process.env.USERS_SERVICE_URL as string,
         createUserMutation,
         {
           newUserData: {
@@ -292,7 +292,7 @@ export default class AuthResolver {
       `;
 
       const data = await request(
-        'http://users-service:5005/graphql',
+        process.env.USERS_SERVICE_URL as string,
         checkUserQuery,
         {
           userId: cookies.TemporaryUserId,
@@ -364,7 +364,7 @@ export default class AuthResolver {
       `;
 
       const data = await request(
-        'http://users-service:5005/graphql',
+        process.env.USERS_SERVICE_URL as string,
         getUserQuery,
         {
           username,

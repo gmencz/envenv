@@ -32,7 +32,7 @@ export const callbackGoogleAuth = async (
     };
 
     const checkUserResponse = await request(
-      'http://users-service:5005/graphql',
+      process.env.USERS_SERVICE_URL as string,
       checkUserQuery,
       {
         userId: id,
@@ -79,6 +79,7 @@ export const callbackGoogleAuth = async (
       needed information like their username, after doing that
       we can create the user but this step is needed.
     */
+    console.log('we got here');
     return res.redirect(
       process.env.NODE_ENV === 'production'
         ? '/auth/signup/lastStep'

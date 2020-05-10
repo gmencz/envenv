@@ -5,9 +5,10 @@ export const GoogleStrategyObj = new GoogleStrategy(
     clientID:
       '697747522167-8f3eobskkb8pm2pk8kft37tarl1nmcqb.apps.googleusercontent.com',
     clientSecret: process.env.SECRET_GOOGLE as string,
-    callbackURL: 'http://localhost:5000/auth/google/callback',
+    callbackURL: `${process.env.GOOGLE_CALLBACK_URL}/auth/google/callback`,
   },
   (_, __, { provider, id, _json: { name, picture } }, done) => {
+    console.log('as');
     done(null, { picture, provider, name, id });
   }
 );
