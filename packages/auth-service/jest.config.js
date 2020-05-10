@@ -9,6 +9,10 @@ module.exports = {
   'transform': {
     '^.+\\.(ts|tsx)$': 'ts-jest',
   },
-  'modulePathIgnorePatterns': ['<rootDir>/src/__tests__/mocks'],
+  'modulePathIgnorePatterns': [
+    '<rootDir>/src/__tests__/mocks',
+    '<rootDir>/src/__tests__/cleanup.ts',
+  ],
   'preset': 'jest-puppeteer',
+  'setupFilesAfterEnv': ['<rootDir>/src/__tests__/cleanup.ts'],
 };
