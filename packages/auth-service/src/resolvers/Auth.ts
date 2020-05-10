@@ -81,7 +81,7 @@ export default class AuthResolver {
 
       const newSession = await createSession(newUser.id, redisClient);
 
-      res.cookie('SID', newSession.sessionId, {
+      res.cookie('SessionID', newSession.sessionId, {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
         maxAge: Number(process.env.SESSION_REDIS_EXPIRY as string),
@@ -240,7 +240,7 @@ export default class AuthResolver {
 
       const newSession = await createSession(newUser.id, redisClient);
 
-      res.cookie('SID', newSession.sessionId, {
+      res.cookie('SessionID', newSession.sessionId, {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
         maxAge: Number(process.env.SESSION_REDIS_EXPIRY as string),
@@ -313,7 +313,7 @@ export default class AuthResolver {
 
       const session = await createSession(user.id, redisClient);
 
-      res.cookie('SID', session.sessionId, {
+      res.cookie('SessionID', session.sessionId, {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
         maxAge: Number(process.env.SESSION_REDIS_EXPIRY as string),
@@ -387,13 +387,13 @@ export default class AuthResolver {
         });
       }
 
-      if (cookies.SID) {
-        const session = await getSession(cookies.SID, redisClient);
+      if (cookies.SessionID) {
+        const session = await getSession(cookies.SessionID, redisClient);
 
         if (!session) {
           const newSession = await createSession(user.id, redisClient);
 
-          res.cookie('SID', newSession.sessionId, {
+          res.cookie('SessionID', newSession.sessionId, {
             httpOnly: true,
             secure: process.env.NODE_ENV === 'production',
             maxAge: Number(process.env.SESSION_REDIS_EXPIRY as string),
@@ -409,7 +409,7 @@ export default class AuthResolver {
 
       const newSession = await createSession(user.id, redisClient);
 
-      res.cookie('SID', newSession.sessionId, {
+      res.cookie('SessionID', newSession.sessionId, {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
         maxAge: Number(process.env.SESSION_REDIS_EXPIRY as string),
