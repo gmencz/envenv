@@ -1,4 +1,11 @@
-import { Resolver, Mutation, Arg, Ctx } from 'type-graphql';
+import {
+  Resolver,
+  Mutation,
+  Arg,
+  Ctx,
+  Query,
+  UseMiddleware,
+} from 'type-graphql';
 import { ApolloError } from 'apollo-server';
 import { Response, Request } from 'express';
 import AuthResponse from '../graphqlShared/types/AuthResponse';
@@ -14,6 +21,8 @@ import { generate } from 'generate-password';
 import { verify } from 'jsonwebtoken';
 import redisClient from '../helpers/redisClient';
 import { reach } from 'yup';
+import isAuth, { ApolloContext } from '../middlewares/isAuth';
+import { createTransport } from 'nodemailer';
 
 @Resolver()
 export default class AuthResolver {
@@ -473,6 +482,38 @@ export default class AuthResolver {
           errorCode: 'server_error',
         }
       );
+    }
+  }
+
+  @Query(() => Boolean)
+  @UseMiddleware(isAuth)
+  async requestPasswordResetEmail(
+    @Ctx() { user }: ApolloContext
+  ): Promise<boolean> {
+    try {
+      console.log(user);
+      const transporterSettings = {
+        host: process.env.NODEMAILER_HOST as string,
+        port: Number(process.env.NODEMAILER_PORT),
+        auth: {
+          user: process.env.NODEMAILER_USERNAME as string,
+          pass: process.env.NODEMAILER_PASSWORD as string,
+        },
+      };
+
+      const transporter = createTransport(transporterSettings);
+
+      await transporter.sendMail({
+        from: 'Envenv <noreply@envenv.com>',
+        to: 'gabrielmendez.dev@gmail.com',
+        subject: 'it works',
+        html: '<h1>Hello world</h1>',
+      });
+
+      return true;
+    } catch (error) {
+      console.error(error);
+      return false;
     }
   }
 }
