@@ -12,6 +12,9 @@ export default class UserInput {
   name: string;
 
   @Field()
+  email: string;
+
+  @Field()
   password: string;
 
   @Field({ nullable: true })

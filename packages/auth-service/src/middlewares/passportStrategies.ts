@@ -7,8 +7,7 @@ export const GoogleStrategyObj = new GoogleStrategy(
     clientSecret: process.env.SECRET_GOOGLE as string,
     callbackURL: `${process.env.GOOGLE_CALLBACK_URL}/auth/google/callback`,
   },
-  (_, __, { provider, id, _json: { name, picture } }, done) => {
-    console.log('as');
-    done(null, { picture, provider, name, id });
+  (_, __, { provider, id, _json: { name, picture, email } }, done) => {
+    done(null, { picture, provider, name, id, email });
   }
 );

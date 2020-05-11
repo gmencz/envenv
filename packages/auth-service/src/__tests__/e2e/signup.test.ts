@@ -51,6 +51,7 @@ describe('Signup', () => {
           username: "mockUsername",
           name: "Gabriel",
           password: "mockPassword",
+          email: "gabriel@envenv.com"
         }) {
           user {
             username
@@ -80,6 +81,7 @@ describe('Signup', () => {
             username: "a",
             name: "Gabriel",
             password: "mockPassword",
+            email: "gabriel@envenv.com"
           }) {
             user {
               username
@@ -108,6 +110,7 @@ describe('Signup', () => {
             username: "mockUsername",
             name: "G",
             password: "mockPassword",
+            email: "gabriel@envenv.com"
           }) {
             user {
               username
@@ -136,6 +139,7 @@ describe('Signup', () => {
             username: "mockUsername",
             name: "Gabriel",
             password: "123",
+            email: "gabriel@envenv.com"
           }) {
             user {
               username
@@ -164,7 +168,8 @@ describe('Signup', () => {
             username: "mockUsername",
             name: "Gabriel",
             password: "securePassword132",
-            picture: "notAnUrl"
+            picture: "notAnUrl",
+            email: "gabriel@envenv.com"
           }) {
             user {
               username
@@ -198,6 +203,7 @@ describe('Signup', () => {
           provider
           username
           name
+          email
           password
           role
         }
@@ -209,6 +215,7 @@ describe('Signup', () => {
         username: 'gabrielmendezc',
         name: 'Gabriel',
         password: 'mockPassword123',
+        email: 'gabriel@envenv.com',
       },
     });
 
@@ -218,6 +225,7 @@ describe('Signup', () => {
           username: "gabrielmendezc",
           name: "Gabriel",
           password: "mockPassword321",
+          email: "gabriel@envenv.com"
         }) {
           user {
             username
@@ -248,6 +256,7 @@ describe('Signup', () => {
           username: "mockUsername",
           name: "Gabriel",
           password: "mockPassword",
+          email: "gabriel@envenv.com"
         }) {
           user {
             id
@@ -286,5 +295,81 @@ describe('Signup', () => {
     });
 
     expect(validSessionWasCreated).toBe(true);
+  });
+
+  it('throws error if the username or the email is taken', async () => {
+    const createUserMutation = `
+      mutation {
+        signup(newUserData: {
+          username: "mockUsername",
+          name: "Gabriel",
+          password: "mockPassword",
+          email: "gabriel@envenv.com"
+        }) {
+          user {
+            id
+          }
+          csrfToken
+        }
+      }
+    `;
+
+    await request(GATEWAY_ENDPOINT, createUserMutation);
+
+    const emailTakenMutation = `
+      mutation {
+        signup(newUserData: {
+          username: "mockuser",
+          name: "Gabriel",
+          password: "mockPassword",
+          email: "gabriel@envenv.com"
+        }) {
+          user {
+            id
+          }
+          csrfToken
+        }
+      }
+    `;
+
+    await request(GATEWAY_ENDPOINT, emailTakenMutation).catch(error => {
+      let validationError = false;
+
+      if (error.response && error.response.errors) {
+        validationError = error.response.errors.some(
+          (err: ApolloError) => err.extensions.errorCode === 'email_taken'
+        );
+      }
+
+      expect(validationError).toBeTruthy();
+    });
+
+    const usernameTakenMutation = `
+      mutation {
+        signup(newUserData: {
+          username: "mockUsername",
+          name: "Gabriel",
+          password: "mockPassword",
+          email: "mockemail@envenv.com"
+        }) {
+          user {
+            id
+          }
+          csrfToken
+        }
+      }
+    `;
+
+    await request(GATEWAY_ENDPOINT, usernameTakenMutation).catch(error => {
+      let validationError = false;
+
+      if (error.response && error.response.errors) {
+        validationError = error.response.errors.some(
+          (err: ApolloError) => err.extensions.errorCode === 'username_taken'
+        );
+      }
+
+      expect(validationError).toBeTruthy();
+    });
   });
 });

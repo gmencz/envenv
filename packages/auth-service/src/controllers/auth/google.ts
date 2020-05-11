@@ -6,10 +6,8 @@ import { sign } from 'jsonwebtoken';
 
 export const scopeFn = () =>
   passport.authenticate('google', {
-    scope: ['https://www.googleapis.com/auth/plus.login'],
+    scope: ['profile', 'email'],
   });
-
-//Make this use JWT
 
 export const callbackGoogleAuth = async (
   req: Request,
@@ -51,7 +49,7 @@ export const callbackGoogleAuth = async (
       // request to a mutation which will automate the login
       return res.redirect(
         process.env.NODE_ENV === 'production'
-          ? '/auth/automateLoginProcess'
+          ? 'https://envenv.com/auth/automateLoginProcess'
           : 'http://localhost:8080/auth/automateLoginProcess'
       );
     }
@@ -79,16 +77,15 @@ export const callbackGoogleAuth = async (
       needed information like their username, after doing that
       we can create the user but this step is needed.
     */
-    console.log('we got here');
     return res.redirect(
       process.env.NODE_ENV === 'production'
-        ? '/auth/signup/lastStep'
+        ? 'https://envenv.com/auth/signup/lastStep'
         : 'http://localhost:8080/auth/signup/lastStep'
     );
   } catch (error) {
     return res.redirect(
       process.env.NODE_ENV === 'production'
-        ? '/auth/signup/error/googleAccountUnknownError'
+        ? 'https://envenv.com/auth/signup/error/googleAccountUnknownError'
         : 'http://localhost:8080/auth/signup/error/googleAccountUnknownError'
     );
   }

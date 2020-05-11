@@ -1,4 +1,11 @@
-import { Resolver, Mutation, Arg, Ctx } from 'type-graphql';
+import {
+  Resolver,
+  Mutation,
+  Arg,
+  Ctx,
+  Query,
+  UseMiddleware,
+} from 'type-graphql';
 import { ApolloError } from 'apollo-server';
 import { Response, Request } from 'express';
 import AuthResponse from '../graphqlShared/types/AuthResponse';
@@ -11,9 +18,11 @@ import UserInput from '../graphqlShared/inputs/UserInput';
 import { newUserValidation } from '../entities/User/validation';
 import ExternalProviderInput from '../graphqlShared/inputs/ExternalProviderInput';
 import { generate } from 'generate-password';
-import { verify } from 'jsonwebtoken';
+import { verify, sign } from 'jsonwebtoken';
 import redisClient from '../helpers/redisClient';
 import { reach } from 'yup';
+import isAuth, { ApolloContext } from '../middlewares/isAuth';
+import { createTransport } from 'nodemailer';
 
 @Resolver()
 export default class AuthResolver {
@@ -53,6 +62,34 @@ export default class AuthResolver {
         );
       }
 
+      const checkEmailQuery = `
+        query queryUserByUsername($email: String!) {
+          queryUser(by: email, byValue: $email) {
+            id
+          }
+        }
+      `;
+
+      const checkEmailResponse = await request(
+        process.env.USERS_SERVICE_URL as string,
+        checkEmailQuery,
+        {
+          email: newUserData.email,
+        }
+      );
+
+      const { queryUser } = checkEmailResponse as { queryUser: User | null };
+
+      if (queryUser) {
+        throw new ApolloError(
+          'That email is taken, please choose a different one!',
+          '400',
+          {
+            errorCode: 'email_taken',
+          }
+        );
+      }
+
       const createUserMutation = `
         mutation createUser($newUserData: UserInput!) {
           createUser(newUserData: $newUserData) {
@@ -61,6 +98,7 @@ export default class AuthResolver {
             provider
             username
             name
+            email
             password
             role
           }
@@ -139,9 +177,15 @@ export default class AuthResolver {
             resolve(sessionInfo);
           }
         );
-      })) as { picture: string; provider: string; name: string; id: string };
+      })) as {
+        picture: string;
+        provider: string;
+        name: string;
+        id: string;
+        email: string;
+      };
 
-      const { picture, provider, name, id } = userData;
+      const { picture, provider, name, id, email } = userData;
 
       const checkUserQuery = `
         query queryUserById($id: String!) {
@@ -213,6 +257,7 @@ export default class AuthResolver {
             provider
             username
             name
+            email
             password
             role
           }
@@ -230,6 +275,7 @@ export default class AuthResolver {
             name,
             id,
             password,
+            email,
           },
         }
       );
@@ -285,6 +331,7 @@ export default class AuthResolver {
             provider
             username
             name
+            email
             password
             role
           }
@@ -357,6 +404,7 @@ export default class AuthResolver {
             provider
             username
             name
+            email
             password
             role
           }
@@ -417,6 +465,354 @@ export default class AuthResolver {
 
       return { user, csrfToken: newSession.csrfToken };
     } catch (error) {
+      if (error.name === 'ValidationError') {
+        throw new ApolloError(error.message, '400', {
+          errorCode: 'validation_error',
+        });
+      }
+
+      if (error instanceof ApolloError) {
+        throw error;
+      }
+
+      throw new ApolloError(
+        `Something went wrong on our side, we're working on it!`,
+        '500',
+        {
+          errorCode: 'server_error',
+        }
+      );
+    }
+  }
+
+  @Query(() => Boolean)
+  async requestPasswordResetEmail(
+    @Arg('email') email: string
+  ): Promise<boolean> {
+    try {
+      await reach(newUserValidation, 'email').validate(email);
+
+      const getUserQuery = `
+        query queryUserByEmail($email: String!) {
+          queryUser(by: email, byValue: $email) {
+            id
+            username
+            lastPasswordChange
+          }
+        }
+      `;
+
+      const data = await request(
+        process.env.USERS_SERVICE_URL as string,
+        getUserQuery,
+        {
+          email,
+        }
+      );
+
+      const { queryUser: user } = data as { queryUser: User | null };
+
+      if (!user) {
+        return true;
+      }
+
+      const transporterSettings = {
+        host: process.env.NODEMAILER_HOST as string,
+        port: Number(process.env.NODEMAILER_PORT),
+        auth: {
+          user: process.env.NODEMAILER_USERNAME as string,
+          pass: process.env.NODEMAILER_PASSWORD as string,
+        },
+      };
+
+      const transporter = createTransport(transporterSettings);
+
+      const token = sign(
+        { userId: user.id, lastPasswordChange: user.lastPasswordChange },
+        process.env.PASSWORD_RESET_SECRET as string,
+        {
+          expiresIn: 900000, // 15 mins
+        }
+      );
+
+      const resetPasswordUrl =
+        process.env.NODE_ENV === 'production'
+          ? `https://envenv.com/auth/resetPassword?token=${token}`
+          : `http://localhost:8080/auth/resetPassword?token=${token}`;
+
+      await transporter.sendMail({
+        from: 'Envenv <noreply@envenv.com>',
+        to: email,
+        subject: 'Reset your envenv password',
+        html: `
+          <div style="font-family: Tahoma">
+            <div style="max-width: 800px; width: 100%; margin: 0 auto;  padding: 30px 0;">
+              <h1 style="font-size: 22px">Hi ${user.username},</h1>
+              <p style="margin-bottom: 30px; color: #565656">You recently requested to reset your password for your Envenv account. Click the button below to reset it.</p>
+              <a href="${resetPasswordUrl}" style="padding: 12px; border: none; background-color: #1890FF; cursor: pointer; color: #fff; border-radius: 5px; text-decoration: none;">Reset your password</a>
+              <p style="margin-top: 30px; margin-bottom: 30px; color: #565656">If you did not request a password reset, please ignore this email. This password reset is only valid for 15 minutes.</p>
+              <hr>
+              <p style="margin-top: 30px; margin-bottom: 30px; color: #565656; font-size: 15px">If you're having trouble clicking the password reset button, copy and paste the URL below into your web browser.</p>
+              <a style="color: #1890ff; display: block; max-width: 800px; overflow-wrap: break-word;" href="${resetPasswordUrl}">${resetPasswordUrl}</a>
+            </div>
+            <footer style="text-align: center; background-color: #f9f9f9; position: absolute; bottom: 0; left: 0; width: 100%; height: 200px; line-height: 200px">
+              <p style="margin: 0">&copy; ${new Date().getFullYear()} Envenv. All Rights Reserved.</p>
+            </footer>  
+          </div>      
+        `,
+      });
+
+      return true;
+    } catch (error) {
+      if (error.name === 'ValidationError') {
+        throw new ApolloError(error.message, '400', {
+          errorCode: 'validation_error',
+        });
+      }
+
+      if (error instanceof ApolloError) {
+        throw error;
+      }
+
+      throw new ApolloError(
+        `Something went wrong on our side, we're working on it!`,
+        '500',
+        {
+          errorCode: 'server_error',
+        }
+      );
+    }
+  }
+
+  @Mutation(() => User)
+  async resetPassword(
+    @Arg('currentPassword') currentPassword: string,
+    @Arg('newPassword') newPassword: string,
+    @Arg('token') token: string
+  ): Promise<User> {
+    try {
+      const decodedToken = verify(
+        token,
+        process.env.PASSWORD_RESET_SECRET as string
+      ) as { userId: string; lastPasswordChange: Date | null };
+
+      const getUserQuery = `
+        query queryUserById($userId: String!) {
+          queryUser(by: id, byValue: $userId) {
+            id
+            username
+            password
+            lastPasswordChange
+          }
+        }
+      `;
+
+      const data = await request(
+        process.env.USERS_SERVICE_URL as string,
+        getUserQuery,
+        {
+          userId: decodedToken.userId,
+        }
+      );
+
+      const { queryUser: user } = data as { queryUser: User | null };
+
+      if (!user) {
+        throw new ApolloError(
+          'Invalid token, please request a new password reset',
+          '400',
+          {
+            errorCode: 'invalid_token',
+          }
+        );
+      }
+
+      if (
+        !(decodedToken.lastPasswordChange instanceof Date) ||
+        !(user.lastPasswordChange instanceof Date)
+      ) {
+        if (decodedToken.lastPasswordChange !== user.lastPasswordChange) {
+          throw new ApolloError(
+            'Invalid token, please request a new password reset',
+            '400',
+            {
+              errorCode: 'invalid_token',
+            }
+          );
+        }
+
+        await reach(newUserValidation, 'password').validate(newPassword);
+
+        const validCurrentPassword = await compare(
+          currentPassword,
+          user.password
+        );
+
+        if (!validCurrentPassword) {
+          throw new ApolloError(
+            'Your current password does not match the one you provided',
+            '400',
+            {
+              errorCode: 'invalid_password',
+            }
+          );
+        }
+
+        const updatePasswordOperation = `
+        mutation updatePassword($userToUpdateId: String!, $newValue: String!) {
+          updateUser(by: password, userToUpdateId: $userToUpdateId, newValue: $newValue) {
+            id
+            picture
+            provider
+            username
+            name
+            email
+            password
+            role
+          }
+        }
+      `;
+
+        await request(
+          process.env.USERS_SERVICE_URL as string,
+          updatePasswordOperation,
+          {
+            userToUpdateId: user.id,
+            newValue: newPassword,
+          }
+        );
+
+        const updateLastPasswordChangeOperation = `
+        mutation updateLastPasswordChange($userToUpdateId: String!, $newValue: String!) {
+          updateUser(by: lastPasswordChange, userToUpdateId: $userToUpdateId, newValue: $newValue) {
+            id
+            picture
+            provider
+            username
+            name
+            email
+            password
+            role
+          }
+        }
+      `;
+
+        const updateLastPasswordChangeResponse = await request(
+          process.env.USERS_SERVICE_URL as string,
+          updateLastPasswordChangeOperation,
+          {
+            userToUpdateId: user.id,
+            newValue: new Date(),
+          }
+        );
+
+        const {
+          updateUser: updatedUser,
+        } = updateLastPasswordChangeResponse as {
+          updateUser: User;
+        };
+
+        return updatedUser;
+      }
+
+      if (
+        decodedToken.lastPasswordChange.getTime() !==
+        user.lastPasswordChange.getTime()
+      ) {
+        throw new ApolloError(
+          'Invalid token, please request a new password reset',
+          '400',
+          {
+            errorCode: 'invalid_token',
+          }
+        );
+      }
+
+      await reach(newUserValidation, 'password').validate(newPassword);
+
+      const validCurrentPassword = await compare(
+        currentPassword,
+        user.password
+      );
+
+      if (!validCurrentPassword) {
+        throw new ApolloError(
+          'Your current password does not match the one you provided',
+          '400',
+          {
+            errorCode: 'invalid_password',
+          }
+        );
+      }
+
+      const updatePasswordOperation = `
+        mutation updatePassword($userToUpdateId: String!, $newValue: String!) {
+          updateUser(by: password, userToUpdateId: $userToUpdateId, newValue: $newValue) {
+            id
+            picture
+            provider
+            username
+            name
+            email
+            password
+            role
+          }
+        }
+      `;
+
+      await request(
+        process.env.USERS_SERVICE_URL as string,
+        updatePasswordOperation,
+        {
+          userToUpdateId: user.id,
+          newValue: newPassword,
+        }
+      );
+
+      const updateLastPasswordChangeOperation = `
+        mutation updateLastPasswordChange($userToUpdateId: String!, $newValue: String!) {
+          updateUser(by: lastPasswordChange, userToUpdateId: $userToUpdateId, newValue: $newValue) {
+            id
+            picture
+            provider
+            username
+            name
+            email
+            password
+            role
+          }
+        }
+      `;
+
+      const updateLastPasswordChangeResponse = await request(
+        process.env.USERS_SERVICE_URL as string,
+        updateLastPasswordChangeOperation,
+        {
+          userToUpdateId: user.id,
+          newValue: new Date(),
+        }
+      );
+
+      const { updateUser: updatedUser } = updateLastPasswordChangeResponse as {
+        updateUser: User;
+      };
+
+      return updatedUser;
+    } catch (error) {
+      console.log(error);
+      if (
+        error.name === 'JsonWebTokenError' ||
+        error.name === 'TokenExpiredError'
+      ) {
+        throw new ApolloError(
+          'Invalid token, please request a new password reset',
+          '400',
+          {
+            errorCode: 'invalid_token',
+          }
+        );
+      }
+
       if (error.name === 'ValidationError') {
         throw new ApolloError(error.message, '400', {
           errorCode: 'validation_error',

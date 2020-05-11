@@ -22,6 +22,7 @@ describe('Login', () => {
           username: "mockUsername",
           name: "Gabriel",
           password: "mockPassword",
+          email: "gabriel@envenv.com"
         }) {
           user {
             username

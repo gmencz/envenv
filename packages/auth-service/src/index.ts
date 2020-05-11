@@ -10,6 +10,7 @@ import { GoogleStrategyObj } from './middlewares/passportStrategies';
 import { scopeFn, callbackGoogleAuth } from './controllers/auth/google';
 import cookieParser from 'cookie-parser';
 import User from './entities/User';
+import { ApolloContext } from './middlewares/isAuth';
 
 //TODO integrate passport callbacks with Apollo
 
@@ -57,15 +58,10 @@ import User from './entities/User';
     schema,
     tracing: false,
     playground: true,
-    context: ({
+    context: ({ req, res }): ApolloContext => ({
       req,
       res,
-    }: {
-      req: Request;
-      res: Response;
-    }): { req: Request; res: Response } => ({
-      req,
-      res,
+      user: null,
     }),
   });
   server.applyMiddleware({ app });
