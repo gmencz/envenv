@@ -497,6 +497,7 @@ export default class AuthResolver {
           queryUser(by: email, byValue: $email) {
             id
             username
+            lastPasswordChange
           }
         }
       `;
@@ -527,7 +528,7 @@ export default class AuthResolver {
       const transporter = createTransport(transporterSettings);
 
       const token = sign(
-        { userId: user.id },
+        { userId: user.id, lastPasswordChange: user.lastPasswordChange },
         process.env.PASSWORD_RESET_SECRET as string,
         {
           expiresIn: 900000, // 15 mins
@@ -563,6 +564,255 @@ export default class AuthResolver {
 
       return true;
     } catch (error) {
+      if (error.name === 'ValidationError') {
+        throw new ApolloError(error.message, '400', {
+          errorCode: 'validation_error',
+        });
+      }
+
+      if (error instanceof ApolloError) {
+        throw error;
+      }
+
+      throw new ApolloError(
+        `Something went wrong on our side, we're working on it!`,
+        '500',
+        {
+          errorCode: 'server_error',
+        }
+      );
+    }
+  }
+
+  @Mutation(() => User)
+  async resetPassword(
+    @Arg('currentPassword') currentPassword: string,
+    @Arg('newPassword') newPassword: string,
+    @Arg('token') token: string
+  ): Promise<User> {
+    try {
+      const decodedToken = verify(
+        token,
+        process.env.PASSWORD_RESET_SECRET as string
+      ) as { userId: string; lastPasswordChange: Date | null };
+
+      const getUserQuery = `
+        query queryUserById($userId: String!) {
+          queryUser(by: id, byValue: $userId) {
+            id
+            username
+            password
+            lastPasswordChange
+          }
+        }
+      `;
+
+      const data = await request(
+        process.env.USERS_SERVICE_URL as string,
+        getUserQuery,
+        {
+          userId: decodedToken.userId,
+        }
+      );
+
+      const { queryUser: user } = data as { queryUser: User | null };
+
+      if (!user) {
+        throw new ApolloError(
+          'Invalid token, please request a new password reset',
+          '400',
+          {
+            errorCode: 'invalid_token',
+          }
+        );
+      }
+
+      if (
+        !(decodedToken.lastPasswordChange instanceof Date) ||
+        !(user.lastPasswordChange instanceof Date)
+      ) {
+        if (decodedToken.lastPasswordChange !== user.lastPasswordChange) {
+          throw new ApolloError(
+            'Invalid token, please request a new password reset',
+            '400',
+            {
+              errorCode: 'invalid_token',
+            }
+          );
+        }
+
+        await reach(newUserValidation, 'password').validate(newPassword);
+
+        const validCurrentPassword = await compare(
+          currentPassword,
+          user.password
+        );
+
+        if (!validCurrentPassword) {
+          throw new ApolloError(
+            'Your current password does not match the one you provided',
+            '400',
+            {
+              errorCode: 'invalid_password',
+            }
+          );
+        }
+
+        const updatePasswordOperation = `
+        mutation updatePassword($userToUpdateId: String!, $newValue: String!) {
+          updateUser(by: password, userToUpdateId: $userToUpdateId, newValue: $newValue) {
+            id
+            picture
+            provider
+            username
+            name
+            email
+            password
+            role
+          }
+        }
+      `;
+
+        await request(
+          process.env.USERS_SERVICE_URL as string,
+          updatePasswordOperation,
+          {
+            userToUpdateId: user.id,
+            newValue: newPassword,
+          }
+        );
+
+        const updateLastPasswordChangeOperation = `
+        mutation updateLastPasswordChange($userToUpdateId: String!, $newValue: String!) {
+          updateUser(by: lastPasswordChange, userToUpdateId: $userToUpdateId, newValue: $newValue) {
+            id
+            picture
+            provider
+            username
+            name
+            email
+            password
+            role
+          }
+        }
+      `;
+
+        const updateLastPasswordChangeResponse = await request(
+          process.env.USERS_SERVICE_URL as string,
+          updateLastPasswordChangeOperation,
+          {
+            userToUpdateId: user.id,
+            newValue: new Date(),
+          }
+        );
+
+        const {
+          updateUser: updatedUser,
+        } = updateLastPasswordChangeResponse as {
+          updateUser: User;
+        };
+
+        return updatedUser;
+      }
+
+      if (
+        decodedToken.lastPasswordChange.getTime() !==
+        user.lastPasswordChange.getTime()
+      ) {
+        throw new ApolloError(
+          'Invalid token, please request a new password reset',
+          '400',
+          {
+            errorCode: 'invalid_token',
+          }
+        );
+      }
+
+      await reach(newUserValidation, 'password').validate(newPassword);
+
+      const validCurrentPassword = await compare(
+        currentPassword,
+        user.password
+      );
+
+      if (!validCurrentPassword) {
+        throw new ApolloError(
+          'Your current password does not match the one you provided',
+          '400',
+          {
+            errorCode: 'invalid_password',
+          }
+        );
+      }
+
+      const updatePasswordOperation = `
+        mutation updatePassword($userToUpdateId: String!, $newValue: String!) {
+          updateUser(by: password, userToUpdateId: $userToUpdateId, newValue: $newValue) {
+            id
+            picture
+            provider
+            username
+            name
+            email
+            password
+            role
+          }
+        }
+      `;
+
+      await request(
+        process.env.USERS_SERVICE_URL as string,
+        updatePasswordOperation,
+        {
+          userToUpdateId: user.id,
+          newValue: newPassword,
+        }
+      );
+
+      const updateLastPasswordChangeOperation = `
+        mutation updateLastPasswordChange($userToUpdateId: String!, $newValue: String!) {
+          updateUser(by: lastPasswordChange, userToUpdateId: $userToUpdateId, newValue: $newValue) {
+            id
+            picture
+            provider
+            username
+            name
+            email
+            password
+            role
+          }
+        }
+      `;
+
+      const updateLastPasswordChangeResponse = await request(
+        process.env.USERS_SERVICE_URL as string,
+        updateLastPasswordChangeOperation,
+        {
+          userToUpdateId: user.id,
+          newValue: new Date(),
+        }
+      );
+
+      const { updateUser: updatedUser } = updateLastPasswordChangeResponse as {
+        updateUser: User;
+      };
+
+      return updatedUser;
+    } catch (error) {
+      console.log(error);
+      if (
+        error.name === 'JsonWebTokenError' &&
+        error.message === 'invalid token'
+      ) {
+        throw new ApolloError(
+          'Invalid token, please request a new password reset',
+          '400',
+          {
+            errorCode: 'invalid_token',
+          }
+        );
+      }
+
       if (error.name === 'ValidationError') {
         throw new ApolloError(error.message, '400', {
           errorCode: 'validation_error',

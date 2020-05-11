@@ -6,6 +6,7 @@ import { newUserValidation } from '../entities/User/validation';
 import { hash } from 'bcryptjs';
 import { generate as generateUniqueId } from 'shortid';
 import { QueryUserBy } from '../graphqlShared/enums/UserBy';
+import { UpdateUserField } from '../graphqlShared/enums/UpdateUserField';
 
 @Resolver(() => User)
 export default class UsersResolver {
@@ -105,5 +106,56 @@ export default class UsersResolver {
 
     await User.clear();
     return true;
+  }
+
+  @Mutation(() => User)
+  async updateUser(
+    @Arg('by', () => UpdateUserField) by: UpdateUserField,
+    @Arg('newValue') newValue: string,
+    @Arg('userToUpdateId') userToUpdateId: string
+  ): Promise<User> {
+    const byPossibilities = [
+      'username',
+      'email',
+      'lastPasswordChange',
+      'role',
+      'password',
+      'name',
+      'picture',
+    ];
+
+    const validBy = byPossibilities.find(byPossibility => byPossibility === by);
+
+    if (!validBy) {
+      throw new ApolloError(
+        `Cannot update user by ${by}, available update fields are: ${byPossibilities.join(
+          ', '
+        )}`,
+        '400',
+        {
+          errorCode: 'invalid_by',
+        }
+      );
+    }
+
+    const userToUpdate = await User.findOne({ where: { id: userToUpdateId } });
+
+    if (!userToUpdate) {
+      throw new ApolloError(
+        `Could not find an user with the id ${userToUpdateId}`,
+        '404',
+        {
+          errorCode: 'user_not_found',
+        }
+      );
+    }
+
+    const newFieldValue =
+      by === 'password' ? await hash(newValue, 12) : newValue;
+
+    userToUpdate[by as string] = newFieldValue;
+    await userToUpdate.save();
+
+    return userToUpdate;
   }
 }

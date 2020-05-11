@@ -62,6 +62,12 @@ export default class User extends Model {
     default: 'user',
   })
   role: string;
+
+  @Field(() => Date, { nullable: true })
+  @Column('timestamp without time zone', {
+    nullable: true,
+  })
+  lastPasswordChange: Date;
 }
 
 export async function resolveUserReference(
