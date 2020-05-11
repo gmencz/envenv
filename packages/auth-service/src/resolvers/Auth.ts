@@ -801,8 +801,8 @@ export default class AuthResolver {
     } catch (error) {
       console.log(error);
       if (
-        error.name === 'JsonWebTokenError' &&
-        error.message === 'invalid token'
+        error.name === 'JsonWebTokenError' ||
+        error.name === 'TokenExpiredError'
       ) {
         throw new ApolloError(
           'Invalid token, please request a new password reset',
