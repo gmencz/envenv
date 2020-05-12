@@ -4,13 +4,16 @@ import { Model } from '../../helpers/Model';
 import EnvironmentMember from '../Environment/Member';
 
 @Entity('users')
+@Directive('@extends')
 @Directive(`@key(fields: "id")`)
 @ObjectType()
 export default class User extends Model {
+  @Directive('@external')
   @Field(() => ID)
   @PrimaryColumn()
   id: string;
 
+  @Directive('@external')
   @Field(() => String)
   @Column('character varying', {
     nullable: false,
@@ -19,6 +22,7 @@ export default class User extends Model {
   })
   picture: string;
 
+  @Directive('@external')
   @Field(() => String)
   @Column('character varying', {
     default: 'none',
@@ -26,6 +30,7 @@ export default class User extends Model {
   })
   provider: string; // google, facebook, etc
 
+  @Directive('@external')
   @Field(() => String)
   @Column('character varying', {
     nullable: false,
@@ -34,6 +39,7 @@ export default class User extends Model {
   })
   username: string;
 
+  @Directive('@external')
   @Field(() => String)
   @Column('character varying', {
     nullable: false,
@@ -42,6 +48,7 @@ export default class User extends Model {
   })
   email: string;
 
+  @Directive('@external')
   @Field(() => String)
   @Column('character varying', {
     nullable: false,
@@ -49,6 +56,7 @@ export default class User extends Model {
   })
   name: string;
 
+  @Directive('@external')
   @Field(() => String)
   @Column('character varying', {
     nullable: false,
@@ -56,6 +64,7 @@ export default class User extends Model {
   })
   password: string;
 
+  @Directive('@external')
   @Field(() => String)
   @Column('character varying', {
     nullable: false,
@@ -64,25 +73,14 @@ export default class User extends Model {
   })
   role: string;
 
+  @Directive('@external')
   @Field(() => Date, { nullable: true })
   @Column('timestamp without time zone', {
     nullable: true,
   })
   lastPasswordChange: Date;
 
-  @Directive(`@provides(fields: "id user environmentRole environment")`)
+  @Directive('@external')
   @Field(() => [EnvironmentMember])
-  @OneToMany(
-    () => EnvironmentMember,
-    (environmentMember: EnvironmentMember) => environmentMember.user
-  )
   membersOfEnvironments: EnvironmentMember[];
-}
-
-export async function resolveUserReference(
-  reference: Pick<User, 'id'>
-): Promise<User> {
-  const users = await User.find();
-
-  return users.find(u => u.id === reference.id) as User;
 }

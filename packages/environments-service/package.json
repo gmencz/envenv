@@ -1,0 +1,26 @@
+{
+  "name": "environments-service",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "ts-node-dev --no-deps --respawn --poll --interval 1000 src/index.ts"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@apollo/federation": "^0.15.0",
+    "apollo-server-express": "^2.13.0",
+    "cookie-parser": "^1.4.5",
+    "pg": "^8.1.0",
+    "reflect-metadata": "^0.1.13",
+    "type-graphql": "^0.18.0-beta.16",
+    "typeorm": "^0.2.24"
+  },
+  "devDependencies": {
+    "@types/cookie-parser": "^1.4.2",
+    "ts-node-dev": "^1.0.0-pre.44",
+    "typescript": "^3.8.3"
+  }
+}

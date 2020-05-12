@@ -19,6 +19,18 @@ services:
       - ./packages/users-service/test.env
     environment:
       - NODE_ENV=test
+  test-environments-service:
+    build:
+      context: ./packages/environments-service
+      dockerfile: Dockerfile.test
+    volumes:
+      - ./packages/environments-service:/test-environments-service
+    ports:
+      - '5006:5006'
+    env_file:
+      - ./packages/environments-service/test.env
+    environment:
+      - NODE_ENV=test
   test-api-gateway:
     build:
       context: ./packages/api-gateway

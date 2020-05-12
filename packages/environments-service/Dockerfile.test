@@ -1,0 +1,9 @@
+FROM buildkite/puppeteer
+
+WORKDIR /test-environments-service
+
+COPY ./package*.json ./
+RUN npm install
+COPY . .
+
+CMD ["npm", "run", "dev"]

@@ -31,6 +31,18 @@ services:
       - ./packages/users-service/development.env
     environment:
       - NODE_ENV=development
+  dev-environments-service:
+    build:
+      context: ./packages/environments-service
+      dockerfile: Dockerfile.dev
+    volumes:
+      - ./packages/environments-service:/dev-environments-service
+    ports:
+      - '5006:5006'
+    env_file:
+      - ./packages/environments-service/development.env
+    environment:
+      - NODE_ENV=development
   dev-api-gateway:
     build:
       context: ./packages/api-gateway
