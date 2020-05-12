@@ -49,12 +49,11 @@ import { hash } from 'bcryptjs';
     if (process.env.NODE_ENV === 'test') {
       connectionOptions = await getConnectionOptions('EnvenvMockDatabase');
     }
+    console.log('before conn');
 
-    await createConnection({
-      ...connectionOptions,
-      name: 'default',
-    });
+    await createConnection({ ...connectionOptions, name: 'default' });
 
+    console.log('after conn');
     if (
       connectionOptions.synchronize &&
       connectionOptions.dropSchema &&
@@ -89,6 +88,7 @@ import { hash } from 'bcryptjs';
       );
     });
   } catch (error) {
+    console.log('anjwefnj');
     console.error(error);
   }
 })();

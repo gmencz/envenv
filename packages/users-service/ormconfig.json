@@ -5,7 +5,7 @@
     "host": "dev-postgres-service",
     "port": 5432,
     "username": "EnvenvAdmin",
-    "password": "ht!4S^9@*5Ritqq9ROOT%uNq0p&J7U41G!#vVZpylzaIjB4XL^",
+    "password": "hwmAS832NSandsao4md",
     "database": "EnvenvDB",
     "logging": true,
     "synchronize": true,
