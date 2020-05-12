@@ -8,7 +8,7 @@
     "password": "ht!4S^9@*5Ritqq9ROOT%uNq0p&J7U41G!#vVZpylzaIjB4XL^",
     "database": "EnvenvDB",
     "logging": true,
-    "synchronize": true,
+    "synchronize": false,
     "dropSchema": true,
     "entities": ["./src/entities/**/*.ts"]
   },

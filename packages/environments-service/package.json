@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "ts-node-dev --no-deps --respawn --poll --interval 1000 src/index.ts"
   },
   "keywords": [],
   "author": "",
@@ -19,6 +19,8 @@
     "typeorm": "^0.2.24"
   },
   "devDependencies": {
-    "@types/cookie-parser": "^1.4.2"
+    "@types/cookie-parser": "^1.4.2",
+    "ts-node-dev": "^1.0.0-pre.44",
+    "typescript": "^3.8.3"
   }
 }

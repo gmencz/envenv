@@ -50,7 +50,10 @@ import { hash } from 'bcryptjs';
       connectionOptions = await getConnectionOptions('EnvenvMockDatabase');
     }
 
-    await createConnection({ ...connectionOptions, name: 'default' });
+    await createConnection({
+      ...connectionOptions,
+      name: 'default',
+    });
 
     if (
       connectionOptions.synchronize &&

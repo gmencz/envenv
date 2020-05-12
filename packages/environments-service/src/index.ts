@@ -9,6 +9,13 @@ import {
   getConnectionOptions,
   createConnection,
 } from 'typeorm';
+import Environment, {
+  resolveEnvironmentReference,
+} from './entities/Environment';
+import EnvironmentMember, {
+  resolveEnvironmentMemberReference,
+} from './entities/Environment/Member';
+import EnvironmentResolver from './resolvers/Environment';
 
 (async (): Promise<void> => {
   try {
@@ -18,11 +25,14 @@ import {
 
     const schema = await buildFederatedSchema(
       {
-        resolvers: [],
-        orphanedTypes: [],
+        resolvers: [EnvironmentResolver],
+        orphanedTypes: [Environment, EnvironmentMember],
       },
       {
-        Environment: {},
+        Environment: { __resolveReference: resolveEnvironmentReference },
+        EnvironmentMember: {
+          __resolveReference: resolveEnvironmentMemberReference,
+        },
       }
     );
 
@@ -50,7 +60,7 @@ import {
 
     app.listen(process.env.SERVICE_PORT, () => {
       console.log(
-        `Users service listening on http://localhost:${process.env.SERVICE_PORT}/`
+        `Environments service listening on http://localhost:${process.env.SERVICE_PORT}/`
       );
     });
   } catch (error) {
