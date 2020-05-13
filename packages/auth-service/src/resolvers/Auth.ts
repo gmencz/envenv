@@ -1,11 +1,4 @@
-import {
-  Resolver,
-  Mutation,
-  Arg,
-  Ctx,
-  Query,
-  UseMiddleware,
-} from 'type-graphql';
+import { Resolver, Mutation, Arg, Ctx, Query } from 'type-graphql';
 import { ApolloError } from 'apollo-server';
 import { Response, Request } from 'express';
 import AuthResponse from '../graphqlShared/types/AuthResponse';
@@ -21,8 +14,10 @@ import { generate } from 'generate-password';
 import { verify, sign } from 'jsonwebtoken';
 import redisClient from '../helpers/redisClient';
 import { reach } from 'yup';
-import isAuth, { ApolloContext } from '../middlewares/isAuth';
 import { createTransport } from 'nodemailer';
+import Test from '../graphqlShared/types/Test';
+import Environment from '../entities/Environment';
+import EnvironmentMember from '../entities/Environment/Member';
 
 @Resolver()
 export default class AuthResolver {
@@ -101,6 +96,9 @@ export default class AuthResolver {
             email
             password
             role
+            membersOfEnvironments {
+              id
+            }
           }
         }
       `;
@@ -260,6 +258,9 @@ export default class AuthResolver {
             email
             password
             role
+            membersOfEnvironments {
+              id
+            }
           }
         }
       `;
@@ -334,6 +335,9 @@ export default class AuthResolver {
             email
             password
             role
+            membersOfEnvironments {
+              id
+            }
           }
         }
       `;
@@ -407,6 +411,9 @@ export default class AuthResolver {
             email
             password
             role
+            membersOfEnvironments {
+              id
+            }
           }
         }
       `;
@@ -669,6 +676,9 @@ export default class AuthResolver {
             email
             password
             role
+            membersOfEnvironments {
+              id
+            }
           }
         }
       `;
@@ -693,6 +703,9 @@ export default class AuthResolver {
             email
             password
             role
+            membersOfEnvironments {
+              id
+            }
           }
         }
       `;
@@ -756,6 +769,9 @@ export default class AuthResolver {
             email
             password
             role
+            membersOfEnvironments {
+              id
+            }
           }
         }
       `;
@@ -780,6 +796,9 @@ export default class AuthResolver {
             email
             password
             role
+            membersOfEnvironments {
+              id
+            }
           }
         }
       `;
@@ -831,5 +850,13 @@ export default class AuthResolver {
         }
       );
     }
+  }
+
+  @Query(() => Test)
+  async mockEnv(): Promise<Test> {
+    return {
+      environment: new Environment(),
+      environmentMember: new EnvironmentMember(),
+    };
   }
 }

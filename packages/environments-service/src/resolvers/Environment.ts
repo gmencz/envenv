@@ -1,7 +1,6 @@
 import { Resolver, Query } from 'type-graphql';
-import Environment from '../entities/Environment';
 
-@Resolver(() => Environment)
+@Resolver()
 export default class EnvironmentResolver {
   @Query(() => String)
   hiEnvironment(): string {

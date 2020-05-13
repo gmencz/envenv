@@ -43,6 +43,10 @@ async function initGateway(): Promise<void> {
         name: 'users-service',
         url: process.env.USERS_SERVICE_URL as string,
       },
+      {
+        name: 'environments-service',
+        url: process.env.ENVIRONMENTS_SERVICE_URL as string,
+      },
     ];
 
     /*

@@ -11,6 +11,8 @@ import { scopeFn, callbackGoogleAuth } from './controllers/auth/google';
 import cookieParser from 'cookie-parser';
 import User from './entities/User';
 import { ApolloContext } from './middlewares/isAuth';
+import Environment from './entities/Environment';
+import EnvironmentMember from './entities/Environment/Member';
 
 //TODO integrate passport callbacks with Apollo
 
@@ -47,11 +49,9 @@ import { ApolloContext } from './middlewares/isAuth';
   const schema = await buildFederatedSchema(
     {
       resolvers: [AuthResolver],
-      orphanedTypes: [User],
-    }
-    // {
-    //   Auth: { __resolveReference: resolveAuthReference },
-    // }
+      orphanedTypes: [User, Environment, EnvironmentMember],
+    },
+    {}
   );
 
   const server = new ApolloServer({
