@@ -1,4 +1,4 @@
-import { Resolver, Mutation, Arg, Ctx, Query } from 'type-graphql';
+import { Resolver, Mutation, Arg, Ctx, Query, Info } from 'type-graphql';
 import { ApolloError } from 'apollo-server';
 import { Response, Request } from 'express';
 import AuthResponse from '../graphqlShared/types/AuthResponse';
@@ -18,15 +18,20 @@ import { createTransport } from 'nodemailer';
 import Test from '../graphqlShared/types/Test';
 import Environment from '../entities/Environment';
 import EnvironmentMember from '../entities/Environment/Member';
+import { InfoParameter } from '../graphqlShared/interfaces';
+import getASTType from '../helpers/getASTType';
+import { print } from 'graphql';
 
 @Resolver()
 export default class AuthResolver {
   @Mutation(() => AuthResponse)
   async signup(
     @Arg('newUserData') newUserData: UserInput,
-    @Ctx() { res }: { res: Response }
+    @Ctx() { res }: { res: Response },
+    @Info() { operation }: InfoParameter
   ): Promise<AuthResponse> {
     try {
+      const parsedAST = getASTType(print(operation), 'user', 'csrfToken');
       await newUserValidation.validate({ ...newUserData });
 
       const checkUsernameQuery = `
@@ -88,17 +93,7 @@ export default class AuthResolver {
       const createUserMutation = `
         mutation createUser($newUserData: UserInput!) {
           createUser(newUserData: $newUserData) {
-            id
-            picture
-            provider
-            username
-            name
-            email
-            password
-            role
-            membersOfEnvironments {
-              id
-            }
+            ${parsedAST}
           }
         }
       `;
@@ -148,9 +143,11 @@ export default class AuthResolver {
   @Mutation(() => AuthResponse)
   async signupWithExternalProvider(
     @Arg('newUserData') newUserData: ExternalProviderInput,
-    @Ctx() { req, res }: { req: Request; res: Response }
+    @Ctx() { req, res }: { req: Request; res: Response },
+    @Info() { operation }: InfoParameter
   ): Promise<AuthResponse> {
     try {
+      const parsedAST = getASTType(print(operation), 'user', 'csrfToken');
       const cookies = JSON.parse(req.headers.cookie as string);
 
       if (!cookies.NewUserData) {
@@ -250,17 +247,7 @@ export default class AuthResolver {
       const createUserMutation = `
         mutation createUser($newUserData: UserInput!) {
           createUser(newUserData: $newUserData) {
-            id
-            picture
-            provider
-            username
-            name
-            email
-            password
-            role
-            membersOfEnvironments {
-              id
-            }
+            ${parsedAST}
           }
         }
       `;
@@ -313,10 +300,12 @@ export default class AuthResolver {
 
   @Mutation(() => AuthResponse)
   async automateLoginProcess(
-    @Ctx() { res, req }: { res: Response; req: Request }
+    @Ctx() { res, req }: { res: Response; req: Request },
+    @Info() { operation }: InfoParameter
   ): Promise<AuthResponse> {
     try {
       const cookies = JSON.parse(req.headers.cookie as string);
+      const parsedAST = getASTType(print(operation), 'user', 'csrfToken');
 
       if (!cookies.TemporaryUserId) {
         throw new ApolloError('Forbidden, cannot automate login', '403', {
@@ -327,17 +316,7 @@ export default class AuthResolver {
       const checkUserQuery = `
         query queryUserById($userId: String!) {
           queryUser(by: id, byValue: $userId) {
-            id
-            picture
-            provider
-            username
-            name
-            email
-            password
-            role
-            membersOfEnvironments {
-              id
-            }
+            ${parsedAST}
           }
         }
       `;
@@ -392,9 +371,11 @@ export default class AuthResolver {
   async login(
     @Arg('username') username: string,
     @Arg('password') password: string,
-    @Ctx() { req, res }: { req: Request; res: Response }
+    @Ctx() { req, res }: { req: Request; res: Response },
+    @Info() { operation }: InfoParameter
   ): Promise<AuthResponse> {
     try {
+      const parsedAST = getASTType(print(operation), 'user', 'csrfToken');
       await reach(newUserValidation, 'username').validate(username);
       await reach(newUserValidation, 'password').validate(password);
 
@@ -403,17 +384,7 @@ export default class AuthResolver {
       const getUserQuery = `
         query queryUserByUsername($username: String!) {
           queryUser(by: username, byValue: $username) {
-            id
-            picture
-            provider
-            username
-            name
-            email
-            password
-            role
-            membersOfEnvironments {
-              id
-            }
+            ${parsedAST}
           }
         }
       `;
@@ -595,9 +566,11 @@ export default class AuthResolver {
   async resetPassword(
     @Arg('currentPassword') currentPassword: string,
     @Arg('newPassword') newPassword: string,
-    @Arg('token') token: string
+    @Arg('token') token: string,
+    @Info() { operation }: InfoParameter
   ): Promise<User> {
     try {
+      const parsedAST = getASTType(print(operation), 'user', 'csrfToken');
       const decodedToken = verify(
         token,
         process.env.PASSWORD_RESET_SECRET as string
@@ -695,17 +668,7 @@ export default class AuthResolver {
         const updateLastPasswordChangeOperation = `
         mutation updateLastPasswordChange($userToUpdateId: String!, $newValue: String!) {
           updateUser(by: lastPasswordChange, userToUpdateId: $userToUpdateId, newValue: $newValue) {
-            id
-            picture
-            provider
-            username
-            name
-            email
-            password
-            role
-            membersOfEnvironments {
-              id
-            }
+            ${parsedAST}
           }
         }
       `;
@@ -788,17 +751,7 @@ export default class AuthResolver {
       const updateLastPasswordChangeOperation = `
         mutation updateLastPasswordChange($userToUpdateId: String!, $newValue: String!) {
           updateUser(by: lastPasswordChange, userToUpdateId: $userToUpdateId, newValue: $newValue) {
-            id
-            picture
-            provider
-            username
-            name
-            email
-            password
-            role
-            membersOfEnvironments {
-              id
-            }
+            ${parsedAST}
           }
         }
       `;
