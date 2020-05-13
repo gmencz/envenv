@@ -1,5 +1,5 @@
 import { Field, ObjectType, Directive, ID } from 'type-graphql';
-import { Entity, Column, PrimaryColumn, OneToMany } from 'typeorm';
+import { Entity, Column, PrimaryColumn } from 'typeorm';
 import { Model } from '../../helpers/Model';
 import EnvironmentMember from '../Environment/Member';
 

@@ -13,6 +13,8 @@ import express from 'express';
 import cookieParser from 'cookie-parser';
 import { generate as generateUniqueId } from 'shortid';
 import { hash } from 'bcryptjs';
+import Environment from './entities/Environment';
+import EnvironmentMember from './entities/Environment/Member';
 
 (async (): Promise<void> => {
   try {
@@ -23,7 +25,7 @@ import { hash } from 'bcryptjs';
     const schema = await buildFederatedSchema(
       {
         resolvers: [UsersResolver],
-        orphanedTypes: [User],
+        orphanedTypes: [User, Environment, EnvironmentMember],
       },
       {
         User: { __resolveReference: resolveUserReference },

@@ -9,13 +9,14 @@ import {
   getConnectionOptions,
   createConnection,
 } from 'typeorm';
-import Environment, {
-  resolveEnvironmentReference,
-} from './entities/Environment';
+import EnvironmentResolver from './resolvers/Environment';
+import User from './entities/User';
 import EnvironmentMember, {
   resolveEnvironmentMemberReference,
 } from './entities/Environment/Member';
-import EnvironmentResolver from './resolvers/Environment';
+import Environment, {
+  resolveEnvironmentReference,
+} from './entities/Environment';
 
 (async (): Promise<void> => {
   try {
@@ -26,7 +27,7 @@ import EnvironmentResolver from './resolvers/Environment';
     const schema = await buildFederatedSchema(
       {
         resolvers: [EnvironmentResolver],
-        orphanedTypes: [Environment, EnvironmentMember],
+        orphanedTypes: [User, EnvironmentMember, Environment],
       },
       {
         Environment: { __resolveReference: resolveEnvironmentReference },

@@ -34,7 +34,10 @@ export default class UsersResolver {
         );
       }
 
-      const user = await User.findOne({ where: { [by]: byValue } });
+      const user = await User.findOne({
+        where: { [by]: byValue },
+        relations: ['membersOfEnvironments'],
+      });
 
       if (!user) {
         return null;
@@ -69,7 +72,22 @@ export default class UsersResolver {
         id: newUserData.id || `${generateUniqueId()}${generateUniqueId()}`,
       }).save();
 
-      return user;
+      const retrievedUser = await User.findOne({
+        where: { id: user.id },
+        relations: ['membersOfEnvironments'],
+      });
+
+      if (!retrievedUser) {
+        throw new ApolloError(
+          `Something went wrong on our side, we're working on it!`,
+          '500',
+          {
+            errorCode: 'server_error',
+          }
+        );
+      }
+
+      return retrievedUser;
     } catch (error) {
       if (error.name === 'ValidationError') {
         throw new ApolloError(error.message, '400', {
@@ -138,7 +156,10 @@ export default class UsersResolver {
       );
     }
 
-    const userToUpdate = await User.findOne({ where: { id: userToUpdateId } });
+    const userToUpdate = await User.findOne({
+      where: { id: userToUpdateId },
+      relations: ['membersOfEnvironments'],
+    });
 
     if (!userToUpdate) {
       throw new ApolloError(

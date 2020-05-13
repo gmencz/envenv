@@ -70,7 +70,6 @@ export default class User extends Model {
   })
   lastPasswordChange: Date;
 
-  @Directive(`@provides(fields: "id user environmentRole environment")`)
   @Field(() => [EnvironmentMember])
   @OneToMany(
     () => EnvironmentMember,

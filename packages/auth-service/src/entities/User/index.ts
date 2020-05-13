@@ -1,4 +1,5 @@
 import { Directive, ObjectType, Field, ID } from 'type-graphql';
+import EnvironmentMember from '../Environment/Member';
 
 @Directive('@extends')
 @Directive(`@key(fields: "id")`)
@@ -39,4 +40,8 @@ export default class User {
   @Directive('@external')
   @Field(() => Date, { nullable: true })
   lastPasswordChange: Date;
+
+  @Directive('@external')
+  @Field(() => [EnvironmentMember])
+  membersOfEnvironments: EnvironmentMember[];
 }

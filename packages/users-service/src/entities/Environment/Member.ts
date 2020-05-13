@@ -1,8 +1,8 @@
-import { Entity, PrimaryColumn, ManyToOne, JoinColumn, Column } from 'typeorm';
+import { Entity, PrimaryColumn, ManyToOne, Column, JoinColumn } from 'typeorm';
+import { Directive, ObjectType, Field, ID } from 'type-graphql';
 import { Model } from '../../helpers/Model';
 import User from '../User';
 import Environment from '.';
-import { Directive, ObjectType, Field, ID } from 'type-graphql';
 
 @Entity('environmentMembers')
 @Directive('@extends')
@@ -17,6 +17,7 @@ export default class EnvironmentMember extends Model {
   @Directive('@external')
   @Field(() => User)
   @ManyToOne(() => User, (user: User) => user.membersOfEnvironments)
+  @JoinColumn({ name: 'id' })
   user: User;
 
   @Directive('@external')
@@ -30,4 +31,14 @@ export default class EnvironmentMember extends Model {
   @Directive('@external')
   @Field(() => Environment)
   environment: Environment;
+}
+
+export async function resolveEnvironmentMemberReference(
+  reference: Pick<EnvironmentMember, 'id'>
+): Promise<EnvironmentMember> {
+  const environmentMembers = await EnvironmentMember.find();
+
+  return environmentMembers.find(
+    environmentMember => environmentMember.id === reference.id
+  ) as EnvironmentMember;
 }
