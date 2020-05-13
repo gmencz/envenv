@@ -18,20 +18,15 @@ import { createTransport } from 'nodemailer';
 import Test from '../graphqlShared/types/Test';
 import Environment from '../entities/Environment';
 import EnvironmentMember from '../entities/Environment/Member';
-import { InfoParameter } from '../graphqlShared/interfaces';
-import getASTType from '../helpers/getASTType';
-import { print } from 'graphql';
 
 @Resolver()
 export default class AuthResolver {
   @Mutation(() => AuthResponse)
   async signup(
     @Arg('newUserData') newUserData: UserInput,
-    @Ctx() { res }: { res: Response },
-    @Info() { operation }: InfoParameter
+    @Ctx() { res }: { res: Response }
   ): Promise<AuthResponse> {
     try {
-      const parsedAST = getASTType(print(operation), 'user', 'csrfToken');
       await newUserValidation.validate({ ...newUserData });
 
       const checkUsernameQuery = `
@@ -93,7 +88,17 @@ export default class AuthResolver {
       const createUserMutation = `
         mutation createUser($newUserData: UserInput!) {
           createUser(newUserData: $newUserData) {
-            ${parsedAST}
+            id
+            picture
+            provider
+            username
+            name
+            email
+            password
+            role
+            membersOfEnvironments {
+              id
+            }
           }
         }
       `;
@@ -143,11 +148,9 @@ export default class AuthResolver {
   @Mutation(() => AuthResponse)
   async signupWithExternalProvider(
     @Arg('newUserData') newUserData: ExternalProviderInput,
-    @Ctx() { req, res }: { req: Request; res: Response },
-    @Info() { operation }: InfoParameter
+    @Ctx() { req, res }: { req: Request; res: Response }
   ): Promise<AuthResponse> {
     try {
-      const parsedAST = getASTType(print(operation), 'user', 'csrfToken');
       const cookies = JSON.parse(req.headers.cookie as string);
 
       if (!cookies.NewUserData) {
@@ -247,7 +250,17 @@ export default class AuthResolver {
       const createUserMutation = `
         mutation createUser($newUserData: UserInput!) {
           createUser(newUserData: $newUserData) {
-            ${parsedAST}
+            id
+            picture
+            provider
+            username
+            name
+            email
+            password
+            role
+            membersOfEnvironments {
+              id
+            }
           }
         }
       `;
@@ -300,12 +313,10 @@ export default class AuthResolver {
 
   @Mutation(() => AuthResponse)
   async automateLoginProcess(
-    @Ctx() { res, req }: { res: Response; req: Request },
-    @Info() { operation }: InfoParameter
+    @Ctx() { res, req }: { res: Response; req: Request }
   ): Promise<AuthResponse> {
     try {
       const cookies = JSON.parse(req.headers.cookie as string);
-      const parsedAST = getASTType(print(operation), 'user', 'csrfToken');
 
       if (!cookies.TemporaryUserId) {
         throw new ApolloError('Forbidden, cannot automate login', '403', {
@@ -316,7 +327,17 @@ export default class AuthResolver {
       const checkUserQuery = `
         query queryUserById($userId: String!) {
           queryUser(by: id, byValue: $userId) {
-            ${parsedAST}
+            id
+            picture
+            provider
+            username
+            name
+            email
+            password
+            role
+            membersOfEnvironments {
+              id
+            }
           }
         }
       `;
@@ -371,11 +392,9 @@ export default class AuthResolver {
   async login(
     @Arg('username') username: string,
     @Arg('password') password: string,
-    @Ctx() { req, res }: { req: Request; res: Response },
-    @Info() { operation }: InfoParameter
+    @Ctx() { req, res }: { req: Request; res: Response }
   ): Promise<AuthResponse> {
     try {
-      const parsedAST = getASTType(print(operation), 'user', 'csrfToken');
       await reach(newUserValidation, 'username').validate(username);
       await reach(newUserValidation, 'password').validate(password);
 
@@ -384,7 +403,17 @@ export default class AuthResolver {
       const getUserQuery = `
         query queryUserByUsername($username: String!) {
           queryUser(by: username, byValue: $username) {
-            ${parsedAST}
+            id
+            picture
+            provider
+            username
+            name
+            email
+            password
+            role
+            membersOfEnvironments {
+              id
+            }
           }
         }
       `;
@@ -566,11 +595,9 @@ export default class AuthResolver {
   async resetPassword(
     @Arg('currentPassword') currentPassword: string,
     @Arg('newPassword') newPassword: string,
-    @Arg('token') token: string,
-    @Info() { operation }: InfoParameter
+    @Arg('token') token: string
   ): Promise<User> {
     try {
-      const parsedAST = getASTType(print(operation), 'user', 'csrfToken');
       const decodedToken = verify(
         token,
         process.env.PASSWORD_RESET_SECRET as string
@@ -668,7 +695,17 @@ export default class AuthResolver {
         const updateLastPasswordChangeOperation = `
         mutation updateLastPasswordChange($userToUpdateId: String!, $newValue: String!) {
           updateUser(by: lastPasswordChange, userToUpdateId: $userToUpdateId, newValue: $newValue) {
-            ${parsedAST}
+            id
+            picture
+            provider
+            username
+            name
+            email
+            password
+            role
+            membersOfEnvironments {
+              id
+            }
           }
         }
       `;
@@ -751,7 +788,17 @@ export default class AuthResolver {
       const updateLastPasswordChangeOperation = `
         mutation updateLastPasswordChange($userToUpdateId: String!, $newValue: String!) {
           updateUser(by: lastPasswordChange, userToUpdateId: $userToUpdateId, newValue: $newValue) {
-            ${parsedAST}
+            id
+            picture
+            provider
+            username
+            name
+            email
+            password
+            role
+            membersOfEnvironments {
+              id
+            }
           }
         }
       `;
