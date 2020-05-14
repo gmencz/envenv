@@ -3,16 +3,38 @@ import { ApolloServer } from 'apollo-server-express';
 import express from 'express';
 import cookieParser from 'cookie-parser';
 import connectDatabase from './helpers/connectDatabase';
-import { ApolloContext } from './types';
+import { ApolloContext } from './typings';
 import User from './entities/User';
 import { buildFederatedSchema } from '@apollo/federation';
 import typeDefs from './graphql/typeDefs';
+import passport from 'passport';
+import { callbackGoogleAuth, scopeFn } from './controllers/auth/google';
+import { GoogleStrategyObj } from './middlewares/passportStrategies';
 
 (async (): Promise<void> => {
   try {
     const app = express();
     app.use(cookieParser());
     app.use(express.json());
+
+    passport.use(GoogleStrategyObj);
+    app.use(passport.initialize());
+    app.use(passport.session());
+
+    app.get('/auth/google', scopeFn());
+    app.get(
+      '/auth/google/callback',
+      passport.authenticate('google', { failureRedirect: '/login' }),
+      callbackGoogleAuth
+    );
+
+    passport.serializeUser(function (user, done) {
+      done(null, user);
+    });
+
+    passport.deserializeUser(function (user, done) {
+      done(null, user);
+    });
 
     const server = new ApolloServer({
       schema: buildFederatedSchema([

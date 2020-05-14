@@ -7,16 +7,16 @@ services:
       dockerfile: Dockerfile.test
     ports:
       - '8080:80'
-  test-users-service:
+  test-accounts-service:
     build:
-      context: ./packages/users-service
+      context: ./packages/accounts-service
       dockerfile: Dockerfile.test
     volumes:
-      - ./packages/users-service:/test-users-service
+      - ./packages/accounts-service:/test-accounts-service
     ports:
       - '5005:5005'
     env_file:
-      - ./packages/users-service/test.env
+      - ./packages/accounts-service/test.env
     environment:
       - NODE_ENV=test
   test-environments-service:
@@ -66,15 +66,3 @@ services:
       - '5434:5432'
     env_file:
       - ./testable-postgres.env
-  test-auth-service:
-    build:
-      context: ./packages/auth-service
-      dockerfile: Dockerfile.test
-    volumes:
-      - ./packages/auth-service:/test-auth-service
-    ports:
-      - '5000:5000'
-    env_file:
-      - ./packages/auth-service/test.env
-    environment:
-      - NODE_ENV=test

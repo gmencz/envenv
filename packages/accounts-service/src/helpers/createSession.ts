@@ -1,4 +1,3 @@
-import SessionResponse from '../graphqlShared/types/SessionResponse';
 import { generate as generateUniqueId } from 'shortid';
 import { sign } from 'jsonwebtoken';
 import { ApolloError } from 'apollo-server';
@@ -10,7 +9,7 @@ export default async function createSession(
   sessionSecret: string = process.env.SESSION_INFO_SECRET as string,
   sessionExpiryTime: string | number = process.env
     .SESSION_REDIS_EXPIRY as string
-): Promise<SessionResponse> {
+): Promise<any> {
   try {
     const sessionInfo = {
       sessionId: `${generateUniqueId()}${generateUniqueId()}`,

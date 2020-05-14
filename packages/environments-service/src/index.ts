@@ -3,7 +3,7 @@ import { ApolloServer } from 'apollo-server-express';
 import express from 'express';
 import cookieParser from 'cookie-parser';
 import connectDatabase from './helpers/connectDatabase';
-import { ApolloContext } from './types';
+import { ApolloContext } from './typings';
 import { buildFederatedSchema } from '@apollo/federation';
 import typeDefs from './graphql/typeDefs';
 import Environment from './entities/Environment';

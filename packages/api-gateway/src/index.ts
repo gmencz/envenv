@@ -1,40 +1,39 @@
 import { ApolloGateway } from '@apollo/gateway';
 import { ApolloServer } from 'apollo-server-express';
-import { GatewayService } from './types';
+import { GatewayService } from './typings';
 import express from 'express';
 import cookieParser from 'cookie-parser';
 import GatewayDataSource from './datasources/GatewayDataSource';
-import { GatewayContext } from './types';
+import { GatewayContext } from './typings';
+
+const serviceList: GatewayService[] = [
+  {
+    name: 'accounts-service',
+    url: process.env.ACCOUNTS_SERVICE_URL as string,
+  },
+  {
+    name: 'environments-service',
+    url: process.env.ENVIRONMENTS_SERVICE_URL as string,
+  },
+];
+
+const gateway = new ApolloGateway({
+  serviceList,
+  buildService({ url }): GatewayDataSource {
+    return new GatewayDataSource({ url });
+  },
+});
 
 (async (): Promise<void> => {
   try {
     const app = express();
     app.use(cookieParser());
 
-    const serviceList: GatewayService[] = [
-      {
-        name: 'auth-service',
-        url: process.env.AUTH_SERVICE_URL as string,
-      },
-      {
-        name: 'users-service',
-        url: process.env.USERS_SERVICE_URL as string,
-      },
-      {
-        name: 'environments-service',
-        url: process.env.ENVIRONMENTS_SERVICE_URL as string,
-      },
-    ];
-
-    const gateway = new ApolloGateway({
-      serviceList,
-      buildService({ url }): GatewayDataSource {
-        return new GatewayDataSource({ url });
-      },
-    });
+    const { executor, schema } = await gateway.load();
 
     const server = new ApolloServer({
-      gateway,
+      executor,
+      schema,
       subscriptions: false,
       context: ({ req, res }: GatewayContext): GatewayContext => ({ req, res }),
     });

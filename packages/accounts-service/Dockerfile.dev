@@ -1,6 +1,5 @@
-FROM buildkite/puppeteer
-
-WORKDIR /test-users-service
+FROM node:lts
+WORKDIR /dev-accounts-service
 
 COPY ./package*.json ./
 RUN npm install
