@@ -10,6 +10,9 @@ import {
   scopeFn,
   GoogleStrategyObj,
 } from './controllers/auth/google';
+import { PrismaClient } from '@prisma/client';
+
+const prisma = new PrismaClient();
 
 (async (): Promise<void> => {
   try {
@@ -65,6 +68,7 @@ import {
         req,
         res,
         user: null,
+        prisma,
       }),
     });
 
@@ -76,5 +80,7 @@ import {
     });
   } catch (error) {
     console.error(error);
+  } finally {
+    await prisma.disconnect();
   }
 })();

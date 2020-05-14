@@ -4,6 +4,9 @@ import cookieParser from 'cookie-parser';
 import { ApolloContext } from './typings';
 import { buildFederatedSchema } from '@apollo/federation';
 import typeDefs from './graphql/typeDefs';
+import { PrismaClient, Environment } from '@prisma/client';
+
+const prisma = new PrismaClient();
 
 (async (): Promise<void> => {
   try {
@@ -17,12 +20,20 @@ import typeDefs from './graphql/typeDefs';
           typeDefs,
           resolvers: {
             Query: {
-              environments() {
-                return null;
+              async environments() {
+                const environments = await prisma.environment.findMany();
+
+                return environments;
               },
             },
             Environment: {
-              __resolveReference(environment) {},
+              async __resolveReference(environment: Environment) {
+                const desiredEnvironment = await prisma.environment.findOne({
+                  where: { id: environment.id },
+                });
+
+                return desiredEnvironment;
+              },
             },
           },
         },
@@ -30,6 +41,7 @@ import typeDefs from './graphql/typeDefs';
       context: ({ req, res }: ApolloContext): ApolloContext => ({
         req,
         res,
+        prisma,
       }),
     });
 
