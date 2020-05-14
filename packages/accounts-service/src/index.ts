@@ -4,7 +4,6 @@ import express from 'express';
 import cookieParser from 'cookie-parser';
 import connectDatabase from './helpers/connectDatabase';
 import { ApolloContext } from './typings';
-import User from './entities/User';
 import { buildFederatedSchema } from '@apollo/federation';
 import typeDefs from './graphql/typeDefs';
 import passport from 'passport';
@@ -56,9 +55,7 @@ import { GoogleStrategyObj } from './middlewares/passportStrategies';
               },
             },
             User: {
-              __resolveReference(user) {
-                return User.find({ where: { id: user.id } });
-              },
+              __resolveReference(user) {},
             },
           },
         },
@@ -66,6 +63,7 @@ import { GoogleStrategyObj } from './middlewares/passportStrategies';
       context: ({ req, res }: ApolloContext): ApolloContext => ({
         req,
         res,
+        user: null,
       }),
     });
 

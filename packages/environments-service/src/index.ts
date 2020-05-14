@@ -6,7 +6,6 @@ import connectDatabase from './helpers/connectDatabase';
 import { ApolloContext } from './typings';
 import { buildFederatedSchema } from '@apollo/federation';
 import typeDefs from './graphql/typeDefs';
-import Environment from './entities/Environment';
 
 (async (): Promise<void> => {
   try {
@@ -25,9 +24,7 @@ import Environment from './entities/Environment';
               },
             },
             Environment: {
-              __resolveReference(environment) {
-                return Environment.find({ where: { id: environment.id } });
-              },
+              __resolveReference(environment) {},
             },
           },
         },
