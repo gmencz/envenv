@@ -1,14 +1,15 @@
-import 'reflect-metadata';
 import { ApolloServer } from 'apollo-server-express';
 import express from 'express';
 import cookieParser from 'cookie-parser';
-import connectDatabase from './helpers/connectDatabase';
 import { ApolloContext } from './typings';
 import { buildFederatedSchema } from '@apollo/federation';
 import typeDefs from './graphql/typeDefs';
 import passport from 'passport';
-import { callbackGoogleAuth, scopeFn } from './controllers/auth/google';
-import { GoogleStrategyObj } from './middlewares/passportStrategies';
+import {
+  callbackGoogleAuth,
+  scopeFn,
+  GoogleStrategyObj,
+} from './controllers/auth/google';
 
 (async (): Promise<void> => {
   try {
@@ -68,8 +69,6 @@ import { GoogleStrategyObj } from './middlewares/passportStrategies';
     });
 
     server.applyMiddleware({ app });
-
-    await connectDatabase();
 
     const PORT = process.env.SERVICE_PORT;
     app.listen(PORT, () => {

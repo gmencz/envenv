@@ -1,6 +1,6 @@
 import { generate as generateUniqueId } from 'shortid';
 import { sign } from 'jsonwebtoken';
-import { ApolloError } from 'apollo-server';
+import { ApolloError } from 'apollo-server-express';
 import { RedisClient } from 'redis';
 
 export default async function createSession(
