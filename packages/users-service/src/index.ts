@@ -1,20 +1,12 @@
 import 'reflect-metadata';
 import { ApolloServer } from 'apollo-server-express';
-import { buildFederatedSchema } from './helpers/buildFederatedSchema';
-import User, { resolveUserReference } from './entities/User';
-import UsersResolver from './resolvers/User';
-import {
-  createConnection,
-  getConnectionOptions,
-  ConnectionOptions,
-} from 'typeorm';
-import { ApolloContext } from './graphqlShared/interfaces';
 import express from 'express';
 import cookieParser from 'cookie-parser';
-import { generate as generateUniqueId } from 'shortid';
-import { hash } from 'bcryptjs';
-import Environment from './entities/Environment';
-import EnvironmentMember from './entities/Environment/Member';
+import connectDatabase from './helpers/connectDatabase';
+import { ApolloContext } from './types';
+import User from './entities/User';
+import { buildFederatedSchema } from '@apollo/federation';
+import typeDefs from './graphql/typeDefs';
 
 (async (): Promise<void> => {
   try {
@@ -22,20 +14,33 @@ import EnvironmentMember from './entities/Environment/Member';
     app.use(cookieParser());
     app.use(express.json());
 
-    const schema = await buildFederatedSchema(
-      {
-        resolvers: [UsersResolver],
-        orphanedTypes: [User, Environment, EnvironmentMember],
-      },
-      {
-        User: { __resolveReference: resolveUserReference },
-      }
-    );
-
     const server = new ApolloServer({
-      schema,
-      tracing: false,
-      playground: true,
+      schema: buildFederatedSchema([
+        {
+          typeDefs,
+          resolvers: {
+            Query: {
+              me() {
+                return {
+                  id: '1',
+                  picture: '',
+                  provider: 'none',
+                  username: 'gabrielmendezc',
+                  email: 'yo@gabrielmendezc.com',
+                  name: 'Gabriel',
+                  password: 'Gabriel123',
+                  role: 'ADMIN',
+                };
+              },
+            },
+            User: {
+              __resolveReference(user) {
+                return User.find({ where: { id: user.id } });
+              },
+            },
+          },
+        },
+      ]),
       context: ({ req, res }: ApolloContext): ApolloContext => ({
         req,
         res,
@@ -44,53 +49,13 @@ import EnvironmentMember from './entities/Environment/Member';
 
     server.applyMiddleware({ app });
 
-    let connectionOptions: ConnectionOptions = await getConnectionOptions(
-      'EnvenvMainDatabase'
-    );
+    await connectDatabase();
 
-    if (process.env.NODE_ENV === 'test') {
-      connectionOptions = await getConnectionOptions('EnvenvMockDatabase');
-    }
-    console.log('before conn');
-
-    await createConnection({ ...connectionOptions, name: 'default' });
-
-    console.log('after conn');
-    if (
-      connectionOptions.synchronize &&
-      connectionOptions.dropSchema &&
-      process.env.NODE_ENV === 'development'
-    ) {
-      // Populate our users database for dev.
-      await User.createQueryBuilder()
-        .insert()
-        .into(User)
-        .values([
-          {
-            id: `${generateUniqueId()}${generateUniqueId()}`,
-            username: 'gabrielmendezc',
-            name: 'Gabriel',
-            email: 'gabriel@envenv.com',
-            password: await hash('Gabriel123', 12),
-          },
-          {
-            id: `${generateUniqueId()}${generateUniqueId()}`,
-            username: 'pexugadepollo',
-            name: 'Blas',
-            email: 'blas@envenv.com',
-            password: await hash('Blas123', 12),
-          },
-        ])
-        .execute();
-    }
-
-    app.listen(process.env.SERVICE_PORT, () => {
-      console.log(
-        `Users service listening on http://localhost:${process.env.SERVICE_PORT}/`
-      );
+    const PORT = process.env.SERVICE_PORT;
+    app.listen(PORT, () => {
+      console.log(`Users service listening on http://localhost:${PORT}/`);
     });
   } catch (error) {
-    console.log('anjwefnj');
     console.error(error);
   }
 })();

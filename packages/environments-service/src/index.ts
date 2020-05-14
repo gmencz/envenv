@@ -1,22 +1,12 @@
 import 'reflect-metadata';
+import { ApolloServer } from 'apollo-server-express';
 import express from 'express';
 import cookieParser from 'cookie-parser';
-import { buildFederatedSchema } from './helpers/buildFederatedSchema';
-import { ApolloServer } from 'apollo-server-express';
-import { ApolloContext } from './graphqlShared/interfaces';
-import {
-  ConnectionOptions,
-  getConnectionOptions,
-  createConnection,
-} from 'typeorm';
-import EnvironmentResolver from './resolvers/Environment';
-import User from './entities/User';
-import EnvironmentMember, {
-  resolveEnvironmentMemberReference,
-} from './entities/Environment/Member';
-import Environment, {
-  resolveEnvironmentReference,
-} from './entities/Environment';
+import connectDatabase from './helpers/connectDatabase';
+import { ApolloContext } from './types';
+import { buildFederatedSchema } from '@apollo/federation';
+import typeDefs from './graphql/typeDefs';
+import Environment from './entities/Environment';
 
 (async (): Promise<void> => {
   try {
@@ -24,23 +14,24 @@ import Environment, {
     app.use(cookieParser());
     app.use(express.json());
 
-    const schema = await buildFederatedSchema(
-      {
-        resolvers: [EnvironmentResolver],
-        orphanedTypes: [User, EnvironmentMember, Environment],
-      },
-      {
-        Environment: { __resolveReference: resolveEnvironmentReference },
-        EnvironmentMember: {
-          __resolveReference: resolveEnvironmentMemberReference,
-        },
-      }
-    );
-
     const server = new ApolloServer({
-      schema,
-      tracing: false,
-      playground: true,
+      schema: buildFederatedSchema([
+        {
+          typeDefs,
+          resolvers: {
+            Query: {
+              environments() {
+                return null;
+              },
+            },
+            Environment: {
+              __resolveReference(environment) {
+                return Environment.find({ where: { id: environment.id } });
+              },
+            },
+          },
+        },
+      ]),
       context: ({ req, res }: ApolloContext): ApolloContext => ({
         req,
         res,
@@ -49,19 +40,12 @@ import Environment, {
 
     server.applyMiddleware({ app });
 
-    let connectionOptions: ConnectionOptions = await getConnectionOptions(
-      'EnvenvMainDatabase'
-    );
+    await connectDatabase();
 
-    if (process.env.NODE_ENV === 'test') {
-      connectionOptions = await getConnectionOptions('EnvenvMockDatabase');
-    }
-
-    await createConnection({ ...connectionOptions, name: 'default' });
-
-    app.listen(process.env.SERVICE_PORT, () => {
+    const PORT = process.env.SERVICE_PORT;
+    app.listen(PORT, () => {
       console.log(
-        `Environments service listening on http://localhost:${process.env.SERVICE_PORT}/`
+        `Environments service listening on http://localhost:${PORT}/`
       );
     });
   } catch (error) {

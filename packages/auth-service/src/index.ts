@@ -1,7 +1,5 @@
 import 'reflect-metadata';
 import { ApolloServer } from 'apollo-server-express';
-import { buildFederatedSchema } from './helpers/buildFederatedSchema';
-import AuthResolver from './resolvers/Auth';
 import express from 'express';
 import { rateLimiter } from './middlewares/rateLimit';
 import helmet from 'helmet';
@@ -9,10 +7,9 @@ import passport from 'passport';
 import { GoogleStrategyObj } from './middlewares/passportStrategies';
 import { scopeFn, callbackGoogleAuth } from './controllers/auth/google';
 import cookieParser from 'cookie-parser';
-import User from './entities/User';
-import { ApolloContext } from './middlewares/isAuth';
-import Environment from './entities/Environment';
-import EnvironmentMember from './entities/Environment/Member';
+import typeDefs from './graphql/typeDefs';
+import { buildFederatedSchema } from '@apollo/federation';
+import { ApolloContext } from './types';
 
 //TODO integrate passport callbacks with Apollo
 
@@ -46,18 +43,19 @@ import EnvironmentMember from './entities/Environment/Member';
     done(null, user);
   });
 
-  const schema = await buildFederatedSchema(
-    {
-      resolvers: [AuthResolver],
-      orphanedTypes: [User, Environment, EnvironmentMember],
-    },
-    {}
-  );
-
   const server = new ApolloServer({
-    schema,
-    tracing: false,
-    playground: true,
+    schema: buildFederatedSchema([
+      {
+        typeDefs,
+        resolvers: {
+          Query: {
+            helloAuth() {
+              return 'hello auth';
+            },
+          },
+        },
+      },
+    ]),
     context: ({ req, res }): ApolloContext => ({
       req,
       res,

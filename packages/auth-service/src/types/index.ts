@@ -1,11 +1,8 @@
 import { Request, Response } from 'express';
-import { ASTNode } from 'graphql';
+import User from '../entities/User';
 
 export interface ApolloContext {
   req: Request;
   res: Response;
-}
-
-export interface InfoParameter {
-  operation: ASTNode;
+  user: User | null;
 }

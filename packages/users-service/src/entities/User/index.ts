@@ -1,17 +1,12 @@
-import { Field, ObjectType, Directive, ID } from 'type-graphql';
 import { Entity, Column, PrimaryColumn, OneToMany } from 'typeorm';
 import { Model } from '../../helpers/Model';
 import EnvironmentMember from '../Environment/Member';
 
 @Entity('users')
-@Directive(`@key(fields: "id")`)
-@ObjectType()
 export default class User extends Model {
-  @Field(() => ID)
   @PrimaryColumn()
   id: string;
 
-  @Field(() => String)
   @Column('character varying', {
     nullable: false,
     default:
@@ -19,14 +14,12 @@ export default class User extends Model {
   })
   picture: string;
 
-  @Field(() => String)
   @Column('character varying', {
     default: 'none',
     nullable: false,
   })
   provider: string; // google, facebook, etc
 
-  @Field(() => String)
   @Column('character varying', {
     nullable: false,
     unique: true,
@@ -34,7 +27,6 @@ export default class User extends Model {
   })
   username: string;
 
-  @Field(() => String)
   @Column('character varying', {
     nullable: false,
     unique: true,
@@ -42,21 +34,18 @@ export default class User extends Model {
   })
   email: string;
 
-  @Field(() => String)
   @Column('character varying', {
     nullable: false,
     length: 60,
   })
   name: string;
 
-  @Field(() => String)
   @Column('character varying', {
     nullable: false,
     length: 255,
   })
   password: string;
 
-  @Field(() => String)
   @Column('character varying', {
     nullable: false,
     length: 30,
@@ -64,13 +53,11 @@ export default class User extends Model {
   })
   role: string;
 
-  @Field(() => Date, { nullable: true })
   @Column('timestamp without time zone', {
     nullable: true,
   })
   lastPasswordChange: Date;
 
-  @Field(() => [EnvironmentMember])
   @OneToMany(
     () => EnvironmentMember,
     (environmentMember: EnvironmentMember) => environmentMember.user
