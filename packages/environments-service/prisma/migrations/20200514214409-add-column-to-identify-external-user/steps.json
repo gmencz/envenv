@@ -1,0 +1,19 @@
+{
+  "version": "0.3.14-fixed",
+  "steps": [
+    {
+      "tag": "UpdateEnum",
+      "enum": "Role",
+      "deletedValues": [
+        "OWNER"
+      ]
+    },
+    {
+      "tag": "CreateField",
+      "model": "Environment",
+      "field": "ownerUserId",
+      "type": "Int",
+      "arity": "Required"
+    }
+  ]
+}

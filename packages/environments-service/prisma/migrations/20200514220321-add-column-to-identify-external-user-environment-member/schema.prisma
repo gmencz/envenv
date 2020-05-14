@@ -1,0 +1,28 @@
+datasource db {
+  provider = "postgresql"
+  url = "***"
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Environment {
+  id          Int                 @default(autoincrement()) @id
+  name        String
+  members     EnvironmentMember[]
+  ownerUserId Int
+}
+
+model EnvironmentMember {
+  id              Int          @default(autoincrement()) @id
+  environment     Environment? @relation(fields: [environmentId], references: [id])
+  environmentId   Int?
+  environmentRole Role         @default(CONTRIBUTOR)
+  userId          Int
+}
+
+enum Role {
+  ADMIN
+  CONTRIBUTOR
+}

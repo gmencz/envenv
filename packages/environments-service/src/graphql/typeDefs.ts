@@ -8,7 +8,20 @@ const typeDefs = gql`
   type Environment @key(fields: "id") {
     id: ID!
     name: String!
-    members: [User] @provides(fields: "username")
+    members: [EnvironmentMember]
+    owner: User! @provides(fields: "id username")
+  }
+
+  type EnvironmentMember @key(fields: "id") {
+    id: ID!
+    environment: Environment
+    environmentRole: EnvironmentRole
+    user: User! @provides(fields: "id username")
+  }
+
+  enum EnvironmentRole {
+    ADMIN
+    CONTRIBUTOR
   }
 
   extend type User @key(fields: "id") {

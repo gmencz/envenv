@@ -1,0 +1,89 @@
+{
+  "version": "0.3.14-fixed",
+  "steps": [
+    {
+      "tag": "CreateEnum",
+      "enum": "Role",
+      "values": [
+        "USER",
+        "ADMIN"
+      ]
+    },
+    {
+      "tag": "CreateEnum",
+      "enum": "Provider",
+      "values": [
+        "GOOGLE",
+        "NONE"
+      ]
+    },
+    {
+      "tag": "UpdateField",
+      "model": "User",
+      "field": "provider",
+      "type": "Provider"
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Field",
+          "model": "User",
+          "field": "provider"
+        },
+        "directive": "default"
+      }
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "User",
+          "field": "provider"
+        },
+        "directive": "default"
+      },
+      "argument": "",
+      "value": "NONE"
+    },
+    {
+      "tag": "UpdateField",
+      "model": "User",
+      "field": "role",
+      "type": "Role"
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Field",
+          "model": "User",
+          "field": "role"
+        },
+        "directive": "default"
+      }
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "User",
+          "field": "role"
+        },
+        "directive": "default"
+      },
+      "argument": "",
+      "value": "USER"
+    },
+    {
+      "tag": "UpdateField",
+      "model": "User",
+      "field": "lastPasswordChange",
+      "type": "DateTime"
+    }
+  ]
+}
