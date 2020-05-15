@@ -1,20 +1,20 @@
-import { UserResolvers, User } from '../../generated';
 import { ApolloContext } from '../../../typings';
 import { ApolloError } from 'apollo-server-express';
+import { UserOperations } from '.';
 
-const resolveEnvironments: UserResolvers['environments'] = async (
-  user: User,
+const resolveEnvironments: UserOperations['resolveEnvironments'] = async (
+  user,
   __,
   { prisma }: ApolloContext
 ) => {
+  console.log(user);
   try {
     const foundEnvironments = await prisma.environment.findMany({
       where: { ownerUserId: user.id },
     });
 
-    return foundEnvironments as any;
+    return foundEnvironments;
   } catch (error) {
-    console.log(error);
     if (error instanceof ApolloError) {
       throw error;
     }

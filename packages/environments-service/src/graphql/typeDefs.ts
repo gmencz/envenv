@@ -12,7 +12,7 @@ const typeDefs = gql`
   type Environment @key(fields: "id") {
     id: Int!
     name: String!
-    owner: User! @provides(fields: "username")
+    owner: User!
     members: [EnvironmentMember]
   }
 
@@ -20,7 +20,7 @@ const typeDefs = gql`
     id: Int!
     environment: Environment
     environmentRole: EnvironmentRole
-    user: User! @provides(fields: "username")
+    user: User!
   }
 
   input CreateEnvironmentInput {
@@ -35,7 +35,6 @@ const typeDefs = gql`
 
   extend type User @key(fields: "id") {
     id: Int! @external
-    username: String! @external
     environments: [Environment]
   }
 `;

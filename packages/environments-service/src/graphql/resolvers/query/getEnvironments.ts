@@ -1,8 +1,9 @@
-import { QueryResolvers, Environment } from '../../generated';
 import { ApolloContext } from '../../../typings';
 import { ApolloError } from 'apollo-server-express';
+import { Environment } from '@prisma/client';
+import { QueryOperations } from './index';
 
-const getEnvironments: QueryResolvers['getEnvironments'] = async (
+const getEnvironments: QueryOperations['getEnvironments'] = async (
   _,
   __,
   { prisma }: ApolloContext
@@ -10,7 +11,7 @@ const getEnvironments: QueryResolvers['getEnvironments'] = async (
   try {
     const environments = await prisma.environment.findMany();
 
-    return environments as any;
+    return environments;
   } catch (error) {
     if (error instanceof ApolloError) {
       throw error;

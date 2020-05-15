@@ -70,7 +70,6 @@ const signup: MutationResolvers['signup'] = async (
       csrfToken: newSession.csrfToken,
     };
   } catch (error) {
-    console.log(error);
     if (error.name === 'ValidationError') {
       throw new ApolloError(error.message, '400', {
         errorCode: 'validation_error',

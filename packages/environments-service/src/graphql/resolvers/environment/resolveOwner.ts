@@ -1,7 +1,6 @@
-import { Environment } from '@prisma/client';
+import { EnvironmentOperations } from '.';
 
-const resolveOwner = (environment: Environment) => {
-  console.log('resolveOwner operation');
+const resolveOwner: EnvironmentOperations['resolveOwner'] = environment => {
   return { __typename: 'User', id: environment.ownerUserId };
 };
 

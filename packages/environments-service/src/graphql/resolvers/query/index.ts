@@ -1,8 +1,17 @@
-import { QueryResolvers } from '../../generated';
 import getEnvironments from './getEnvironments';
+import { ApolloContext } from '../../../typings';
+import { Environment } from '@prisma/client';
 
-const Query: QueryResolvers = {
+export interface QueryOperations {
+  getEnvironments(
+    root: any,
+    args: {},
+    ctx: ApolloContext
+  ): Promise<Environment[]>;
+}
+
+const QueryResolvers: QueryOperations = {
   getEnvironments,
 };
 
-export default Query;
+export default QueryResolvers;

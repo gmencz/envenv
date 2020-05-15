@@ -24,7 +24,6 @@ const findUser: QueryResolvers['findUser'] = async (
       username: user.username,
     };
   } catch (error) {
-    console.log(error);
     if (error instanceof ApolloError) {
       throw error;
     }

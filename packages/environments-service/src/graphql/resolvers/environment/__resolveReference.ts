@@ -1,9 +1,8 @@
-import { Environment } from '@prisma/client';
-import { ApolloContext } from '../../../typings';
+import { EnvironmentOperations } from '.';
 
-const __resolveReference = async (
-  environment: Environment,
-  { prisma }: ApolloContext
+const __resolveReference: EnvironmentOperations['__resolveReference'] = async (
+  environment,
+  { prisma }
 ) => {
   const wantedEnvironment = await prisma.environment.findOne({
     where: { id: environment.id },

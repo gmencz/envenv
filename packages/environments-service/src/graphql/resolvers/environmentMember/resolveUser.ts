@@ -1,6 +1,6 @@
-import { EnvironmentMember } from '@prisma/client';
+import { EnvironmentMemberOperations } from '.';
 
-const resolveUser = (environmentMember: EnvironmentMember) => {
+const resolveUser: EnvironmentMemberOperations['resolveUser'] = environmentMember => {
   return { __typename: 'User', id: environmentMember.userId };
 };
 

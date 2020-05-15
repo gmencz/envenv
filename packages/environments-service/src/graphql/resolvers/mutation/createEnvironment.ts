@@ -1,12 +1,17 @@
-import { MutationResolvers } from '../../generated';
 import { ApolloError } from 'apollo-server-express';
-import { ApolloContext } from '../../../typings';
+import { MutationOperations } from '.';
 
-const createEnvironment: MutationResolvers['createEnvironment'] = async (
+export interface CreateEnvironmentResolvableReturnType {
+  id: number;
+  name: string;
+  ownerUserId: number;
+}
+
+const createEnvironment: MutationOperations['createEnvironment'] = async (
   _,
   { data },
-  { prisma }: ApolloContext
-) => {
+  { prisma }
+): Promise<CreateEnvironmentResolvableReturnType> => {
   try {
     const environment = await prisma.environment.create({
       data: {
@@ -15,12 +20,11 @@ const createEnvironment: MutationResolvers['createEnvironment'] = async (
       },
     });
 
-    console.log('createEnvironment operation');
     return {
       id: environment.id,
       name: environment.name,
       ownerUserId: environment.ownerUserId,
-    } as any;
+    };
   } catch (error) {
     if (error instanceof ApolloError) {
       throw error;
