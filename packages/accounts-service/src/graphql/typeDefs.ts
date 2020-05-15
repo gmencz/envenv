@@ -20,14 +20,12 @@ const typeDefs = gql`
   }
 
   input CreateUserInput {
-    id: ID
-    picture: String!
-    provider: Provider!
+    id: Int
+    picture: String
     username: String!
     email: String!
     name: String!
     password: String!
-    role: Role!
   }
 
   type AuthResponse {
@@ -36,8 +34,8 @@ const typeDefs = gql`
   }
 
   type User @key(fields: "id") {
-    id: ID!
-    picture: String!
+    id: Int!
+    picture: String
     provider: Provider!
     username: String!
     email: String!
@@ -45,6 +43,7 @@ const typeDefs = gql`
     password: String!
     role: Role!
     lastPasswordChange: String
+    environments: [Int]
   }
 
   enum Role {

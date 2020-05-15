@@ -7,3 +7,5 @@
 20200514202015-add-unique-directives-to-user-table
 20200514213637-add-stricter-types-for-users
 20200514221003-add-column-to-identify-external-environment
+20200515012953-alter-lastpasswordchange-column-to-optional-date
+20200515020048-alter-column-picture-to-nullable

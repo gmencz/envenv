@@ -3,13 +3,18 @@ import { sign } from 'jsonwebtoken';
 import { ApolloError } from 'apollo-server-express';
 import { RedisClient } from 'redis';
 
+interface CreateSessionReturnType {
+  csrfToken: string;
+  sessionId: string;
+}
+
 export default async function createSession(
-  userId: string,
+  userId: string | number,
   preferedRedisClient: RedisClient,
   sessionSecret: string = process.env.SESSION_INFO_SECRET as string,
   sessionExpiryTime: string | number = process.env
     .SESSION_REDIS_EXPIRY as string
-): Promise<any> {
+): Promise<CreateSessionReturnType> {
   try {
     const sessionInfo = {
       sessionId: `${generateUniqueId()}${generateUniqueId()}`,

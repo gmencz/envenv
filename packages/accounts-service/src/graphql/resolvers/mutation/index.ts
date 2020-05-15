@@ -1,5 +1,8 @@
 import { MutationResolvers } from '../../generated';
+import signup from './signup';
 
-const Mutation: MutationResolvers = {};
+const Mutation: MutationResolvers = {
+  signup,
+};
 
 export default Mutation;

@@ -25,14 +25,12 @@ export type ResetPasswordInput = {
 };
 
 export type CreateUserInput = {
-  id?: Maybe<Scalars['ID']>;
-  picture: Scalars['String'];
-  provider: Provider;
+  id?: Maybe<Scalars['Int']>;
+  picture?: Maybe<Scalars['String']>;
   username: Scalars['String'];
   email: Scalars['String'];
   name: Scalars['String'];
   password: Scalars['String'];
-  role: Role;
 };
 
 export type AuthResponse = {
@@ -43,8 +41,8 @@ export type AuthResponse = {
 
 export type User = {
   __typename?: 'User';
-  id: Scalars['ID'];
-  picture: Scalars['String'];
+  id: Scalars['Int'];
+  picture?: Maybe<Scalars['String']>;
   provider: Provider;
   username: Scalars['String'];
   email: Scalars['String'];
@@ -52,6 +50,7 @@ export type User = {
   password: Scalars['String'];
   role: Role;
   lastPasswordChange?: Maybe<Scalars['String']>;
+  environments?: Maybe<Array<Maybe<Scalars['Int']>>>;
 };
 
 export enum Role {
@@ -225,7 +224,7 @@ export type ResolversTypes = {
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
   ResetPasswordInput: ResetPasswordInput;
   CreateUserInput: CreateUserInput;
-  ID: ResolverTypeWrapper<Scalars['ID']>;
+  Int: ResolverTypeWrapper<Scalars['Int']>;
   AuthResponse: ResolverTypeWrapper<AuthResponse>;
   User: ResolverTypeWrapper<User>;
   Role: Role;
@@ -243,7 +242,7 @@ export type ResolversParentTypes = {
   Boolean: Scalars['Boolean'];
   ResetPasswordInput: ResetPasswordInput;
   CreateUserInput: CreateUserInput;
-  ID: Scalars['ID'];
+  Int: Scalars['Int'];
   AuthResponse: AuthResponse;
   User: User;
   Role: Role;
@@ -268,8 +267,8 @@ export type UserResolvers<
   ContextType = any,
   ParentType extends ResolversParentTypes['User'] = ResolversParentTypes['User']
 > = {
-  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
-  picture?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  picture?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   provider?: Resolver<ResolversTypes['Provider'], ParentType, ContextType>;
   username?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   email?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
@@ -278,6 +277,11 @@ export type UserResolvers<
   role?: Resolver<ResolversTypes['Role'], ParentType, ContextType>;
   lastPasswordChange?: Resolver<
     Maybe<ResolversTypes['String']>,
+    ParentType,
+    ContextType
+  >;
+  environments?: Resolver<
+    Maybe<Array<Maybe<ResolversTypes['Int']>>>,
     ParentType,
     ContextType
   >;
