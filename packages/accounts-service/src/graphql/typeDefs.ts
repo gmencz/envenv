@@ -3,6 +3,7 @@ import { gql } from 'apollo-server-express';
 const typeDefs = gql`
   extend type Query {
     requestPasswordResetEmail(email: String!): Boolean!
+    findUser(id: Int!): User
   }
 
   extend type Mutation {
@@ -43,7 +44,6 @@ const typeDefs = gql`
     password: String!
     role: Role!
     lastPasswordChange: String
-    environments: [Int]
   }
 
   enum Role {

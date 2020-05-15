@@ -9,3 +9,4 @@
 20200514221003-add-column-to-identify-external-environment
 20200515012953-alter-lastpasswordchange-column-to-optional-date
 20200515020048-alter-column-picture-to-nullable
+20200515155353-alter-table-user-remove-column-environments

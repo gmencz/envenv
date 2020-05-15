@@ -1,9 +1,10 @@
-import { MutationResolvers, AuthResponse, User } from '../../generated';
+import { MutationResolvers, AuthResponse } from '../../generated';
 import { ApolloContext } from '../../../typings';
 import { ApolloError } from 'apollo-server-express';
 import { createUserSchema } from '../../../validation/createUser';
 import createSession from '../../../helpers/createSession';
 import redisClient from '../../../helpers/redisClient';
+import { hash } from 'bcryptjs';
 
 const signup: MutationResolvers['signup'] = async (
   _,
@@ -43,8 +44,10 @@ const signup: MutationResolvers['signup'] = async (
       );
     }
 
+    const password = await hash(data.password, 12);
+
     const newUser = await prisma.user.create({
-      data: { ...data },
+      data: { ...data, password },
     });
     const newSession = await createSession(newUser.id, redisClient);
 
@@ -56,10 +59,13 @@ const signup: MutationResolvers['signup'] = async (
 
     return {
       user: {
-        ...newUser,
+        email: newUser.email,
+        id: newUser.id,
+        name: newUser.name,
+        password: newUser.password,
         provider: newUser.provider as any,
         role: newUser.role as any,
-        lastPasswordChange: null,
+        username: newUser.username,
       },
       csrfToken: newSession.csrfToken,
     };

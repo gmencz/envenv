@@ -18,71 +18,44 @@ export type Scalars = {
   _Any: any;
 };
 
-export type ResetPasswordInput = {
-  currentPassword: Scalars['String'];
-  newPassword: Scalars['String'];
-  token: Scalars['String'];
-};
-
-export type CreateUserInput = {
-  id?: Maybe<Scalars['Int']>;
-  picture?: Maybe<Scalars['String']>;
-  username: Scalars['String'];
-  email: Scalars['String'];
-  name: Scalars['String'];
-  password: Scalars['String'];
-};
-
-export type AuthResponse = {
-  __typename?: 'AuthResponse';
-  user: User;
-  csrfToken: Scalars['String'];
-};
-
-export type User = {
-  __typename?: 'User';
+export type Environment = {
+  __typename?: 'Environment';
   id: Scalars['Int'];
-  picture?: Maybe<Scalars['String']>;
-  provider: Provider;
-  username: Scalars['String'];
-  email: Scalars['String'];
   name: Scalars['String'];
-  password: Scalars['String'];
-  role: Role;
-  lastPasswordChange?: Maybe<Scalars['String']>;
+  owner: User;
+  members?: Maybe<Array<Maybe<EnvironmentMember>>>;
 };
 
-export enum Role {
-  User = 'USER',
-  Admin = 'ADMIN',
-}
+export type EnvironmentMember = {
+  __typename?: 'EnvironmentMember';
+  id: Scalars['Int'];
+  environment?: Maybe<Environment>;
+  environmentRole?: Maybe<EnvironmentRole>;
+  user: User;
+};
 
-export enum Provider {
-  Google = 'GOOGLE',
-  None = 'NONE',
+export type CreateEnvironmentInput = {
+  name: Scalars['String'];
+  userCreatingEnvironmentId: Scalars['Int'];
+};
+
+export enum EnvironmentRole {
+  Admin = 'ADMIN',
+  Contributor = 'CONTRIBUTOR',
 }
 
 export type Query = {
   __typename?: 'Query';
   _entities: Array<Maybe<_Entity>>;
   _service: _Service;
-  requestPasswordResetEmail: Scalars['Boolean'];
-  findUser?: Maybe<User>;
+  getEnvironments?: Maybe<Array<Maybe<Environment>>>;
 };
 
 export type Query_EntitiesArgs = {
   representations: Array<Scalars['_Any']>;
 };
 
-export type QueryRequestPasswordResetEmailArgs = {
-  email: Scalars['String'];
-};
-
-export type QueryFindUserArgs = {
-  id: Scalars['Int'];
-};
-
-export type _Entity = User;
+export type _Entity = Environment | EnvironmentMember | User;
 
 export type _Service = {
   __typename?: '_Service';
@@ -92,28 +65,18 @@ export type _Service = {
 
 export type Mutation = {
   __typename?: 'Mutation';
-  signup: AuthResponse;
-  signupWithExternalProvider: AuthResponse;
-  automateLoginProcess: AuthResponse;
-  login: AuthResponse;
-  resetPassword: User;
+  createEnvironment?: Maybe<Environment>;
 };
 
-export type MutationSignupArgs = {
-  data: CreateUserInput;
+export type MutationCreateEnvironmentArgs = {
+  data?: Maybe<CreateEnvironmentInput>;
 };
 
-export type MutationSignupWithExternalProviderArgs = {
+export type User = {
+  __typename?: 'User';
+  id: Scalars['Int'];
   username: Scalars['String'];
-};
-
-export type MutationLoginArgs = {
-  username: Scalars['String'];
-  password: Scalars['String'];
-};
-
-export type MutationResetPasswordArgs = {
-  data?: Maybe<ResetPasswordInput>;
+  environments?: Maybe<Array<Maybe<Environment>>>;
 };
 
 export type ResolverTypeWrapper<T> = Promise<T> | T;
@@ -226,64 +189,73 @@ export type DirectiveResolverFn<
 export type ResolversTypes = {
   String: ResolverTypeWrapper<Scalars['String']>;
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
-  ResetPasswordInput: ResetPasswordInput;
-  CreateUserInput: CreateUserInput;
+  Environment: ResolverTypeWrapper<Environment>;
   Int: ResolverTypeWrapper<Scalars['Int']>;
-  AuthResponse: ResolverTypeWrapper<AuthResponse>;
-  User: ResolverTypeWrapper<User>;
-  Role: Role;
-  Provider: Provider;
+  EnvironmentMember: ResolverTypeWrapper<EnvironmentMember>;
+  CreateEnvironmentInput: CreateEnvironmentInput;
+  EnvironmentRole: EnvironmentRole;
   Query: ResolverTypeWrapper<{}>;
-  _Entity: ResolversTypes['User'];
+  _Entity:
+    | ResolversTypes['Environment']
+    | ResolversTypes['EnvironmentMember']
+    | ResolversTypes['User'];
   _Any: ResolverTypeWrapper<Scalars['_Any']>;
   _Service: ResolverTypeWrapper<_Service>;
   Mutation: ResolverTypeWrapper<{}>;
+  User: ResolverTypeWrapper<User>;
 };
 
 /** Mapping between all available schema types and the resolvers parents */
 export type ResolversParentTypes = {
   String: Scalars['String'];
   Boolean: Scalars['Boolean'];
-  ResetPasswordInput: ResetPasswordInput;
-  CreateUserInput: CreateUserInput;
+  Environment: Environment;
   Int: Scalars['Int'];
-  AuthResponse: AuthResponse;
-  User: User;
-  Role: Role;
-  Provider: Provider;
+  EnvironmentMember: EnvironmentMember;
+  CreateEnvironmentInput: CreateEnvironmentInput;
+  EnvironmentRole: EnvironmentRole;
   Query: {};
-  _Entity: ResolversParentTypes['User'];
+  _Entity:
+    | ResolversParentTypes['Environment']
+    | ResolversParentTypes['EnvironmentMember']
+    | ResolversParentTypes['User'];
   _Any: Scalars['_Any'];
   _Service: _Service;
   Mutation: {};
+  User: User;
 };
 
-export type AuthResponseResolvers<
+export type EnvironmentResolvers<
   ContextType = any,
-  ParentType extends ResolversParentTypes['AuthResponse'] = ResolversParentTypes['AuthResponse']
-> = {
-  user?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
-  csrfToken?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  __isTypeOf?: isTypeOfResolverFn<ParentType>;
-};
-
-export type UserResolvers<
-  ContextType = any,
-  ParentType extends ResolversParentTypes['User'] = ResolversParentTypes['User']
+  ParentType extends ResolversParentTypes['Environment'] = ResolversParentTypes['Environment']
 > = {
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  picture?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  provider?: Resolver<ResolversTypes['Provider'], ParentType, ContextType>;
-  username?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  email?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  password?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  role?: Resolver<ResolversTypes['Role'], ParentType, ContextType>;
-  lastPasswordChange?: Resolver<
-    Maybe<ResolversTypes['String']>,
+  owner?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
+  members?: Resolver<
+    Maybe<Array<Maybe<ResolversTypes['EnvironmentMember']>>>,
     ParentType,
     ContextType
   >;
+  __isTypeOf?: isTypeOfResolverFn<ParentType>;
+};
+
+export type EnvironmentMemberResolvers<
+  ContextType = any,
+  ParentType extends ResolversParentTypes['EnvironmentMember'] = ResolversParentTypes['EnvironmentMember']
+> = {
+  id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  environment?: Resolver<
+    Maybe<ResolversTypes['Environment']>,
+    ParentType,
+    ContextType
+  >;
+  environmentRole?: Resolver<
+    Maybe<ResolversTypes['EnvironmentRole']>,
+    ParentType,
+    ContextType
+  >;
+  user?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
   __isTypeOf?: isTypeOfResolverFn<ParentType>;
 };
 
@@ -298,17 +270,10 @@ export type QueryResolvers<
     RequireFields<Query_EntitiesArgs, 'representations'>
   >;
   _service?: Resolver<ResolversTypes['_Service'], ParentType, ContextType>;
-  requestPasswordResetEmail?: Resolver<
-    ResolversTypes['Boolean'],
+  getEnvironments?: Resolver<
+    Maybe<Array<Maybe<ResolversTypes['Environment']>>>,
     ParentType,
-    ContextType,
-    RequireFields<QueryRequestPasswordResetEmailArgs, 'email'>
-  >;
-  findUser?: Resolver<
-    Maybe<ResolversTypes['User']>,
-    ParentType,
-    ContextType,
-    RequireFields<QueryFindUserArgs, 'id'>
+    ContextType
   >;
 };
 
@@ -316,7 +281,11 @@ export type _EntityResolvers<
   ContextType = any,
   ParentType extends ResolversParentTypes['_Entity'] = ResolversParentTypes['_Entity']
 > = {
-  __resolveType: TypeResolveFn<'User', ParentType, ContextType>;
+  __resolveType: TypeResolveFn<
+    'Environment' | 'EnvironmentMember' | 'User',
+    ParentType,
+    ContextType
+  >;
 };
 
 export interface _AnyScalarConfig
@@ -336,45 +305,37 @@ export type MutationResolvers<
   ContextType = any,
   ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']
 > = {
-  signup?: Resolver<
-    ResolversTypes['AuthResponse'],
+  createEnvironment?: Resolver<
+    Maybe<ResolversTypes['Environment']>,
     ParentType,
     ContextType,
-    RequireFields<MutationSignupArgs, 'data'>
-  >;
-  signupWithExternalProvider?: Resolver<
-    ResolversTypes['AuthResponse'],
-    ParentType,
-    ContextType,
-    RequireFields<MutationSignupWithExternalProviderArgs, 'username'>
-  >;
-  automateLoginProcess?: Resolver<
-    ResolversTypes['AuthResponse'],
-    ParentType,
-    ContextType
-  >;
-  login?: Resolver<
-    ResolversTypes['AuthResponse'],
-    ParentType,
-    ContextType,
-    RequireFields<MutationLoginArgs, 'username' | 'password'>
-  >;
-  resetPassword?: Resolver<
-    ResolversTypes['User'],
-    ParentType,
-    ContextType,
-    RequireFields<MutationResetPasswordArgs, never>
+    RequireFields<MutationCreateEnvironmentArgs, never>
   >;
 };
 
+export type UserResolvers<
+  ContextType = any,
+  ParentType extends ResolversParentTypes['User'] = ResolversParentTypes['User']
+> = {
+  id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  username?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  environments?: Resolver<
+    Maybe<Array<Maybe<ResolversTypes['Environment']>>>,
+    ParentType,
+    ContextType
+  >;
+  __isTypeOf?: isTypeOfResolverFn<ParentType>;
+};
+
 export type Resolvers<ContextType = any> = {
-  AuthResponse?: AuthResponseResolvers<ContextType>;
-  User?: UserResolvers<ContextType>;
+  Environment?: EnvironmentResolvers<ContextType>;
+  EnvironmentMember?: EnvironmentMemberResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
   _Entity?: _EntityResolvers;
   _Any?: GraphQLScalarType;
   _Service?: _ServiceResolvers<ContextType>;
   Mutation?: MutationResolvers<ContextType>;
+  User?: UserResolvers<ContextType>;
 };
 
 /**
