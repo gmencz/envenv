@@ -27,6 +27,7 @@ const typeDefs = gql`
   extend type User @key(fields: "id") {
     id: ID! @external
     username: String! @external
+    environments: [Environment]
   }
 `;
 

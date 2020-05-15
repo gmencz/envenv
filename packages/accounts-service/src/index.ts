@@ -11,6 +11,8 @@ import {
   GoogleStrategyObj,
 } from './controllers/auth/google';
 import { PrismaClient } from '@prisma/client';
+import resolvers from './graphql/resolvers';
+import { GraphQLResolverMap } from 'apollo-graphql';
 
 const prisma = new PrismaClient();
 
@@ -43,25 +45,7 @@ const prisma = new PrismaClient();
       schema: buildFederatedSchema([
         {
           typeDefs,
-          resolvers: {
-            Query: {
-              me() {
-                return {
-                  id: '1',
-                  picture: '',
-                  provider: 'none',
-                  username: 'gabrielmendezc',
-                  email: 'yo@gabrielmendezc.com',
-                  name: 'Gabriel',
-                  password: 'Gabriel123',
-                  role: 'ADMIN',
-                };
-              },
-            },
-            User: {
-              __resolveReference(user) {},
-            },
-          },
+          resolvers: resolvers as any,
         },
       ]),
       context: ({ req, res }: ApolloContext): ApolloContext => ({

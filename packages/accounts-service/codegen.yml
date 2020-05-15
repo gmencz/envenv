@@ -1,0 +1,9 @@
+overwrite: true
+schema: 'http://dev-accounts-service:5005/graphql'
+documents: null
+useIndexSignature: true
+generates:
+  src/graphql/generated.ts:
+    plugins:
+      - 'typescript'
+      - 'typescript-resolvers'

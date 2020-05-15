@@ -2,19 +2,59 @@ import { gql } from 'apollo-server-express';
 
 const typeDefs = gql`
   extend type Query {
-    me: User
+    requestPasswordResetEmail(email: String!): Boolean!
+  }
+
+  extend type Mutation {
+    signup(data: CreateUserInput!): AuthResponse!
+    signupWithExternalProvider(username: String!): AuthResponse!
+    automateLoginProcess: AuthResponse!
+    login(username: String!, password: String!): AuthResponse!
+    resetPassword(data: ResetPasswordInput): User!
+  }
+
+  input ResetPasswordInput {
+    currentPassword: String!
+    newPassword: String!
+    token: String!
+  }
+
+  input CreateUserInput {
+    id: ID
+    picture: String!
+    provider: Provider!
+    username: String!
+    email: String!
+    name: String!
+    password: String!
+    role: Role!
+  }
+
+  type AuthResponse {
+    user: User!
+    csrfToken: String!
   }
 
   type User @key(fields: "id") {
     id: ID!
     picture: String!
-    provider: String!
+    provider: Provider!
     username: String!
     email: String!
     name: String!
     password: String!
-    role: String!
+    role: Role!
     lastPasswordChange: String
+  }
+
+  enum Role {
+    USER
+    ADMIN
+  }
+
+  enum Provider {
+    GOOGLE
+    NONE
   }
 `;
 
