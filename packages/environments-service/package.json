@@ -4,8 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "ts-node-dev --no-deps --respawn --poll --interval 1000 src/index.ts",
-    "gen-graphql": "graphql-codegen --config codegen.yml"
+    "gen-graphql": "graphql-codegen --config codegen.yml",
+    "gen-graphql-watch": "graphql-codegen --config codegen.yml --watch src/graphql/typeDefs.ts",
+    "dev": "concurrently \"ts-node-dev --no-deps --respawn --poll --interval 1000 --ignore-watch src/graphql/typeDefs.ts src/index.ts\" \"npm run gen-graphql-watch\""
   },
   "keywords": [],
   "author": "",
@@ -20,12 +21,13 @@
   },
   "devDependencies": {
     "@graphql-codegen/cli": "1.13.5",
+    "@graphql-codegen/typescript": "1.13.5",
+    "@graphql-codegen/typescript-resolvers": "1.13.5",
     "@prisma/cli": "^2.0.0-beta.5",
     "@types/cookie-parser": "^1.4.2",
     "@types/node": "^14.0.1",
+    "concurrently": "^5.2.0",
     "ts-node-dev": "^1.0.0-pre.44",
-    "typescript": "^3.8.3",
-    "@graphql-codegen/typescript": "1.13.5",
-    "@graphql-codegen/typescript-resolvers": "1.13.5"
+    "typescript": "^3.8.3"
   }
 }
