@@ -6,7 +6,7 @@
   "scripts": {
     "gen-graphql": "graphql-codegen --config codegen.yml",
     "gen-graphql-watch": "graphql-codegen --config codegen.yml --watch src/graphql/typeDefs.ts",
-    "dev": "concurrently \"ts-node-dev --no-deps --respawn --poll --interval 1000 --ignore-watch src/graphql/typeDefs.ts src/index.ts\" \"npm run gen-graphql-watch\""
+    "dev": "concurrently \"ts-node-dev --no-deps --respawn --poll --interval 1000 src/index.ts\" \"npm run gen-graphql-watch\""
   },
   "keywords": [],
   "author": "",

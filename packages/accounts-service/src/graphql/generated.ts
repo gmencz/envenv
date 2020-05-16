@@ -1,8 +1,4 @@
-import {
-  GraphQLResolveInfo,
-  GraphQLScalarType,
-  GraphQLScalarTypeConfig,
-} from 'graphql';
+import { GraphQLResolveInfo } from 'graphql';
 export type Maybe<T> = T | null;
 export type RequireFields<T, K extends keyof T> = {
   [X in Exclude<keyof T, K>]?: T[X];
@@ -15,7 +11,41 @@ export type Scalars = {
   Boolean: boolean;
   Int: number;
   Float: number;
-  _Any: any;
+};
+
+export type Query = {
+  __typename?: 'Query';
+  requestPasswordResetEmail: Scalars['Boolean'];
+};
+
+export type QueryRequestPasswordResetEmailArgs = {
+  email: Scalars['String'];
+};
+
+export type Mutation = {
+  __typename?: 'Mutation';
+  signup: AuthResponse;
+  signupWithExternalProvider: AuthResponse;
+  automateLoginProcess: AuthResponse;
+  login: AuthResponse;
+  resetPassword: User;
+};
+
+export type MutationSignupArgs = {
+  data: CreateUserInput;
+};
+
+export type MutationSignupWithExternalProviderArgs = {
+  username: Scalars['String'];
+};
+
+export type MutationLoginArgs = {
+  username: Scalars['String'];
+  password: Scalars['String'];
+};
+
+export type MutationResetPasswordArgs = {
+  data?: Maybe<ResetPasswordInput>;
 };
 
 export type ResetPasswordInput = {
@@ -61,55 +91,6 @@ export enum Provider {
   Google = 'GOOGLE',
   None = 'NONE',
 }
-
-export type Query = {
-  __typename?: 'Query';
-  _entities: Array<Maybe<_Entity>>;
-  _service: _Service;
-  requestPasswordResetEmail: Scalars['Boolean'];
-};
-
-export type Query_EntitiesArgs = {
-  representations: Array<Scalars['_Any']>;
-};
-
-export type QueryRequestPasswordResetEmailArgs = {
-  email: Scalars['String'];
-};
-
-export type _Entity = User;
-
-export type _Service = {
-  __typename?: '_Service';
-  /** The sdl representing the federated service capabilities. Includes federation directives, removes federation types, and includes rest of full schema after schema directives have been applied */
-  sdl?: Maybe<Scalars['String']>;
-};
-
-export type Mutation = {
-  __typename?: 'Mutation';
-  signup: AuthResponse;
-  signupWithExternalProvider: AuthResponse;
-  automateLoginProcess: AuthResponse;
-  login: AuthResponse;
-  resetPassword: User;
-};
-
-export type MutationSignupArgs = {
-  data: CreateUserInput;
-};
-
-export type MutationSignupWithExternalProviderArgs = {
-  username: Scalars['String'];
-};
-
-export type MutationLoginArgs = {
-  username: Scalars['String'];
-  password: Scalars['String'];
-};
-
-export type MutationResetPasswordArgs = {
-  data?: Maybe<ResetPasswordInput>;
-};
 
 export type ResolverTypeWrapper<T> = Promise<T> | T;
 
@@ -221,6 +202,8 @@ export type DirectiveResolverFn<
 export type ResolversTypes = {
   String: ResolverTypeWrapper<Scalars['String']>;
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
+  Query: ResolverTypeWrapper<{}>;
+  Mutation: ResolverTypeWrapper<{}>;
   ResetPasswordInput: ResetPasswordInput;
   CreateUserInput: CreateUserInput;
   Int: ResolverTypeWrapper<Scalars['Int']>;
@@ -228,17 +211,14 @@ export type ResolversTypes = {
   User: ResolverTypeWrapper<User>;
   Role: Role;
   Provider: Provider;
-  Query: ResolverTypeWrapper<{}>;
-  _Entity: ResolversTypes['User'];
-  _Any: ResolverTypeWrapper<Scalars['_Any']>;
-  _Service: ResolverTypeWrapper<_Service>;
-  Mutation: ResolverTypeWrapper<{}>;
 };
 
 /** Mapping between all available schema types and the resolvers parents */
 export type ResolversParentTypes = {
   String: Scalars['String'];
   Boolean: Scalars['Boolean'];
+  Query: {};
+  Mutation: {};
   ResetPasswordInput: ResetPasswordInput;
   CreateUserInput: CreateUserInput;
   Int: Scalars['Int'];
@@ -246,79 +226,18 @@ export type ResolversParentTypes = {
   User: User;
   Role: Role;
   Provider: Provider;
-  Query: {};
-  _Entity: ResolversParentTypes['User'];
-  _Any: Scalars['_Any'];
-  _Service: _Service;
-  Mutation: {};
-};
-
-export type AuthResponseResolvers<
-  ContextType = any,
-  ParentType extends ResolversParentTypes['AuthResponse'] = ResolversParentTypes['AuthResponse']
-> = {
-  user?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
-  csrfToken?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  __isTypeOf?: isTypeOfResolverFn<ParentType>;
-};
-
-export type UserResolvers<
-  ContextType = any,
-  ParentType extends ResolversParentTypes['User'] = ResolversParentTypes['User']
-> = {
-  id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  picture?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  provider?: Resolver<ResolversTypes['Provider'], ParentType, ContextType>;
-  username?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  email?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  password?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  role?: Resolver<ResolversTypes['Role'], ParentType, ContextType>;
-  lastPasswordChange?: Resolver<
-    Maybe<ResolversTypes['String']>,
-    ParentType,
-    ContextType
-  >;
-  __isTypeOf?: isTypeOfResolverFn<ParentType>;
 };
 
 export type QueryResolvers<
   ContextType = any,
   ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']
 > = {
-  _entities?: Resolver<
-    Array<Maybe<ResolversTypes['_Entity']>>,
-    ParentType,
-    ContextType,
-    RequireFields<Query_EntitiesArgs, 'representations'>
-  >;
-  _service?: Resolver<ResolversTypes['_Service'], ParentType, ContextType>;
   requestPasswordResetEmail?: Resolver<
     ResolversTypes['Boolean'],
     ParentType,
     ContextType,
     RequireFields<QueryRequestPasswordResetEmailArgs, 'email'>
   >;
-};
-
-export type _EntityResolvers<
-  ContextType = any,
-  ParentType extends ResolversParentTypes['_Entity'] = ResolversParentTypes['_Entity']
-> = {
-  __resolveType: TypeResolveFn<'User', ParentType, ContextType>;
-};
-
-export interface _AnyScalarConfig
-  extends GraphQLScalarTypeConfig<ResolversTypes['_Any'], any> {
-  name: '_Any';
-}
-
-export type _ServiceResolvers<
-  ContextType = any,
-  ParentType extends ResolversParentTypes['_Service'] = ResolversParentTypes['_Service']
-> = {
-  sdl?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  __isTypeOf?: isTypeOfResolverFn<ParentType>;
 };
 
 export type MutationResolvers<
@@ -356,14 +275,40 @@ export type MutationResolvers<
   >;
 };
 
+export type AuthResponseResolvers<
+  ContextType = any,
+  ParentType extends ResolversParentTypes['AuthResponse'] = ResolversParentTypes['AuthResponse']
+> = {
+  user?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
+  csrfToken?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  __isTypeOf?: isTypeOfResolverFn<ParentType>;
+};
+
+export type UserResolvers<
+  ContextType = any,
+  ParentType extends ResolversParentTypes['User'] = ResolversParentTypes['User']
+> = {
+  id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  picture?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  provider?: Resolver<ResolversTypes['Provider'], ParentType, ContextType>;
+  username?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  email?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  password?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  role?: Resolver<ResolversTypes['Role'], ParentType, ContextType>;
+  lastPasswordChange?: Resolver<
+    Maybe<ResolversTypes['String']>,
+    ParentType,
+    ContextType
+  >;
+  __isTypeOf?: isTypeOfResolverFn<ParentType>;
+};
+
 export type Resolvers<ContextType = any> = {
+  Query?: QueryResolvers<ContextType>;
+  Mutation?: MutationResolvers<ContextType>;
   AuthResponse?: AuthResponseResolvers<ContextType>;
   User?: UserResolvers<ContextType>;
-  Query?: QueryResolvers<ContextType>;
-  _Entity?: _EntityResolvers;
-  _Any?: GraphQLScalarType;
-  _Service?: _ServiceResolvers<ContextType>;
-  Mutation?: MutationResolvers<ContextType>;
 };
 
 /**

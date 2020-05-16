@@ -1,8 +1,4 @@
-import {
-  GraphQLResolveInfo,
-  GraphQLScalarType,
-  GraphQLScalarTypeConfig,
-} from 'graphql';
+import { GraphQLResolveInfo } from 'graphql';
 export type Maybe<T> = T | null;
 export type RequireFields<T, K extends keyof T> = {
   [X in Exclude<keyof T, K>]?: T[X];
@@ -15,7 +11,20 @@ export type Scalars = {
   Boolean: boolean;
   Int: number;
   Float: number;
-  _Any: any;
+};
+
+export type Query = {
+  __typename?: 'Query';
+  getEnvironments?: Maybe<Array<Maybe<Environment>>>;
+};
+
+export type Mutation = {
+  __typename?: 'Mutation';
+  createEnvironment?: Maybe<Environment>;
+};
+
+export type MutationCreateEnvironmentArgs = {
+  data?: Maybe<CreateEnvironmentInput>;
 };
 
 export type Environment = {
@@ -43,34 +52,6 @@ export enum EnvironmentRole {
   Admin = 'ADMIN',
   Contributor = 'CONTRIBUTOR',
 }
-
-export type Query = {
-  __typename?: 'Query';
-  _entities: Array<Maybe<_Entity>>;
-  _service: _Service;
-  getEnvironments?: Maybe<Array<Maybe<Environment>>>;
-};
-
-export type Query_EntitiesArgs = {
-  representations: Array<Scalars['_Any']>;
-};
-
-export type _Entity = Environment | EnvironmentMember | User;
-
-export type _Service = {
-  __typename?: '_Service';
-  /** The sdl representing the federated service capabilities. Includes federation directives, removes federation types, and includes rest of full schema after schema directives have been applied */
-  sdl?: Maybe<Scalars['String']>;
-};
-
-export type Mutation = {
-  __typename?: 'Mutation';
-  createEnvironment?: Maybe<Environment>;
-};
-
-export type MutationCreateEnvironmentArgs = {
-  data?: Maybe<CreateEnvironmentInput>;
-};
 
 export type User = {
   __typename?: 'User';
@@ -188,19 +169,13 @@ export type DirectiveResolverFn<
 export type ResolversTypes = {
   String: ResolverTypeWrapper<Scalars['String']>;
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
+  Query: ResolverTypeWrapper<{}>;
+  Mutation: ResolverTypeWrapper<{}>;
   Environment: ResolverTypeWrapper<Environment>;
   Int: ResolverTypeWrapper<Scalars['Int']>;
   EnvironmentMember: ResolverTypeWrapper<EnvironmentMember>;
   CreateEnvironmentInput: CreateEnvironmentInput;
   EnvironmentRole: EnvironmentRole;
-  Query: ResolverTypeWrapper<{}>;
-  _Entity:
-    | ResolversTypes['Environment']
-    | ResolversTypes['EnvironmentMember']
-    | ResolversTypes['User'];
-  _Any: ResolverTypeWrapper<Scalars['_Any']>;
-  _Service: ResolverTypeWrapper<_Service>;
-  Mutation: ResolverTypeWrapper<{}>;
   User: ResolverTypeWrapper<User>;
 };
 
@@ -208,20 +183,37 @@ export type ResolversTypes = {
 export type ResolversParentTypes = {
   String: Scalars['String'];
   Boolean: Scalars['Boolean'];
+  Query: {};
+  Mutation: {};
   Environment: Environment;
   Int: Scalars['Int'];
   EnvironmentMember: EnvironmentMember;
   CreateEnvironmentInput: CreateEnvironmentInput;
   EnvironmentRole: EnvironmentRole;
-  Query: {};
-  _Entity:
-    | ResolversParentTypes['Environment']
-    | ResolversParentTypes['EnvironmentMember']
-    | ResolversParentTypes['User'];
-  _Any: Scalars['_Any'];
-  _Service: _Service;
-  Mutation: {};
   User: User;
+};
+
+export type QueryResolvers<
+  ContextType = any,
+  ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']
+> = {
+  getEnvironments?: Resolver<
+    Maybe<Array<Maybe<ResolversTypes['Environment']>>>,
+    ParentType,
+    ContextType
+  >;
+};
+
+export type MutationResolvers<
+  ContextType = any,
+  ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']
+> = {
+  createEnvironment?: Resolver<
+    Maybe<ResolversTypes['Environment']>,
+    ParentType,
+    ContextType,
+    RequireFields<MutationCreateEnvironmentArgs, never>
+  >;
 };
 
 export type EnvironmentResolvers<
@@ -258,60 +250,6 @@ export type EnvironmentMemberResolvers<
   __isTypeOf?: isTypeOfResolverFn<ParentType>;
 };
 
-export type QueryResolvers<
-  ContextType = any,
-  ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']
-> = {
-  _entities?: Resolver<
-    Array<Maybe<ResolversTypes['_Entity']>>,
-    ParentType,
-    ContextType,
-    RequireFields<Query_EntitiesArgs, 'representations'>
-  >;
-  _service?: Resolver<ResolversTypes['_Service'], ParentType, ContextType>;
-  getEnvironments?: Resolver<
-    Maybe<Array<Maybe<ResolversTypes['Environment']>>>,
-    ParentType,
-    ContextType
-  >;
-};
-
-export type _EntityResolvers<
-  ContextType = any,
-  ParentType extends ResolversParentTypes['_Entity'] = ResolversParentTypes['_Entity']
-> = {
-  __resolveType: TypeResolveFn<
-    'Environment' | 'EnvironmentMember' | 'User',
-    ParentType,
-    ContextType
-  >;
-};
-
-export interface _AnyScalarConfig
-  extends GraphQLScalarTypeConfig<ResolversTypes['_Any'], any> {
-  name: '_Any';
-}
-
-export type _ServiceResolvers<
-  ContextType = any,
-  ParentType extends ResolversParentTypes['_Service'] = ResolversParentTypes['_Service']
-> = {
-  sdl?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  __isTypeOf?: isTypeOfResolverFn<ParentType>;
-};
-
-export type MutationResolvers<
-  ContextType = any,
-  ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']
-> = {
-  createEnvironment?: Resolver<
-    Maybe<ResolversTypes['Environment']>,
-    ParentType,
-    ContextType,
-    RequireFields<MutationCreateEnvironmentArgs, never>
-  >;
-};
-
 export type UserResolvers<
   ContextType = any,
   ParentType extends ResolversParentTypes['User'] = ResolversParentTypes['User']
@@ -326,13 +264,10 @@ export type UserResolvers<
 };
 
 export type Resolvers<ContextType = any> = {
+  Query?: QueryResolvers<ContextType>;
+  Mutation?: MutationResolvers<ContextType>;
   Environment?: EnvironmentResolvers<ContextType>;
   EnvironmentMember?: EnvironmentMemberResolvers<ContextType>;
-  Query?: QueryResolvers<ContextType>;
-  _Entity?: _EntityResolvers;
-  _Any?: GraphQLScalarType;
-  _Service?: _ServiceResolvers<ContextType>;
-  Mutation?: MutationResolvers<ContextType>;
   User?: UserResolvers<ContextType>;
 };
 

@@ -1,5 +1,5 @@
 overwrite: true
-schema: 'http://dev-environments-service:5006/graphql'
+schema: './src/graphql/typeDefs.ts'
 documents: null
 generates:
   src/graphql/generated.ts:

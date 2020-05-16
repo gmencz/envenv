@@ -1,5 +1,5 @@
 overwrite: true
-schema: 'http://dev-accounts-service:5005/graphql'
+schema: './src/graphql/typeDefs.ts'
 documents: null
 useIndexSignature: true
 generates:
