@@ -12,7 +12,6 @@ import {
 } from './controllers/auth/google';
 import { PrismaClient } from '@prisma/client';
 import resolvers from './graphql/resolvers';
-import { GraphQLResolverMap } from 'apollo-graphql';
 
 const prisma = new PrismaClient();
 
@@ -60,7 +59,7 @@ const prisma = new PrismaClient();
 
     const PORT = process.env.SERVICE_PORT;
     app.listen(PORT, () => {
-      console.log(`Users service listening on http://localhost:${PORT}/`);
+      console.log(`Accounts service listening on http://localhost:${PORT}/`);
     });
   } catch (error) {
     console.error(error);
