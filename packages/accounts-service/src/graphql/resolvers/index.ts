@@ -1,20 +1,12 @@
-import { Resolvers } from '../generated';
 import Query from './query';
 import Mutation from './mutation';
-import { User } from '@prisma/client';
-import { ApolloContext } from '../../typings';
 import __resolveReference from './user/__resolveReference';
+import UserResolvers from './user';
 
-const resolvers: Resolvers & {
-  User: {
-    __resolveReference(user: User, ctx: ApolloContext): Promise<User | null>;
-  };
-} = {
+const resolvers = {
   Query,
   Mutation,
-  User: {
-    __resolveReference,
-  },
+  User: UserResolvers,
 };
 
 export default resolvers;

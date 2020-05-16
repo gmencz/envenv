@@ -58,7 +58,6 @@ export type Query = {
   _entities: Array<Maybe<_Entity>>;
   _service: _Service;
   requestPasswordResetEmail: Scalars['Boolean'];
-  findUser?: Maybe<User>;
 };
 
 export type Query_EntitiesArgs = {
@@ -67,10 +66,6 @@ export type Query_EntitiesArgs = {
 
 export type QueryRequestPasswordResetEmailArgs = {
   email: Scalars['String'];
-};
-
-export type QueryFindUserArgs = {
-  id: Scalars['Int'];
 };
 
 export type _Entity = User;

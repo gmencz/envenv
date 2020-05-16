@@ -1,10 +1,17 @@
-import { QueryResolvers } from '../../generated';
 import requestPasswordResetEmail from './requestPasswordResetEmail';
-import findUser from './findUser';
+import { QueryRequestPasswordResetEmailArgs } from '../../generated';
+import { ApolloContext } from '../../../typings';
 
-const Query: QueryResolvers = {
+export interface QueryOperations {
+  requestPasswordResetEmail(
+    root: any,
+    args: QueryRequestPasswordResetEmailArgs,
+    ctx: ApolloContext
+  ): Promise<boolean>;
+}
+
+const QueryResolvers: QueryOperations = {
   requestPasswordResetEmail,
-  findUser,
 };
 
-export default Query;
+export default QueryResolvers;

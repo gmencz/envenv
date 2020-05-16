@@ -1,16 +1,15 @@
-import { QueryResolvers } from '../../generated';
 import { reach } from 'yup';
 import { ApolloError } from 'apollo-server-express';
 import { createUserSchema } from '../../../validation/createUser';
-import { ApolloContext } from '../../../typings';
-import { createTransport } from 'nodemailer';
 import { sign } from 'jsonwebtoken';
+import { QueryOperations } from '.';
+import { createTransport } from 'nodemailer';
 
-const requestPasswordResetEmail: QueryResolvers['requestPasswordResetEmail'] = async (
+const requestPasswordResetEmail: QueryOperations['requestPasswordResetEmail'] = async (
   _,
   { email },
-  { prisma }: ApolloContext
-): Promise<boolean> => {
+  { prisma }
+) => {
   try {
     await reach(createUserSchema, 'email').validate(email);
 

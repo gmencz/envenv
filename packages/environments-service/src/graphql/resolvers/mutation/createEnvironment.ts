@@ -1,17 +1,11 @@
 import { ApolloError } from 'apollo-server-express';
 import { MutationOperations } from '.';
 
-export interface CreateEnvironmentResolvableReturnType {
-  id: number;
-  name: string;
-  ownerUserId: number;
-}
-
 const createEnvironment: MutationOperations['createEnvironment'] = async (
   _,
   { data },
   { prisma }
-): Promise<CreateEnvironmentResolvableReturnType> => {
+) => {
   try {
     const environment = await prisma.environment.create({
       data: {

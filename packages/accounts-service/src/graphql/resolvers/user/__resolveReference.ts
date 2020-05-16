@@ -1,7 +1,9 @@
-import { User } from '@prisma/client';
-import { ApolloContext } from '../../../typings';
+import { UserOperations } from '.';
 
-const __resolveReference = async (user: User, { prisma }: ApolloContext) => {
+const __resolveReference: UserOperations['__resolveReference'] = async (
+  user,
+  { prisma }
+) => {
   const wantedUser = await prisma.user.findOne({ where: { id: user.id } });
 
   return wantedUser;

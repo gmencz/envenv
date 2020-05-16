@@ -1,16 +1,15 @@
-import { MutationResolvers, AuthResponse } from '../../generated';
-import { ApolloContext } from '../../../typings';
 import { ApolloError } from 'apollo-server-express';
 import { createUserSchema } from '../../../validation/createUser';
 import createSession from '../../../helpers/createSession';
 import redisClient from '../../../helpers/redisClient';
 import { hash } from 'bcryptjs';
+import { MutationOperations } from '.';
 
-const signup: MutationResolvers['signup'] = async (
+const signup: MutationOperations['signup'] = async (
   _,
   { data },
-  { prisma, res }: ApolloContext
-): Promise<AuthResponse> => {
+  { prisma, res }
+) => {
   try {
     await createUserSchema.validate({ ...data });
 

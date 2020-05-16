@@ -3,7 +3,6 @@ import { gql } from 'apollo-server-express';
 const typeDefs = gql`
   extend type Query {
     requestPasswordResetEmail(email: String!): Boolean!
-    findUser(id: Int!): User
   }
 
   extend type Mutation {
