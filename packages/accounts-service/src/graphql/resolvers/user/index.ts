@@ -1,6 +1,7 @@
 import { ApolloContext } from '../../../typings';
 import { User } from '@prisma/client';
 import __resolveReference from './__resolveReference';
+import { UserResolvers } from '../../generated';
 
 export interface ReferencedUserRoot {
   __typename: 'User';
@@ -14,8 +15,10 @@ export interface UserOperations {
   ): Promise<User | null>;
 }
 
-const UserResolvers: UserOperations = {
-  __resolveReference,
+const UserResolvers: {
+  [T in keyof UserResolvers]: UserOperations[keyof UserOperations];
+} = {
+  ['__resolveReference' as keyof UserResolvers]: __resolveReference,
 };
 
 export default UserResolvers;

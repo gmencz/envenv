@@ -1,5 +1,8 @@
 import createEnvironment from './createEnvironment';
-import { MutationCreateEnvironmentArgs } from '../../generated';
+import {
+  MutationCreateEnvironmentArgs,
+  MutationResolvers,
+} from '../../generated';
 import { ApolloContext } from '../../../typings';
 
 export interface CreateEnvironmentResolvableReturnType {
@@ -16,7 +19,9 @@ export interface MutationOperations {
   ): Promise<CreateEnvironmentResolvableReturnType>;
 }
 
-const MutationResolvers: MutationOperations = {
+const MutationResolvers: {
+  [T in keyof MutationResolvers]: MutationOperations[keyof MutationOperations];
+} = {
   createEnvironment,
 };
 

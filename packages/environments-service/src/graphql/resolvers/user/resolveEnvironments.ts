@@ -7,7 +7,6 @@ const resolveEnvironments: UserOperations['resolveEnvironments'] = async (
   __,
   { prisma }: ApolloContext
 ) => {
-  console.log(user);
   try {
     const foundEnvironments = await prisma.environment.findMany({
       where: { ownerUserId: user.id },

@@ -1,6 +1,7 @@
 import requestPasswordResetEmail from './requestPasswordResetEmail';
 import { QueryRequestPasswordResetEmailArgs } from '../../generated';
 import { ApolloContext } from '../../../typings';
+import { QueryResolvers } from '../../generated';
 
 export interface QueryOperations {
   requestPasswordResetEmail(
@@ -10,7 +11,9 @@ export interface QueryOperations {
   ): Promise<boolean>;
 }
 
-const QueryResolvers: QueryOperations = {
+const QueryResolvers: {
+  [T in keyof QueryResolvers]: QueryOperations[keyof QueryOperations];
+} = {
   requestPasswordResetEmail,
 };
 

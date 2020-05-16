@@ -5,3 +5,4 @@ generates:
   src/graphql/generated.ts:
     plugins:
       - 'typescript'
+      - 'typescript-resolvers'

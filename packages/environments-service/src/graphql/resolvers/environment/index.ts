@@ -4,6 +4,7 @@ import __resolveReference from './__resolveReference';
 import { ReferencedUserRoot } from '../user';
 import { CreateEnvironmentResolvableReturnType } from '../mutation/';
 import resolveOwner from './resolveOwner';
+import { EnvironmentResolvers } from '../../generated';
 
 export interface ReferencedEnvironmentRoot {
   __typename: 'Environment';
@@ -15,14 +16,14 @@ export interface EnvironmentOperations {
     root: ReferencedEnvironmentRoot,
     ctx: ApolloContext
   ): Promise<Environment | null>;
-  resolveOwner(
-    environment: CreateEnvironmentResolvableReturnType
-  ): ReferencedUserRoot;
+  owner(environment: CreateEnvironmentResolvableReturnType): ReferencedUserRoot;
 }
 
-const EnvironmentResolvers: EnvironmentOperations = {
-  __resolveReference,
-  resolveOwner,
+const EnvironmentResolvers: {
+  [T in keyof EnvironmentResolvers]: EnvironmentOperations[keyof EnvironmentOperations];
+} = {
+  ['__resolveReference' as keyof EnvironmentResolvers]: __resolveReference,
+  owner: resolveOwner,
 };
 
 export default EnvironmentResolvers;

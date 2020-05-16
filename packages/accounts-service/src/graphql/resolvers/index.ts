@@ -1,11 +1,10 @@
-import Query from './query';
-import Mutation from './mutation';
-import __resolveReference from './user/__resolveReference';
 import UserResolvers from './user';
+import MutationResolvers from './mutation';
+import QueryResolvers from './query';
 
 const resolvers = {
-  Query,
-  Mutation,
+  Query: QueryResolvers,
+  Mutation: MutationResolvers,
   User: UserResolvers,
 };
 

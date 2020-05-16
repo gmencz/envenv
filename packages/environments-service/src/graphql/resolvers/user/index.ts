@@ -1,6 +1,7 @@
 import resolveEnvironments from './resolveEnvironments';
 import { Environment } from '@prisma/client';
 import { ApolloContext } from '../../../typings';
+import { UserResolvers } from '../../generated';
 
 export interface ReferencedUserRoot {
   __typename: 'User';
@@ -15,8 +16,10 @@ export interface UserOperations {
   ): Promise<Environment[]>;
 }
 
-const UserResolvers: UserOperations = {
-  resolveEnvironments,
+const UserResolvers: {
+  [T in keyof UserResolvers]: UserOperations[keyof UserOperations];
+} = {
+  environments: resolveEnvironments,
 };
 
 export default UserResolvers;

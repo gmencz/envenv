@@ -14,6 +14,8 @@ const createEnvironment: MutationOperations['createEnvironment'] = async (
       },
     });
 
+    console.log('before return');
+
     return {
       id: environment.id,
       name: environment.name,

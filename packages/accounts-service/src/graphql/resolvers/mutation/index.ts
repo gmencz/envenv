@@ -1,5 +1,9 @@
 import signup from './signup';
-import { AuthResponse, MutationSignupArgs } from '../../generated';
+import {
+  AuthResponse,
+  MutationSignupArgs,
+  MutationResolvers,
+} from '../../generated';
 import { ApolloContext } from '../../../typings';
 
 export interface MutationOperations {
@@ -10,7 +14,9 @@ export interface MutationOperations {
   ): Promise<AuthResponse>;
 }
 
-const MutationResolvers: MutationOperations = {
+const MutationResolvers: {
+  [T in keyof MutationResolvers]: MutationOperations[keyof MutationOperations];
+} = {
   signup,
 };
 

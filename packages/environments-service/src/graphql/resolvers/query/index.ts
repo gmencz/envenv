@@ -1,6 +1,7 @@
 import getEnvironments from './getEnvironments';
 import { ApolloContext } from '../../../typings';
 import { Environment } from '@prisma/client';
+import { QueryResolvers } from '../../generated';
 
 export interface QueryOperations {
   getEnvironments(
@@ -10,7 +11,9 @@ export interface QueryOperations {
   ): Promise<Environment[]>;
 }
 
-const QueryResolvers: QueryOperations = {
+const QueryResolvers: {
+  [T in keyof QueryResolvers]: QueryOperations[keyof QueryOperations];
+} = {
   getEnvironments,
 };
 
