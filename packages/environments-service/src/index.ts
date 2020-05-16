@@ -1,11 +1,11 @@
-import { ApolloServer } from 'apollo-server-express';
+import { ApolloServer, gql } from 'apollo-server-express';
 import express from 'express';
 import cookieParser from 'cookie-parser';
 import { ApolloContext } from './typings';
 import { buildFederatedSchema } from '@apollo/federation';
-import typeDefs from './graphql/typeDefs';
 import { PrismaClient } from '@prisma/client';
 import resolvers from './graphql/resolvers';
+import { importSchema } from 'graphql-import';
 
 const prisma = new PrismaClient();
 
@@ -15,7 +15,10 @@ const prisma = new PrismaClient();
     app.use(cookieParser());
     app.use(express.json());
 
+    const typeDefs = gql(importSchema(`${__dirname}/graphql/schema.graphql`));
+
     const server = new ApolloServer({
+      engine: false,
       schema: buildFederatedSchema([
         {
           typeDefs,

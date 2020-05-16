@@ -14,7 +14,7 @@ services:
     volumes:
       - ./packages/accounts-service:/test-accounts-service
     ports:
-      - '5005:5005'
+      - '5000:5000'
     env_file:
       - ./packages/accounts-service/test.env
     environment:
@@ -26,7 +26,7 @@ services:
     volumes:
       - ./packages/environments-service:/test-environments-service
     ports:
-      - '5006:5006'
+      - '5001:5001'
     env_file:
       - ./packages/environments-service/test.env
     environment:

@@ -5,8 +5,8 @@
   "main": "src/index.ts",
   "scripts": {
     "gen-graphql": "graphql-codegen --config codegen.yml",
-    "gen-graphql-watch": "graphql-codegen --config codegen.yml --watch src/graphql/typeDefs.ts",
-    "dev": "concurrently \"ts-node-dev --no-deps --respawn --poll --interval 1000 src/index.ts\" \"npm run gen-graphql-watch\""
+    "gen-graphql-watch": "graphql-codegen --config codegen.yml --watch src/graphql/schema.graphql",
+    "dev": "concurrently \"ts-node-dev --respawn --poll --type-check --watch src/graphql/schema.graphql src/index.ts\" \"npm run gen-graphql-watch\""
   },
   "keywords": [],
   "author": "",
@@ -34,6 +34,7 @@
   },
   "devDependencies": {
     "@graphql-codegen/cli": "1.13.5",
+    "@graphql-codegen/introspection": "^1.13.5",
     "@graphql-codegen/typescript": "1.13.5",
     "@graphql-codegen/typescript-resolvers": "1.13.5",
     "@prisma/cli": "^2.0.0-beta.5",
@@ -49,12 +50,13 @@
     "@types/redis-mock": "^0.17.0",
     "@types/shortid": "^0.0.29",
     "@types/yup": "^0.26.37",
+    "apollo": "^2.27.4",
     "concurrently": "^5.2.0",
     "jest": "^26.0.1",
     "jest-puppeteer": "^4.4.0",
     "redis-mock": "^0.49.0",
     "ts-jest": "^25.5.0",
     "ts-node-dev": "^1.0.0-pre.44",
-    "typescript": "^3.8.3"
+    "typescript": "^3.9.2"
   }
 }

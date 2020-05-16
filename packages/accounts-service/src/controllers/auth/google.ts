@@ -50,7 +50,7 @@ export const callbackGoogleAuth = async (
       }
     );
 
-    const { queryUser: user } = checkUserResponse as { queryUser: User | null };
+    const { queryUser: user } = checkUserResponse as { queryUser: any };
 
     if (user) {
       res.cookie('TemporaryUserId', id, {

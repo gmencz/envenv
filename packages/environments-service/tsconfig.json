@@ -6,18 +6,14 @@
     "sourceMap": true,
     "outDir": "./dist",
     "moduleResolution": "node",
-    "declaration": false,
-    "composite": false,
     "removeComments": true,
     "strict": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
+    "forceConsistentCasingInFileNames": true,
     "allowSyntheticDefaultImports": true,
-    "esModuleInterop": true,
-    "skipLibCheck": true,
-    "baseUrl": "."
+    "esModuleInterop": true
   },
-  "exclude": ["node_modules"],
-  "include": ["./src/**/*.ts", "src/index.ts"]
+  "include": ["src"]
 }

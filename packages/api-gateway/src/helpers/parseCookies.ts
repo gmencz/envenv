@@ -104,7 +104,7 @@ export default function parseCookies(rawCookies: string): ParsedCookie[] {
           return;
         }
 
-        options[key] = value;
+        options[key as keyof CookieOptions] = value as any;
       });
     });
 

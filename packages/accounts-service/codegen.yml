@@ -1,7 +1,6 @@
 overwrite: true
-schema: './src/graphql/typeDefs.ts'
+schema: './src/graphql/schema.graphql'
 documents: null
-useIndexSignature: true
 generates:
   src/graphql/generated.ts:
     plugins:

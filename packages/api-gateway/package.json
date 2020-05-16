@@ -4,7 +4,7 @@
   "description": "",
   "main": "src/index.ts",
   "scripts": {
-    "dev": "ts-node-dev --no-deps --respawn --poll --interval 1000 src/index.ts",
+    "dev": "ts-node-dev --respawn --poll --type-check src/index.ts",
     "test": "jest"
   },
   "keywords": [],
@@ -24,6 +24,6 @@
     "jest": "^25.5.4",
     "ts-jest": "^25.4.0",
     "ts-node-dev": "^1.0.0-pre.44",
-    "typescript": "^3.8.3"
+    "typescript": "^3.9.2"
   }
 }

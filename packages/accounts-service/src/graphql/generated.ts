@@ -92,6 +92,16 @@ export enum Provider {
   None = 'NONE',
 }
 
+export type Environment = {
+  __typename?: 'Environment';
+  id: Scalars['Int'];
+};
+
+export type EnvironmentMember = {
+  __typename?: 'EnvironmentMember';
+  id: Scalars['Int'];
+};
+
 export type ResolverTypeWrapper<T> = Promise<T> | T;
 
 export type StitchingResolver<TResult, TParent, TContext, TArgs> = {
@@ -211,6 +221,8 @@ export type ResolversTypes = {
   User: ResolverTypeWrapper<User>;
   Role: Role;
   Provider: Provider;
+  Environment: ResolverTypeWrapper<Environment>;
+  EnvironmentMember: ResolverTypeWrapper<EnvironmentMember>;
 };
 
 /** Mapping between all available schema types and the resolvers parents */
@@ -226,6 +238,8 @@ export type ResolversParentTypes = {
   User: User;
   Role: Role;
   Provider: Provider;
+  Environment: Environment;
+  EnvironmentMember: EnvironmentMember;
 };
 
 export type QueryResolvers<
@@ -304,11 +318,29 @@ export type UserResolvers<
   __isTypeOf?: isTypeOfResolverFn<ParentType>;
 };
 
+export type EnvironmentResolvers<
+  ContextType = any,
+  ParentType extends ResolversParentTypes['Environment'] = ResolversParentTypes['Environment']
+> = {
+  id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  __isTypeOf?: isTypeOfResolverFn<ParentType>;
+};
+
+export type EnvironmentMemberResolvers<
+  ContextType = any,
+  ParentType extends ResolversParentTypes['EnvironmentMember'] = ResolversParentTypes['EnvironmentMember']
+> = {
+  id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  __isTypeOf?: isTypeOfResolverFn<ParentType>;
+};
+
 export type Resolvers<ContextType = any> = {
   Query?: QueryResolvers<ContextType>;
   Mutation?: MutationResolvers<ContextType>;
   AuthResponse?: AuthResponseResolvers<ContextType>;
   User?: UserResolvers<ContextType>;
+  Environment?: EnvironmentResolvers<ContextType>;
+  EnvironmentMember?: EnvironmentMemberResolvers<ContextType>;
 };
 
 /**
