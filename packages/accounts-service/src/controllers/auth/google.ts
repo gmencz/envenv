@@ -1,15 +1,13 @@
 import passport from 'passport';
 import { Request, Response } from 'express';
-import { request } from 'graphql-request';
 import { sign } from 'jsonwebtoken';
-
 import { OAuth2Strategy as GoogleStrategy } from 'passport-google-oauth';
 
 export const GoogleStrategyObj = new GoogleStrategy(
   {
     clientID:
       '697747522167-8f3eobskkb8pm2pk8kft37tarl1nmcqb.apps.googleusercontent.com',
-    clientSecret: process.env.SECRET_GOOGLE as string,
+    clientSecret: process.env.SECRET_GOOGLE!,
     callbackURL: `${process.env.GOOGLE_CALLBACK_URL}/auth/google/callback`,
   },
   (_, __, { provider, id, _json: { name, picture, email } }, done) => {
@@ -17,7 +15,7 @@ export const GoogleStrategyObj = new GoogleStrategy(
   }
 );
 
-export const scopeFn = () =>
+export const scopeFn = (): any =>
   passport.authenticate('google', {
     scope: ['profile', 'email'],
   });
@@ -27,30 +25,11 @@ export const callbackGoogleAuth = async (
   res: Response
 ): Promise<void> => {
   try {
-    const checkUserQuery = `
-      query queryUserById($userId: String!) {
-        queryUser(by: id, byValue: $userId) {
-          id
-        }
-      }
-    `;
-
     const { id } = req.user as {
-      id: string;
-      picture: string;
-      provider: string;
-      name: string;
+      id: number | string;
     };
 
-    const checkUserResponse = await request(
-      process.env.USERS_SERVICE_URL as string,
-      checkUserQuery,
-      {
-        userId: id,
-      }
-    );
-
-    const { queryUser: user } = checkUserResponse as { queryUser: any };
+    const user = id;
 
     if (user) {
       res.cookie('TemporaryUserId', id, {
@@ -70,7 +49,7 @@ export const callbackGoogleAuth = async (
     const signedNewUserData = await new Promise((resolve, reject) => {
       sign(
         { ...req.user },
-        process.env.SESSION_INFO_SECRET as string,
+        process.env.SESSION_INFO_SECRET!,
         {
           expiresIn: '1m',
         },
@@ -96,6 +75,7 @@ export const callbackGoogleAuth = async (
         : 'http://localhost:8080/auth/signup/lastStep'
     );
   } catch (error) {
+    console.log(error);
     return res.redirect(
       process.env.NODE_ENV === 'production'
         ? 'https://envenv.com/auth/signup/error/googleAccountUnknownError'

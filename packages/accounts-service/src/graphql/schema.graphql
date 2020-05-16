@@ -1,5 +1,6 @@
 extend type Query {
   requestPasswordResetEmail(email: String!): Boolean!
+  findUser(id: Int!): User
 }
 
 extend type Mutation {
