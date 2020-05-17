@@ -1,17 +1,17 @@
 import { ApolloServer, gql } from 'apollo-server-express';
 import express from 'express';
 import cookieParser from 'cookie-parser';
-import { ApolloContext } from './typings';
 import { buildFederatedSchema } from '@apollo/federation';
 import passport from 'passport';
+import { PrismaClient } from '@prisma/client';
+import { importSchema } from 'graphql-import';
 import {
   callbackGoogleAuth,
   scopeFn,
   GoogleStrategyObj,
 } from './controllers/auth/google';
-import { PrismaClient } from '@prisma/client';
 import resolvers from './graphql/resolvers';
-import { importSchema } from 'graphql-import';
+import { ApolloContext } from './typings';
 
 const prisma = new PrismaClient();
 
@@ -32,11 +32,11 @@ const prisma = new PrismaClient();
       callbackGoogleAuth
     );
 
-    passport.serializeUser(function (user, done) {
+    passport.serializeUser((user, done) => {
       done(null, user);
     });
 
-    passport.deserializeUser(function (user, done) {
+    passport.deserializeUser((user, done) => {
       done(null, user);
     });
 

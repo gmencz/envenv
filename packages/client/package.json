@@ -37,7 +37,6 @@
     ]
   },
   "devDependencies": {
-    "@types/node": "^14.0.1",
-    "eslint": "^7.0.0"
+    "@types/node": "^14.0.1"
   }
 }

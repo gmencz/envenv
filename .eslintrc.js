@@ -6,16 +6,16 @@ module.exports = {
     node: true,
     es6: true,
   },
-  extends: [
-    'eslint:recommended',
-    'plugin:eslint-comments/recommended',
-    'plugin:jest/recommended',
-  ],
   parserOptions: {
     ecmaVersion: 2020,
     sourceType: 'module',
     project: 'tsconfig.json',
   },
+  extends: [
+    'eslint:recommended',
+    'plugin:eslint-comments/recommended',
+    'plugin:jest/recommended',
+  ],
   overrides: [
     // {
     //   files: ['*.js'],
