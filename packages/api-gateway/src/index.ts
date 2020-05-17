@@ -9,11 +9,11 @@ import { GatewayContext } from './typings';
 const serviceList: GatewayService[] = [
   {
     name: 'accounts-service',
-    url: process.env.ACCOUNTS_SERVICE_URL as string,
+    url: process.env.ACCOUNTS_SERVICE_URL!,
   },
   {
     name: 'environments-service',
-    url: process.env.ENVIRONMENTS_SERVICE_URL as string,
+    url: process.env.ENVIRONMENTS_SERVICE_URL!,
   },
 ];
 
