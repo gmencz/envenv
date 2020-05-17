@@ -2,6 +2,7 @@ import passport from 'passport';
 import { Request, Response } from 'express';
 import { sign } from 'jsonwebtoken';
 import { OAuth2Strategy as GoogleStrategy } from 'passport-google-oauth';
+import request from 'graphql-request';
 
 export const GoogleStrategyObj = new GoogleStrategy(
   {
@@ -25,14 +26,29 @@ export const callbackGoogleAuth = async (
   res: Response
 ): Promise<void> => {
   try {
-    const { id } = req.user as {
-      id: number | string;
+    const { email } = req.user as {
+      email: string;
     };
 
-    const user = id;
+    const data = await request(
+      process.env.GRAPHQL_ENDPOINT!,
+      `
+      query doesUserExist($email: String!) {
+        checkExternalProviderUserAvailability(externalProviderUserEmail: $email)
+      } 
+    `,
+      {
+        email,
+      }
+    );
 
-    if (user) {
-      res.cookie('TemporaryUserId', id, {
+    const {
+      checkExternalProviderUserAvailability: userAlreadyExists,
+    } = data as { checkExternalProviderUserAvailability: boolean };
+
+    if (userAlreadyExists) {
+      // Find user by email instead of id when automating login process
+      res.cookie('TemporaryUserEmail', email, {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
       });

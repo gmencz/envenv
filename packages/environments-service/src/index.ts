@@ -8,39 +8,34 @@ import resolvers from './graphql/resolvers';
 import { importSchema } from 'graphql-import';
 
 const prisma = new PrismaClient();
+try {
+  const app = express();
+  app.use(cookieParser());
+  app.use(express.json());
 
-(async (): Promise<void> => {
-  try {
-    const app = express();
-    app.use(cookieParser());
-    app.use(express.json());
+  const typeDefs = gql(importSchema(`${__dirname}/graphql/schema.graphql`));
 
-    const typeDefs = gql(importSchema(`${__dirname}/graphql/schema.graphql`));
+  const server = new ApolloServer({
+    engine: false,
+    schema: buildFederatedSchema([
+      {
+        typeDefs,
+        resolvers: resolvers as any,
+      },
+    ]),
+    context: ({ req, res }: ApolloContext): ApolloContext => ({
+      req,
+      res,
+      prisma,
+    }),
+  });
 
-    const server = new ApolloServer({
-      engine: false,
-      schema: buildFederatedSchema([
-        {
-          typeDefs,
-          resolvers: resolvers as any,
-        },
-      ]),
-      context: ({ req, res }: ApolloContext): ApolloContext => ({
-        req,
-        res,
-        prisma,
-      }),
-    });
+  server.applyMiddleware({ app });
 
-    server.applyMiddleware({ app });
-
-    const PORT = process.env.SERVICE_PORT;
-    app.listen(PORT, () => {
-      console.log(
-        `Environments service listening on http://localhost:${PORT}/`
-      );
-    });
-  } catch (error) {
-    console.error(error);
-  }
-})();
+  const PORT = process.env.SERVICE_PORT;
+  app.listen(PORT, () => {
+    console.log(`Environments service listening on http://localhost:${PORT}/`);
+  });
+} catch (error) {
+  console.error(error);
+}

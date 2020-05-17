@@ -16,15 +16,15 @@ export type Scalars = {
 export type Query = {
   __typename?: 'Query';
   requestPasswordResetEmail: Scalars['Boolean'];
-  findUser?: Maybe<User>;
+  checkExternalProviderUserAvailability: Scalars['Boolean'];
 };
 
 export type QueryRequestPasswordResetEmailArgs = {
   email: Scalars['String'];
 };
 
-export type QueryFindUserArgs = {
-  id: Scalars['Int'];
+export type QueryCheckExternalProviderUserAvailabilityArgs = {
+  externalProviderUserEmail: Scalars['String'];
 };
 
 export type Mutation = {
@@ -218,10 +218,10 @@ export type ResolversTypes = {
   String: ResolverTypeWrapper<Scalars['String']>;
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
   Query: ResolverTypeWrapper<{}>;
-  Int: ResolverTypeWrapper<Scalars['Int']>;
   Mutation: ResolverTypeWrapper<{}>;
   ResetPasswordInput: ResetPasswordInput;
   CreateUserInput: CreateUserInput;
+  Int: ResolverTypeWrapper<Scalars['Int']>;
   AuthResponse: ResolverTypeWrapper<AuthResponse>;
   User: ResolverTypeWrapper<User>;
   Role: Role;
@@ -235,10 +235,10 @@ export type ResolversParentTypes = {
   String: Scalars['String'];
   Boolean: Scalars['Boolean'];
   Query: {};
-  Int: Scalars['Int'];
   Mutation: {};
   ResetPasswordInput: ResetPasswordInput;
   CreateUserInput: CreateUserInput;
+  Int: Scalars['Int'];
   AuthResponse: AuthResponse;
   User: User;
   Role: Role;
@@ -257,11 +257,14 @@ export type QueryResolvers<
     ContextType,
     RequireFields<QueryRequestPasswordResetEmailArgs, 'email'>
   >;
-  findUser?: Resolver<
-    Maybe<ResolversTypes['User']>,
+  checkExternalProviderUserAvailability?: Resolver<
+    ResolversTypes['Boolean'],
     ParentType,
     ContextType,
-    RequireFields<QueryFindUserArgs, 'id'>
+    RequireFields<
+      QueryCheckExternalProviderUserAvailabilityArgs,
+      'externalProviderUserEmail'
+    >
   >;
 };
 

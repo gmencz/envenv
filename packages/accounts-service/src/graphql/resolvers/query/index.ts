@@ -1,12 +1,11 @@
 import requestPasswordResetEmail from './requestPasswordResetEmail';
 import {
   QueryRequestPasswordResetEmailArgs,
-  QueryFindUserArgs,
+  QueryCheckExternalProviderUserAvailabilityArgs,
 } from '../../generated';
 import { ApolloContext } from '../../../typings';
 import { QueryResolvers } from '../../generated';
-import { User } from '@prisma/client';
-import findUser from './findUser';
+import checkExternalProviderUserAvailability from './checkExternalProviderUserAvailability';
 
 export interface QueryOperations {
   requestPasswordResetEmail(
@@ -14,18 +13,18 @@ export interface QueryOperations {
     args: QueryRequestPasswordResetEmailArgs,
     ctx: ApolloContext
   ): Promise<boolean>;
-  findUser(
+  checkExternalProviderUserAvailability(
     root: any,
-    args: QueryFindUserArgs,
+    args: QueryCheckExternalProviderUserAvailabilityArgs,
     ctx: ApolloContext
-  ): Promise<User | null>;
+  ): Promise<boolean>;
 }
 
 const QueryResolvers: {
   [T in keyof QueryResolvers]: QueryOperations[keyof QueryOperations];
 } = {
   requestPasswordResetEmail,
-  findUser,
+  checkExternalProviderUserAvailability,
 };
 
 export default QueryResolvers;
