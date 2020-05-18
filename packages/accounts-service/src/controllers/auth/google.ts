@@ -3,6 +3,7 @@ import { Request, Response } from 'express';
 import { sign } from 'jsonwebtoken';
 import { OAuth2Strategy as GoogleStrategy } from 'passport-google-oauth';
 import request from 'graphql-request';
+import { UserResult } from '../../graphql/generated';
 
 export const GoogleStrategyObj = new GoogleStrategy(
   {
@@ -26,29 +27,27 @@ export const callbackGoogleAuth = async (
   res: Response
 ): Promise<void> => {
   try {
-    const { email } = req.user as {
-      email: string;
+    const { id } = req.user as {
+      id: string;
     };
 
     const data = await request(
       process.env.GRAPHQL_ENDPOINT!,
       `
-      query doesUserExist($email: String!) {
-        checkExternalProviderUserAvailability(externalProviderUserEmail: $email)
+      query GetUserById($id: String!) {
+        user(id: $id)
       } 
     `,
       {
-        email,
+        id,
       }
     );
 
-    const {
-      checkExternalProviderUserAvailability: userAlreadyExists,
-    } = data as { checkExternalProviderUserAvailability: boolean };
+    const { user: userResult } = data as { user: UserResult };
 
-    if (userAlreadyExists) {
+    if (userResult.__typename === 'User') {
       // Find user by email instead of id when automating login process
-      res.cookie('TemporaryUserEmail', email, {
+      res.cookie('TemporaryUserId', id, {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
       });
@@ -62,36 +61,46 @@ export const callbackGoogleAuth = async (
       );
     }
 
-    const signedNewUserData = await new Promise((resolve, reject) => {
-      sign(
-        { ...req.user },
-        process.env.SESSION_INFO_SECRET!,
-        {
-          expiresIn: '1m',
-        },
-        (error, data) => {
-          if (error) {
-            reject(error);
+    if (userResult.__typename === 'UserNotFound') {
+      const signedNewUserData = await new Promise((resolve, reject) => {
+        sign(
+          { ...req.user },
+          process.env.SESSION_INFO_SECRET!,
+          {
+            expiresIn: '1m',
+          },
+          (error, data) => {
+            if (error) {
+              reject(error);
+            }
+
+            resolve(data);
           }
+        );
+      });
 
-          resolve(data);
-        }
+      res.cookie('NewUserData', signedNewUserData, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+      });
+      /* 
+        Redirect to route where the user will fill out 
+        needed information like their username, after doing that
+        we can create the user but this step is needed.
+      */
+      return res.redirect(
+        process.env.NODE_ENV === 'production'
+          ? 'https://envenv.com/auth/signup/lastStep'
+          : 'http://localhost:8080/auth/signup/lastStep'
       );
-    });
+    }
 
-    res.cookie('NewUserData', signedNewUserData, { httpOnly: true });
-    /* 
-      Redirect to route where the user will fill out 
-      needed information like their username, after doing that
-      we can create the user but this step is needed.
-    */
     return res.redirect(
       process.env.NODE_ENV === 'production'
-        ? 'https://envenv.com/auth/signup/lastStep'
-        : 'http://localhost:8080/auth/signup/lastStep'
+        ? 'https://envenv.com/auth/signup/error/invalidGoogleResponse'
+        : 'http://localhost:8080/auth/signup/error/invalidGoogleResponse'
     );
   } catch (error) {
-    console.log(error);
     return res.redirect(
       process.env.NODE_ENV === 'production'
         ? 'https://envenv.com/auth/signup/error/googleAccountUnknownError'

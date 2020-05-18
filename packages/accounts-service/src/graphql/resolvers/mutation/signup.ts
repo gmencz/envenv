@@ -51,7 +51,7 @@ const signup: MutationOperations['signup'] = async (
     });
 
     return {
-      __typename: 'SuccessfulAuthentication',
+      __typename: 'SuccessfulSignup',
       user: {
         email: newUser.email,
         id: newUser.id,

@@ -1,8 +1,9 @@
 # =================
-# SDL for root types such as queries and mutations
+# SDL for root types
 # =================
+
 extend type Query {
-  requestPasswordResetEmail(email: String!): Boolean!
+  requestPasswordResetEmail(email: String!): RequestPasswordResetEmailResult!
   user(id: String, username: String, email: String): UserResult!
 }
 
@@ -53,7 +54,12 @@ type InvalidDataFormat {
   message: String!
 }
 
-type SuccessfulAuthentication {
+type SuccessfulSignup {
+  user: User!
+  csrfToken: String!
+}
+
+type SuccessfulLogin {
   user: User!
   csrfToken: String!
 }
@@ -78,28 +84,26 @@ type UserNotFound {
   message: String!
 }
 
+type EmailMayHaveBeenSent {
+  message: String!
+}
+
 # Unions for auth which combine the previous types.
-# This is a better approach for error handling than just throwing errors,
-# the GraphQL twitter representative talks about this in the following link
+# This is a better approach for error handling than just throwing errors.
+# The GraphQL Twitter representative talks about this in the following link
 # https://medium.com/@sachee/200-ok-error-handling-in-graphql-7ec869aec9bc
 
 union UserResult = User | UserNotFound | InvalidDataFormat
 
+union RequestPasswordResetEmailResult = EmailMayHaveBeenSent | InvalidDataFormat
+
 union ResetPasswordResult = User | InvalidOrExpiredToken | PasswordsDontMatch
 
-union AutomateLoginResult =
-    SuccessfulAuthentication
-  | InvalidOrMissingUserIdentifier
+union AutomateLoginResult = SuccessfulLogin | InvalidOrMissingUserIdentifier
 
-union SignupResult =
-    SuccessfulAuthentication
-  | InvalidDataFormat
-  | TakenUsernameOrEmail
+union SignupResult = SuccessfulSignup | InvalidDataFormat | TakenUsernameOrEmail
 
-union LoginResult =
-    SuccessfulAuthentication
-  | InvalidDataFormat
-  | InvalidCredentials
+union LoginResult = SuccessfulLogin | InvalidDataFormat | InvalidCredentials
 
 # =================
 # SDL for input types used for this service's queries/mutations

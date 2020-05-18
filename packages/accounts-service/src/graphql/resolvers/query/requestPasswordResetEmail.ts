@@ -20,7 +20,11 @@ const requestPasswordResetEmail: QueryOperations['requestPasswordResetEmail'] = 
         Just return true so the end user won't know whether or not
         the email exists, this is for security.
       */
-      return true;
+      return {
+        __typename: 'EmailMayHaveBeenSent',
+        message:
+          'If the email you provided was associated to an account, we have sent an email with the instructions to reset your password!',
+      };
     }
 
     const transporterSettings = {
@@ -69,12 +73,17 @@ const requestPasswordResetEmail: QueryOperations['requestPasswordResetEmail'] = 
       `,
     });
 
-    return true;
+    return {
+      __typename: 'EmailMayHaveBeenSent',
+      message:
+        'If the email you provided was associated to an account, we have sent an email with the instructions to reset your password!',
+    };
   } catch (error) {
     if (error.name === 'ValidationError') {
-      throw new ApolloError(error.message, '400', {
-        errorCode: 'validation_error',
-      });
+      return {
+        __typename: 'InvalidDataFormat',
+        message: error.message,
+      };
     }
 
     if (error instanceof ApolloError) {

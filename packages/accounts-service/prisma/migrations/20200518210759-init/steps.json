@@ -2,6 +2,22 @@
   "version": "0.3.14-fixed",
   "steps": [
     {
+      "tag": "CreateEnum",
+      "enum": "UserRole",
+      "values": [
+        "USER",
+        "ADMIN"
+      ]
+    },
+    {
+      "tag": "CreateEnum",
+      "enum": "AccountProvider",
+      "values": [
+        "GOOGLE",
+        "NONE"
+      ]
+    },
+    {
       "tag": "CreateSource",
       "source": "db"
     },
@@ -31,7 +47,7 @@
       "tag": "CreateField",
       "model": "User",
       "field": "id",
-      "type": "Int",
+      "type": "String",
       "arity": "Required"
     },
     {
@@ -57,7 +73,7 @@
         "directive": "default"
       },
       "argument": "",
-      "value": "autoincrement()"
+      "value": "cuid()"
     },
     {
       "tag": "CreateDirective",
@@ -75,14 +91,39 @@
       "model": "User",
       "field": "picture",
       "type": "String",
-      "arity": "Required"
+      "arity": "Optional"
     },
     {
       "tag": "CreateField",
       "model": "User",
       "field": "provider",
-      "type": "String",
+      "type": "AccountProvider",
       "arity": "Required"
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Field",
+          "model": "User",
+          "field": "provider"
+        },
+        "directive": "default"
+      }
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "User",
+          "field": "provider"
+        },
+        "directive": "default"
+      },
+      "argument": "",
+      "value": "NONE"
     },
     {
       "tag": "CreateField",
@@ -92,11 +133,33 @@
       "arity": "Required"
     },
     {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Field",
+          "model": "User",
+          "field": "username"
+        },
+        "directive": "unique"
+      }
+    },
+    {
       "tag": "CreateField",
       "model": "User",
       "field": "email",
       "type": "String",
       "arity": "Required"
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Field",
+          "model": "User",
+          "field": "email"
+        },
+        "directive": "unique"
+      }
     },
     {
       "tag": "CreateField",
@@ -116,15 +179,40 @@
       "tag": "CreateField",
       "model": "User",
       "field": "role",
-      "type": "String",
+      "type": "UserRole",
       "arity": "Required"
+    },
+    {
+      "tag": "CreateDirective",
+      "location": {
+        "path": {
+          "tag": "Field",
+          "model": "User",
+          "field": "role"
+        },
+        "directive": "default"
+      }
+    },
+    {
+      "tag": "CreateArgument",
+      "location": {
+        "tag": "Directive",
+        "path": {
+          "tag": "Field",
+          "model": "User",
+          "field": "role"
+        },
+        "directive": "default"
+      },
+      "argument": "",
+      "value": "USER"
     },
     {
       "tag": "CreateField",
       "model": "User",
       "field": "lastPasswordChange",
-      "type": "String",
-      "arity": "Required"
+      "type": "DateTime",
+      "arity": "Optional"
     }
   ]
 }

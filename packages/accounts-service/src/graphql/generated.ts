@@ -12,7 +12,7 @@ export type Scalars = {
 
 export type Query = {
    __typename?: 'Query';
-  requestPasswordResetEmail: Scalars['Boolean'];
+  requestPasswordResetEmail: RequestPasswordResetEmailResult;
   user: UserResult;
 };
 
@@ -91,8 +91,14 @@ export type InvalidDataFormat = {
   message: Scalars['String'];
 };
 
-export type SuccessfulAuthentication = {
-   __typename?: 'SuccessfulAuthentication';
+export type SuccessfulSignup = {
+   __typename?: 'SuccessfulSignup';
+  user: User;
+  csrfToken: Scalars['String'];
+};
+
+export type SuccessfulLogin = {
+   __typename?: 'SuccessfulLogin';
   user: User;
   csrfToken: Scalars['String'];
 };
@@ -122,15 +128,22 @@ export type UserNotFound = {
   message: Scalars['String'];
 };
 
+export type EmailMayHaveBeenSent = {
+   __typename?: 'EmailMayHaveBeenSent';
+  message: Scalars['String'];
+};
+
 export type UserResult = User | UserNotFound | InvalidDataFormat;
+
+export type RequestPasswordResetEmailResult = EmailMayHaveBeenSent | InvalidDataFormat;
 
 export type ResetPasswordResult = User | InvalidOrExpiredToken | PasswordsDontMatch;
 
-export type AutomateLoginResult = SuccessfulAuthentication | InvalidOrMissingUserIdentifier;
+export type AutomateLoginResult = SuccessfulLogin | InvalidOrMissingUserIdentifier;
 
-export type SignupResult = SuccessfulAuthentication | InvalidDataFormat | TakenUsernameOrEmail;
+export type SignupResult = SuccessfulSignup | InvalidDataFormat | TakenUsernameOrEmail;
 
-export type LoginResult = SuccessfulAuthentication | InvalidDataFormat | InvalidCredentials;
+export type LoginResult = SuccessfulLogin | InvalidDataFormat | InvalidCredentials;
 
 export type ResetPasswordInput = {
   currentPassword: Scalars['String'];
@@ -229,17 +242,20 @@ export type ResolversTypes = {
   AccountProvider: AccountProvider,
   TakenUsernameOrEmail: ResolverTypeWrapper<TakenUsernameOrEmail>,
   InvalidDataFormat: ResolverTypeWrapper<InvalidDataFormat>,
-  SuccessfulAuthentication: ResolverTypeWrapper<SuccessfulAuthentication>,
+  SuccessfulSignup: ResolverTypeWrapper<SuccessfulSignup>,
+  SuccessfulLogin: ResolverTypeWrapper<SuccessfulLogin>,
   InvalidCredentials: ResolverTypeWrapper<InvalidCredentials>,
   InvalidOrMissingUserIdentifier: ResolverTypeWrapper<InvalidOrMissingUserIdentifier>,
   InvalidOrExpiredToken: ResolverTypeWrapper<InvalidOrExpiredToken>,
   PasswordsDontMatch: ResolverTypeWrapper<PasswordsDontMatch>,
   UserNotFound: ResolverTypeWrapper<UserNotFound>,
+  EmailMayHaveBeenSent: ResolverTypeWrapper<EmailMayHaveBeenSent>,
   UserResult: ResolversTypes['User'] | ResolversTypes['UserNotFound'] | ResolversTypes['InvalidDataFormat'],
+  RequestPasswordResetEmailResult: ResolversTypes['EmailMayHaveBeenSent'] | ResolversTypes['InvalidDataFormat'],
   ResetPasswordResult: ResolversTypes['User'] | ResolversTypes['InvalidOrExpiredToken'] | ResolversTypes['PasswordsDontMatch'],
-  AutomateLoginResult: ResolversTypes['SuccessfulAuthentication'] | ResolversTypes['InvalidOrMissingUserIdentifier'],
-  SignupResult: ResolversTypes['SuccessfulAuthentication'] | ResolversTypes['InvalidDataFormat'] | ResolversTypes['TakenUsernameOrEmail'],
-  LoginResult: ResolversTypes['SuccessfulAuthentication'] | ResolversTypes['InvalidDataFormat'] | ResolversTypes['InvalidCredentials'],
+  AutomateLoginResult: ResolversTypes['SuccessfulLogin'] | ResolversTypes['InvalidOrMissingUserIdentifier'],
+  SignupResult: ResolversTypes['SuccessfulSignup'] | ResolversTypes['InvalidDataFormat'] | ResolversTypes['TakenUsernameOrEmail'],
+  LoginResult: ResolversTypes['SuccessfulLogin'] | ResolversTypes['InvalidDataFormat'] | ResolversTypes['InvalidCredentials'],
   ResetPasswordInput: ResetPasswordInput,
   CreateUserInput: CreateUserInput,
 };
@@ -256,23 +272,26 @@ export type ResolversParentTypes = {
   AccountProvider: AccountProvider,
   TakenUsernameOrEmail: TakenUsernameOrEmail,
   InvalidDataFormat: InvalidDataFormat,
-  SuccessfulAuthentication: SuccessfulAuthentication,
+  SuccessfulSignup: SuccessfulSignup,
+  SuccessfulLogin: SuccessfulLogin,
   InvalidCredentials: InvalidCredentials,
   InvalidOrMissingUserIdentifier: InvalidOrMissingUserIdentifier,
   InvalidOrExpiredToken: InvalidOrExpiredToken,
   PasswordsDontMatch: PasswordsDontMatch,
   UserNotFound: UserNotFound,
+  EmailMayHaveBeenSent: EmailMayHaveBeenSent,
   UserResult: ResolversParentTypes['User'] | ResolversParentTypes['UserNotFound'] | ResolversParentTypes['InvalidDataFormat'],
+  RequestPasswordResetEmailResult: ResolversParentTypes['EmailMayHaveBeenSent'] | ResolversParentTypes['InvalidDataFormat'],
   ResetPasswordResult: ResolversParentTypes['User'] | ResolversParentTypes['InvalidOrExpiredToken'] | ResolversParentTypes['PasswordsDontMatch'],
-  AutomateLoginResult: ResolversParentTypes['SuccessfulAuthentication'] | ResolversParentTypes['InvalidOrMissingUserIdentifier'],
-  SignupResult: ResolversParentTypes['SuccessfulAuthentication'] | ResolversParentTypes['InvalidDataFormat'] | ResolversParentTypes['TakenUsernameOrEmail'],
-  LoginResult: ResolversParentTypes['SuccessfulAuthentication'] | ResolversParentTypes['InvalidDataFormat'] | ResolversParentTypes['InvalidCredentials'],
+  AutomateLoginResult: ResolversParentTypes['SuccessfulLogin'] | ResolversParentTypes['InvalidOrMissingUserIdentifier'],
+  SignupResult: ResolversParentTypes['SuccessfulSignup'] | ResolversParentTypes['InvalidDataFormat'] | ResolversParentTypes['TakenUsernameOrEmail'],
+  LoginResult: ResolversParentTypes['SuccessfulLogin'] | ResolversParentTypes['InvalidDataFormat'] | ResolversParentTypes['InvalidCredentials'],
   ResetPasswordInput: ResetPasswordInput,
   CreateUserInput: CreateUserInput,
 };
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
-  requestPasswordResetEmail?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<QueryRequestPasswordResetEmailArgs, 'email'>>,
+  requestPasswordResetEmail?: Resolver<ResolversTypes['RequestPasswordResetEmailResult'], ParentType, ContextType, RequireFields<QueryRequestPasswordResetEmailArgs, 'email'>>,
   user?: Resolver<ResolversTypes['UserResult'], ParentType, ContextType, RequireFields<QueryUserArgs, never>>,
 };
 
@@ -307,7 +326,13 @@ export type InvalidDataFormatResolvers<ContextType = any, ParentType extends Res
   __isTypeOf?: isTypeOfResolverFn<ParentType>,
 };
 
-export type SuccessfulAuthenticationResolvers<ContextType = any, ParentType extends ResolversParentTypes['SuccessfulAuthentication'] = ResolversParentTypes['SuccessfulAuthentication']> = {
+export type SuccessfulSignupResolvers<ContextType = any, ParentType extends ResolversParentTypes['SuccessfulSignup'] = ResolversParentTypes['SuccessfulSignup']> = {
+  user?: Resolver<ResolversTypes['User'], ParentType, ContextType>,
+  csrfToken?: Resolver<ResolversTypes['String'], ParentType, ContextType>,
+  __isTypeOf?: isTypeOfResolverFn<ParentType>,
+};
+
+export type SuccessfulLoginResolvers<ContextType = any, ParentType extends ResolversParentTypes['SuccessfulLogin'] = ResolversParentTypes['SuccessfulLogin']> = {
   user?: Resolver<ResolversTypes['User'], ParentType, ContextType>,
   csrfToken?: Resolver<ResolversTypes['String'], ParentType, ContextType>,
   __isTypeOf?: isTypeOfResolverFn<ParentType>,
@@ -338,8 +363,17 @@ export type UserNotFoundResolvers<ContextType = any, ParentType extends Resolver
   __isTypeOf?: isTypeOfResolverFn<ParentType>,
 };
 
+export type EmailMayHaveBeenSentResolvers<ContextType = any, ParentType extends ResolversParentTypes['EmailMayHaveBeenSent'] = ResolversParentTypes['EmailMayHaveBeenSent']> = {
+  message?: Resolver<ResolversTypes['String'], ParentType, ContextType>,
+  __isTypeOf?: isTypeOfResolverFn<ParentType>,
+};
+
 export type UserResultResolvers<ContextType = any, ParentType extends ResolversParentTypes['UserResult'] = ResolversParentTypes['UserResult']> = {
   __resolveType: TypeResolveFn<'User' | 'UserNotFound' | 'InvalidDataFormat', ParentType, ContextType>
+};
+
+export type RequestPasswordResetEmailResultResolvers<ContextType = any, ParentType extends ResolversParentTypes['RequestPasswordResetEmailResult'] = ResolversParentTypes['RequestPasswordResetEmailResult']> = {
+  __resolveType: TypeResolveFn<'EmailMayHaveBeenSent' | 'InvalidDataFormat', ParentType, ContextType>
 };
 
 export type ResetPasswordResultResolvers<ContextType = any, ParentType extends ResolversParentTypes['ResetPasswordResult'] = ResolversParentTypes['ResetPasswordResult']> = {
@@ -347,15 +381,15 @@ export type ResetPasswordResultResolvers<ContextType = any, ParentType extends R
 };
 
 export type AutomateLoginResultResolvers<ContextType = any, ParentType extends ResolversParentTypes['AutomateLoginResult'] = ResolversParentTypes['AutomateLoginResult']> = {
-  __resolveType: TypeResolveFn<'SuccessfulAuthentication' | 'InvalidOrMissingUserIdentifier', ParentType, ContextType>
+  __resolveType: TypeResolveFn<'SuccessfulLogin' | 'InvalidOrMissingUserIdentifier', ParentType, ContextType>
 };
 
 export type SignupResultResolvers<ContextType = any, ParentType extends ResolversParentTypes['SignupResult'] = ResolversParentTypes['SignupResult']> = {
-  __resolveType: TypeResolveFn<'SuccessfulAuthentication' | 'InvalidDataFormat' | 'TakenUsernameOrEmail', ParentType, ContextType>
+  __resolveType: TypeResolveFn<'SuccessfulSignup' | 'InvalidDataFormat' | 'TakenUsernameOrEmail', ParentType, ContextType>
 };
 
 export type LoginResultResolvers<ContextType = any, ParentType extends ResolversParentTypes['LoginResult'] = ResolversParentTypes['LoginResult']> = {
-  __resolveType: TypeResolveFn<'SuccessfulAuthentication' | 'InvalidDataFormat' | 'InvalidCredentials', ParentType, ContextType>
+  __resolveType: TypeResolveFn<'SuccessfulLogin' | 'InvalidDataFormat' | 'InvalidCredentials', ParentType, ContextType>
 };
 
 export type Resolvers<ContextType = any> = {
@@ -364,13 +398,16 @@ export type Resolvers<ContextType = any> = {
   User?: UserResolvers<ContextType>,
   TakenUsernameOrEmail?: TakenUsernameOrEmailResolvers<ContextType>,
   InvalidDataFormat?: InvalidDataFormatResolvers<ContextType>,
-  SuccessfulAuthentication?: SuccessfulAuthenticationResolvers<ContextType>,
+  SuccessfulSignup?: SuccessfulSignupResolvers<ContextType>,
+  SuccessfulLogin?: SuccessfulLoginResolvers<ContextType>,
   InvalidCredentials?: InvalidCredentialsResolvers<ContextType>,
   InvalidOrMissingUserIdentifier?: InvalidOrMissingUserIdentifierResolvers<ContextType>,
   InvalidOrExpiredToken?: InvalidOrExpiredTokenResolvers<ContextType>,
   PasswordsDontMatch?: PasswordsDontMatchResolvers<ContextType>,
   UserNotFound?: UserNotFoundResolvers<ContextType>,
+  EmailMayHaveBeenSent?: EmailMayHaveBeenSentResolvers<ContextType>,
   UserResult?: UserResultResolvers,
+  RequestPasswordResetEmailResult?: RequestPasswordResetEmailResultResolvers,
   ResetPasswordResult?: ResetPasswordResultResolvers,
   AutomateLoginResult?: AutomateLoginResultResolvers,
   SignupResult?: SignupResultResolvers,

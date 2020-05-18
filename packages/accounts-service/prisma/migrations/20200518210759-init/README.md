@@ -1,6 +1,6 @@
-# Migration `20200518125121-update-enums-names-to-avoid-collisions`
+# Migration `20200518210759-init`
 
-This migration has been generated at 5/18/2020, 12:51:21 PM.
+This migration has been generated at 5/18/2020, 9:07:59 PM.
 You can check out the [state of the schema](./schema.prisma) after the migration.
 
 ## Database Steps
@@ -17,53 +17,45 @@ CREATE TABLE "accounts"."User" (
 CREATE UNIQUE INDEX "User.username" ON "accounts"."User"("username")
 
 CREATE UNIQUE INDEX "User.email" ON "accounts"."User"("email")
-
-DROP TYPE "Provider"
-
-DROP TYPE "Role"
 ```
 
 ## Changes
 
 ```diff
 diff --git schema.prisma schema.prisma
-migration 20200518121831-alter-id-datatype..20200518125121-update-enums-names-to-avoid-collisions
+migration ..20200518210759-init
 --- datamodel.dml
 +++ datamodel.dml
-@@ -1,31 +1,31 @@
- datasource db {
-   provider = "postgresql"
--  url = "***"
+@@ -1,0 +1,31 @@
++datasource db {
++  provider = "postgresql"
 +  url      = env("DATABASE_URL")
- }
- generator client {
-   provider      = "prisma-client-js"
-   binaryTargets = ["debian-openssl-1.1.x"]
- }
- model User {
--  id                 String    @default(cuid()) @id
++}
++
++generator client {
++  provider      = "prisma-client-js"
++  binaryTargets = ["debian-openssl-1.1.x"]
++}
++
++model User {
 +  id                 String          @default(cuid()) @id
-   picture            String?
--  provider           Provider  @default(NONE)
--  username           String    @unique
--  email              String    @unique
++  picture            String?
 +  provider           AccountProvider @default(NONE)
 +  username           String          @unique
 +  email              String          @unique
-   name               String
-   password           String
--  role               Role      @default(USER)
++  name               String
++  password           String
 +  role               UserRole        @default(USER)
-   lastPasswordChange DateTime?
- }
--enum Role {
++  lastPasswordChange DateTime?
++}
++
 +enum UserRole {
-   USER
-   ADMIN
- }
--enum Provider {
++  USER
++  ADMIN
++}
++
 +enum AccountProvider {
-   GOOGLE
-   NONE
- }
++  GOOGLE
++  NONE
++}
 ```

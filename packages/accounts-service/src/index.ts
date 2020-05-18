@@ -63,8 +63,6 @@ try {
   app.listen(PORT, () => {
     console.log(
       `
-===================================================
-
   Accounts GraphQL service is up and running! 
 
   - Locally (accessible via your browser): ✔️
@@ -72,8 +70,6 @@ try {
 
   - Inside Docker network: ✔️
     ${process.env.GRAPHQL_ENDPOINT} 
-
-===================================================
     `
     );
   });
