@@ -54,11 +54,3 @@ enum Provider {
   GOOGLE
   NONE
 }
-
-extend type Environment @key(fields: "id") {
-  id: Int! @external
-}
-
-extend type EnvironmentMember @key(fields: "id") {
-  id: Int! @external
-}
