@@ -10,3 +10,6 @@
 20200515012953-alter-lastpasswordchange-column-to-optional-date
 20200515020048-alter-column-picture-to-nullable
 20200515155353-alter-table-user-remove-column-environments
+20200518112518-change_id_column
+20200518121831-alter-id-datatype
+20200518125121-update-enums-names-to-avoid-collisions

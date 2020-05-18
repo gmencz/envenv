@@ -8,7 +8,7 @@ import { EnvironmentResolvers } from '../../generated';
 
 export interface ReferencedEnvironmentRoot {
   __typename: 'Environment';
-  id: number;
+  id: string;
 }
 
 export interface EnvironmentOperations {

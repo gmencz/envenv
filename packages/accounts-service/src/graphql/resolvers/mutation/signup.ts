@@ -19,13 +19,10 @@ const signup: MutationOperations['signup'] = async (
     });
 
     if (isUsernameTaken) {
-      throw new ApolloError(
-        'That username is taken, please choose a different one!',
-        '400',
-        {
-          errorCode: 'username_taken',
-        }
-      );
+      return {
+        __typename: 'TakenUsernameOrEmail',
+        message: 'That username is taken, please choose a different one!',
+      };
     }
 
     const isEmailTaken = await prisma.user.findOne({
@@ -34,13 +31,10 @@ const signup: MutationOperations['signup'] = async (
     });
 
     if (isEmailTaken) {
-      throw new ApolloError(
-        'That email is taken, please choose a different one!',
-        '400',
-        {
-          errorCode: 'email_taken',
-        }
-      );
+      return {
+        __typename: 'TakenUsernameOrEmail',
+        message: 'That email is taken, please choose a different one!',
+      };
     }
 
     const password = await hash(data.password, 12);
@@ -53,10 +47,11 @@ const signup: MutationOperations['signup'] = async (
     res.cookie('SessionID', newSession.sessionId, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
-      maxAge: Number(process.env.SESSION_REDIS_EXPIRY as string),
+      maxAge: Number(process.env.SESSION_REDIS_EXPIRY!),
     });
 
     return {
+      __typename: 'SuccessfulAuthentication',
       user: {
         email: newUser.email,
         id: newUser.id,
@@ -70,13 +65,10 @@ const signup: MutationOperations['signup'] = async (
     };
   } catch (error) {
     if (error.name === 'ValidationError') {
-      throw new ApolloError(error.message, '400', {
-        errorCode: 'validation_error',
-      });
-    }
-
-    if (error instanceof ApolloError) {
-      throw error;
+      return {
+        __typename: 'InvalidDataFormat',
+        message: error.message,
+      };
     }
 
     throw new ApolloError(

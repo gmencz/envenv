@@ -16,24 +16,26 @@ export type Scalars = {
 export type Query = {
   __typename?: 'Query';
   requestPasswordResetEmail: Scalars['Boolean'];
-  checkExternalProviderUserAvailability: Scalars['Boolean'];
+  user: UserResult;
 };
 
 export type QueryRequestPasswordResetEmailArgs = {
   email: Scalars['String'];
 };
 
-export type QueryCheckExternalProviderUserAvailabilityArgs = {
-  externalProviderUserEmail: Scalars['String'];
+export type QueryUserArgs = {
+  id?: Maybe<Scalars['String']>;
+  username?: Maybe<Scalars['String']>;
+  email?: Maybe<Scalars['String']>;
 };
 
 export type Mutation = {
   __typename?: 'Mutation';
-  signup: AuthResponse;
-  signupWithExternalProvider: AuthResponse;
-  automateLoginProcess: AuthResponse;
-  login: AuthResponse;
-  resetPassword: User;
+  signup: SignupResult;
+  signupWithExternalProvider: SignupResult;
+  automateLoginProcess: AutomateLoginResult;
+  login: LoginResult;
+  resetPassword: ResetPasswordResult;
 };
 
 export type MutationSignupArgs = {
@@ -60,42 +62,97 @@ export type ResetPasswordInput = {
 };
 
 export type CreateUserInput = {
-  id?: Maybe<Scalars['Int']>;
   picture?: Maybe<Scalars['String']>;
   username: Scalars['String'];
   email: Scalars['String'];
   name: Scalars['String'];
   password: Scalars['String'];
-};
-
-export type AuthResponse = {
-  __typename?: 'AuthResponse';
-  user: User;
-  csrfToken: Scalars['String'];
 };
 
 export type User = {
   __typename?: 'User';
-  id: Scalars['Int'];
+  id: Scalars['ID'];
   picture?: Maybe<Scalars['String']>;
-  provider: Provider;
+  provider: AccountProvider;
   username: Scalars['String'];
   email: Scalars['String'];
   name: Scalars['String'];
   password: Scalars['String'];
-  role: Role;
+  role: UserRole;
   lastPasswordChange?: Maybe<Scalars['String']>;
 };
 
-export enum Role {
+export enum UserRole {
   User = 'USER',
   Admin = 'ADMIN',
 }
 
-export enum Provider {
+export enum AccountProvider {
   Google = 'GOOGLE',
   None = 'NONE',
 }
+
+export type TakenUsernameOrEmail = {
+  __typename?: 'TakenUsernameOrEmail';
+  message: Scalars['String'];
+};
+
+export type InvalidDataFormat = {
+  __typename?: 'InvalidDataFormat';
+  message: Scalars['String'];
+};
+
+export type SuccessfulAuthentication = {
+  __typename?: 'SuccessfulAuthentication';
+  user: User;
+  csrfToken: Scalars['String'];
+};
+
+export type InvalidCredentials = {
+  __typename?: 'InvalidCredentials';
+  message: Scalars['String'];
+};
+
+export type InvalidOrMissingUserIdentifier = {
+  __typename?: 'InvalidOrMissingUserIdentifier';
+  message: Scalars['String'];
+};
+
+export type InvalidOrExpiredToken = {
+  __typename?: 'InvalidOrExpiredToken';
+  message: Scalars['String'];
+};
+
+export type PasswordsDontMatch = {
+  __typename?: 'PasswordsDontMatch';
+  message: Scalars['String'];
+};
+
+export type UserNotFound = {
+  __typename?: 'UserNotFound';
+  message: Scalars['String'];
+};
+
+export type UserResult = User | UserNotFound | InvalidDataFormat;
+
+export type ResetPasswordResult =
+  | User
+  | InvalidOrExpiredToken
+  | PasswordsDontMatch;
+
+export type AutomateLoginResult =
+  | SuccessfulAuthentication
+  | InvalidOrMissingUserIdentifier;
+
+export type SignupResult =
+  | SuccessfulAuthentication
+  | InvalidDataFormat
+  | TakenUsernameOrEmail;
+
+export type LoginResult =
+  | SuccessfulAuthentication
+  | InvalidDataFormat
+  | InvalidCredentials;
 
 export type ResolverTypeWrapper<T> = Promise<T> | T;
 
@@ -211,11 +268,39 @@ export type ResolversTypes = {
   Mutation: ResolverTypeWrapper<{}>;
   ResetPasswordInput: ResetPasswordInput;
   CreateUserInput: CreateUserInput;
-  Int: ResolverTypeWrapper<Scalars['Int']>;
-  AuthResponse: ResolverTypeWrapper<AuthResponse>;
   User: ResolverTypeWrapper<User>;
-  Role: Role;
-  Provider: Provider;
+  ID: ResolverTypeWrapper<Scalars['ID']>;
+  UserRole: UserRole;
+  AccountProvider: AccountProvider;
+  TakenUsernameOrEmail: ResolverTypeWrapper<TakenUsernameOrEmail>;
+  InvalidDataFormat: ResolverTypeWrapper<InvalidDataFormat>;
+  SuccessfulAuthentication: ResolverTypeWrapper<SuccessfulAuthentication>;
+  InvalidCredentials: ResolverTypeWrapper<InvalidCredentials>;
+  InvalidOrMissingUserIdentifier: ResolverTypeWrapper<
+    InvalidOrMissingUserIdentifier
+  >;
+  InvalidOrExpiredToken: ResolverTypeWrapper<InvalidOrExpiredToken>;
+  PasswordsDontMatch: ResolverTypeWrapper<PasswordsDontMatch>;
+  UserNotFound: ResolverTypeWrapper<UserNotFound>;
+  UserResult:
+    | ResolversTypes['User']
+    | ResolversTypes['UserNotFound']
+    | ResolversTypes['InvalidDataFormat'];
+  ResetPasswordResult:
+    | ResolversTypes['User']
+    | ResolversTypes['InvalidOrExpiredToken']
+    | ResolversTypes['PasswordsDontMatch'];
+  AutomateLoginResult:
+    | ResolversTypes['SuccessfulAuthentication']
+    | ResolversTypes['InvalidOrMissingUserIdentifier'];
+  SignupResult:
+    | ResolversTypes['SuccessfulAuthentication']
+    | ResolversTypes['InvalidDataFormat']
+    | ResolversTypes['TakenUsernameOrEmail'];
+  LoginResult:
+    | ResolversTypes['SuccessfulAuthentication']
+    | ResolversTypes['InvalidDataFormat']
+    | ResolversTypes['InvalidCredentials'];
 };
 
 /** Mapping between all available schema types and the resolvers parents */
@@ -226,11 +311,37 @@ export type ResolversParentTypes = {
   Mutation: {};
   ResetPasswordInput: ResetPasswordInput;
   CreateUserInput: CreateUserInput;
-  Int: Scalars['Int'];
-  AuthResponse: AuthResponse;
   User: User;
-  Role: Role;
-  Provider: Provider;
+  ID: Scalars['ID'];
+  UserRole: UserRole;
+  AccountProvider: AccountProvider;
+  TakenUsernameOrEmail: TakenUsernameOrEmail;
+  InvalidDataFormat: InvalidDataFormat;
+  SuccessfulAuthentication: SuccessfulAuthentication;
+  InvalidCredentials: InvalidCredentials;
+  InvalidOrMissingUserIdentifier: InvalidOrMissingUserIdentifier;
+  InvalidOrExpiredToken: InvalidOrExpiredToken;
+  PasswordsDontMatch: PasswordsDontMatch;
+  UserNotFound: UserNotFound;
+  UserResult:
+    | ResolversParentTypes['User']
+    | ResolversParentTypes['UserNotFound']
+    | ResolversParentTypes['InvalidDataFormat'];
+  ResetPasswordResult:
+    | ResolversParentTypes['User']
+    | ResolversParentTypes['InvalidOrExpiredToken']
+    | ResolversParentTypes['PasswordsDontMatch'];
+  AutomateLoginResult:
+    | ResolversParentTypes['SuccessfulAuthentication']
+    | ResolversParentTypes['InvalidOrMissingUserIdentifier'];
+  SignupResult:
+    | ResolversParentTypes['SuccessfulAuthentication']
+    | ResolversParentTypes['InvalidDataFormat']
+    | ResolversParentTypes['TakenUsernameOrEmail'];
+  LoginResult:
+    | ResolversParentTypes['SuccessfulAuthentication']
+    | ResolversParentTypes['InvalidDataFormat']
+    | ResolversParentTypes['InvalidCredentials'];
 };
 
 export type QueryResolvers<
@@ -243,14 +354,11 @@ export type QueryResolvers<
     ContextType,
     RequireFields<QueryRequestPasswordResetEmailArgs, 'email'>
   >;
-  checkExternalProviderUserAvailability?: Resolver<
-    ResolversTypes['Boolean'],
+  user?: Resolver<
+    ResolversTypes['UserResult'],
     ParentType,
     ContextType,
-    RequireFields<
-      QueryCheckExternalProviderUserAvailabilityArgs,
-      'externalProviderUserEmail'
-    >
+    RequireFields<QueryUserArgs, never>
   >;
 };
 
@@ -259,57 +367,52 @@ export type MutationResolvers<
   ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']
 > = {
   signup?: Resolver<
-    ResolversTypes['AuthResponse'],
+    ResolversTypes['SignupResult'],
     ParentType,
     ContextType,
     RequireFields<MutationSignupArgs, 'data'>
   >;
   signupWithExternalProvider?: Resolver<
-    ResolversTypes['AuthResponse'],
+    ResolversTypes['SignupResult'],
     ParentType,
     ContextType,
     RequireFields<MutationSignupWithExternalProviderArgs, 'username'>
   >;
   automateLoginProcess?: Resolver<
-    ResolversTypes['AuthResponse'],
+    ResolversTypes['AutomateLoginResult'],
     ParentType,
     ContextType
   >;
   login?: Resolver<
-    ResolversTypes['AuthResponse'],
+    ResolversTypes['LoginResult'],
     ParentType,
     ContextType,
     RequireFields<MutationLoginArgs, 'username' | 'password'>
   >;
   resetPassword?: Resolver<
-    ResolversTypes['User'],
+    ResolversTypes['ResetPasswordResult'],
     ParentType,
     ContextType,
     RequireFields<MutationResetPasswordArgs, never>
   >;
 };
 
-export type AuthResponseResolvers<
-  ContextType = any,
-  ParentType extends ResolversParentTypes['AuthResponse'] = ResolversParentTypes['AuthResponse']
-> = {
-  user?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
-  csrfToken?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  __isTypeOf?: isTypeOfResolverFn<ParentType>;
-};
-
 export type UserResolvers<
   ContextType = any,
   ParentType extends ResolversParentTypes['User'] = ResolversParentTypes['User']
 > = {
-  id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   picture?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  provider?: Resolver<ResolversTypes['Provider'], ParentType, ContextType>;
+  provider?: Resolver<
+    ResolversTypes['AccountProvider'],
+    ParentType,
+    ContextType
+  >;
   username?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   email?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   password?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  role?: Resolver<ResolversTypes['Role'], ParentType, ContextType>;
+  role?: Resolver<ResolversTypes['UserRole'], ParentType, ContextType>;
   lastPasswordChange?: Resolver<
     Maybe<ResolversTypes['String']>,
     ParentType,
@@ -318,11 +421,145 @@ export type UserResolvers<
   __isTypeOf?: isTypeOfResolverFn<ParentType>;
 };
 
+export type TakenUsernameOrEmailResolvers<
+  ContextType = any,
+  ParentType extends ResolversParentTypes['TakenUsernameOrEmail'] = ResolversParentTypes['TakenUsernameOrEmail']
+> = {
+  message?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  __isTypeOf?: isTypeOfResolverFn<ParentType>;
+};
+
+export type InvalidDataFormatResolvers<
+  ContextType = any,
+  ParentType extends ResolversParentTypes['InvalidDataFormat'] = ResolversParentTypes['InvalidDataFormat']
+> = {
+  message?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  __isTypeOf?: isTypeOfResolverFn<ParentType>;
+};
+
+export type SuccessfulAuthenticationResolvers<
+  ContextType = any,
+  ParentType extends ResolversParentTypes['SuccessfulAuthentication'] = ResolversParentTypes['SuccessfulAuthentication']
+> = {
+  user?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
+  csrfToken?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  __isTypeOf?: isTypeOfResolverFn<ParentType>;
+};
+
+export type InvalidCredentialsResolvers<
+  ContextType = any,
+  ParentType extends ResolversParentTypes['InvalidCredentials'] = ResolversParentTypes['InvalidCredentials']
+> = {
+  message?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  __isTypeOf?: isTypeOfResolverFn<ParentType>;
+};
+
+export type InvalidOrMissingUserIdentifierResolvers<
+  ContextType = any,
+  ParentType extends ResolversParentTypes['InvalidOrMissingUserIdentifier'] = ResolversParentTypes['InvalidOrMissingUserIdentifier']
+> = {
+  message?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  __isTypeOf?: isTypeOfResolverFn<ParentType>;
+};
+
+export type InvalidOrExpiredTokenResolvers<
+  ContextType = any,
+  ParentType extends ResolversParentTypes['InvalidOrExpiredToken'] = ResolversParentTypes['InvalidOrExpiredToken']
+> = {
+  message?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  __isTypeOf?: isTypeOfResolverFn<ParentType>;
+};
+
+export type PasswordsDontMatchResolvers<
+  ContextType = any,
+  ParentType extends ResolversParentTypes['PasswordsDontMatch'] = ResolversParentTypes['PasswordsDontMatch']
+> = {
+  message?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  __isTypeOf?: isTypeOfResolverFn<ParentType>;
+};
+
+export type UserNotFoundResolvers<
+  ContextType = any,
+  ParentType extends ResolversParentTypes['UserNotFound'] = ResolversParentTypes['UserNotFound']
+> = {
+  message?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  __isTypeOf?: isTypeOfResolverFn<ParentType>;
+};
+
+export type UserResultResolvers<
+  ContextType = any,
+  ParentType extends ResolversParentTypes['UserResult'] = ResolversParentTypes['UserResult']
+> = {
+  __resolveType: TypeResolveFn<
+    'User' | 'UserNotFound' | 'InvalidDataFormat',
+    ParentType,
+    ContextType
+  >;
+};
+
+export type ResetPasswordResultResolvers<
+  ContextType = any,
+  ParentType extends ResolversParentTypes['ResetPasswordResult'] = ResolversParentTypes['ResetPasswordResult']
+> = {
+  __resolveType: TypeResolveFn<
+    'User' | 'InvalidOrExpiredToken' | 'PasswordsDontMatch',
+    ParentType,
+    ContextType
+  >;
+};
+
+export type AutomateLoginResultResolvers<
+  ContextType = any,
+  ParentType extends ResolversParentTypes['AutomateLoginResult'] = ResolversParentTypes['AutomateLoginResult']
+> = {
+  __resolveType: TypeResolveFn<
+    'SuccessfulAuthentication' | 'InvalidOrMissingUserIdentifier',
+    ParentType,
+    ContextType
+  >;
+};
+
+export type SignupResultResolvers<
+  ContextType = any,
+  ParentType extends ResolversParentTypes['SignupResult'] = ResolversParentTypes['SignupResult']
+> = {
+  __resolveType: TypeResolveFn<
+    'SuccessfulAuthentication' | 'InvalidDataFormat' | 'TakenUsernameOrEmail',
+    ParentType,
+    ContextType
+  >;
+};
+
+export type LoginResultResolvers<
+  ContextType = any,
+  ParentType extends ResolversParentTypes['LoginResult'] = ResolversParentTypes['LoginResult']
+> = {
+  __resolveType: TypeResolveFn<
+    'SuccessfulAuthentication' | 'InvalidDataFormat' | 'InvalidCredentials',
+    ParentType,
+    ContextType
+  >;
+};
+
 export type Resolvers<ContextType = any> = {
   Query?: QueryResolvers<ContextType>;
   Mutation?: MutationResolvers<ContextType>;
-  AuthResponse?: AuthResponseResolvers<ContextType>;
   User?: UserResolvers<ContextType>;
+  TakenUsernameOrEmail?: TakenUsernameOrEmailResolvers<ContextType>;
+  InvalidDataFormat?: InvalidDataFormatResolvers<ContextType>;
+  SuccessfulAuthentication?: SuccessfulAuthenticationResolvers<ContextType>;
+  InvalidCredentials?: InvalidCredentialsResolvers<ContextType>;
+  InvalidOrMissingUserIdentifier?: InvalidOrMissingUserIdentifierResolvers<
+    ContextType
+  >;
+  InvalidOrExpiredToken?: InvalidOrExpiredTokenResolvers<ContextType>;
+  PasswordsDontMatch?: PasswordsDontMatchResolvers<ContextType>;
+  UserNotFound?: UserNotFoundResolvers<ContextType>;
+  UserResult?: UserResultResolvers;
+  ResetPasswordResult?: ResetPasswordResultResolvers;
+  AutomateLoginResult?: AutomateLoginResultResolvers;
+  SignupResult?: SignupResultResolvers;
+  LoginResult?: LoginResultResolvers;
 };
 
 /**

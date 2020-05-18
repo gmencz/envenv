@@ -7,7 +7,7 @@ import { EnvironmentMemberResolvers } from '../../generated';
 
 export interface ReferencedEnvironmentMemberRoot {
   __typename: 'EnvironmentMember';
-  id: number;
+  id: string;
 }
 
 export type EnvironmentMemberOperations = {

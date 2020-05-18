@@ -11,7 +11,7 @@ export default class GatewayDataSource extends RemoteGraphQLDataSource {
   willSendRequest({ request, context }: WillSendRequestParams): void {
     if (context && context.req && context.req.cookies) {
       // Perform authentication here
-      console.log(context.req.cookies);
+      // console.log(context.req.cookies);
 
       request.http.headers.set('Cookie', JSON.stringify(context.req.cookies));
     }

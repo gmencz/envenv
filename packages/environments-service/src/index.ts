@@ -16,7 +16,6 @@ try {
   const typeDefs = gql(importSchema(`${__dirname}/graphql/schema.graphql`));
 
   const server = new ApolloServer({
-    engine: false,
     schema: buildFederatedSchema([
       {
         typeDefs,

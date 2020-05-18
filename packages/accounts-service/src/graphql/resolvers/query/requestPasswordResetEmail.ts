@@ -24,11 +24,11 @@ const requestPasswordResetEmail: QueryOperations['requestPasswordResetEmail'] = 
     }
 
     const transporterSettings = {
-      host: process.env.NODEMAILER_HOST as string,
+      host: process.env.NODEMAILER_HOST!,
       port: Number(process.env.NODEMAILER_PORT),
       auth: {
-        user: process.env.NODEMAILER_USERNAME as string,
-        pass: process.env.NODEMAILER_PASSWORD as string,
+        user: process.env.NODEMAILER_USERNAME!,
+        pass: process.env.NODEMAILER_PASSWORD!,
       },
     };
 
@@ -36,7 +36,7 @@ const requestPasswordResetEmail: QueryOperations['requestPasswordResetEmail'] = 
 
     const token = sign(
       { userId: user.id, lastPasswordChange: user.lastPasswordChange },
-      process.env.PASSWORD_RESET_SECRET as string,
+      process.env.PASSWORD_RESET_SECRET!,
       {
         expiresIn: 900000, // 15 mins
       }

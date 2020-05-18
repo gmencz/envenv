@@ -6,9 +6,9 @@ import {
 import { ApolloContext } from '../../../typings';
 
 export interface CreateEnvironmentResolvableReturnType {
-  id: number;
+  id: string;
   name: string;
-  ownerUserId: number;
+  ownerUserId: string;
 }
 
 export interface MutationOperations {

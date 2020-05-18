@@ -5,7 +5,7 @@ import { UserResolvers } from '../../generated';
 
 export interface ReferencedUserRoot {
   __typename: 'User';
-  id: number;
+  id: string;
 }
 
 export interface UserOperations {

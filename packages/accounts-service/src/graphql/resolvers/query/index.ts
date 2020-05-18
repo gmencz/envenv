@@ -1,11 +1,12 @@
 import requestPasswordResetEmail from './requestPasswordResetEmail';
 import {
   QueryRequestPasswordResetEmailArgs,
-  QueryCheckExternalProviderUserAvailabilityArgs,
+  QueryUserArgs,
+  UserResult,
 } from '../../generated';
 import { ApolloContext } from '../../../typings';
 import { QueryResolvers } from '../../generated';
-import checkExternalProviderUserAvailability from './checkExternalProviderUserAvailability';
+import user from './user';
 
 export interface QueryOperations {
   requestPasswordResetEmail(
@@ -13,18 +14,14 @@ export interface QueryOperations {
     args: QueryRequestPasswordResetEmailArgs,
     ctx: ApolloContext
   ): Promise<boolean>;
-  checkExternalProviderUserAvailability(
-    root: any,
-    args: QueryCheckExternalProviderUserAvailabilityArgs,
-    ctx: ApolloContext
-  ): Promise<boolean>;
+  user(root: any, args: QueryUserArgs, ctx: ApolloContext): Promise<UserResult>;
 }
 
 const QueryResolvers: {
   [T in keyof QueryResolvers]: QueryOperations[keyof QueryOperations];
 } = {
   requestPasswordResetEmail,
-  checkExternalProviderUserAvailability,
+  user,
 };
 
 export default QueryResolvers;
