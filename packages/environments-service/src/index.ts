@@ -27,6 +27,7 @@ try {
       res,
       prisma,
     }),
+    engine: false,
   });
 
   server.applyMiddleware({ app });

@@ -8,19 +8,19 @@ generator client {
   binaryTargets = ["debian-openssl-1.1.x"]
 }
 
-model Environment {
-  id          String              @default(cuid()) @id
-  name        String
-  members     EnvironmentMember[]
-  ownerUserId String
-}
-
 model EnvironmentMember {
-  id              String          @default(cuid()) @id
+  id              String          @default(uuid()) @id
   environment     Environment?    @relation(fields: [environmentId], references: [id])
   environmentId   String?
   environmentRole EnvironmentRole @default(CONTRIBUTOR)
   userId          String
+}
+
+model Environment {
+  id          String              @default(uuid()) @id
+  name        String
+  members     EnvironmentMember[]
+  ownerUserId String
 }
 
 enum EnvironmentRole {

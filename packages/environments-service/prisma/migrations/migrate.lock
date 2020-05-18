@@ -3,8 +3,4 @@
 # Prisma Migrate lockfile v1
 # Read more about conflict resolution here: TODO
 
-20200514213514-init
-20200514214409-add-column-to-identify-external-user
-20200514220321-add-column-to-identify-external-user-environment-member
-20200518124537-change-datatype-for-id-s
-20200518124936-change-enums-names-to-avoid-conflicts
+20200518145637-init
