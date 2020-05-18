@@ -4,6 +4,7 @@ import createSession from '../../../helpers/createSession';
 import redisClient from '../../../helpers/redisClient';
 import { hash } from 'bcryptjs';
 import { MutationOperations } from '.';
+import addAtToUsername from '../../../helpers/addAtToUsername';
 
 const signup: MutationOperations['signup'] = async (
   _,
@@ -14,14 +15,18 @@ const signup: MutationOperations['signup'] = async (
     await createUserSchema.validate({ ...data });
 
     const isUsernameTaken = await prisma.user.findOne({
-      where: { username: data.username },
+      where: {
+        username: data.username.startsWith('@')
+          ? data.username
+          : `@${data.username}`,
+      },
       select: { id: true },
     });
 
     if (isUsernameTaken) {
       return {
         __typename: 'TakenUsernameOrEmail',
-        message: 'That username is taken, please choose a different one!',
+        message: 'That username is taken, please choose a different one',
       };
     }
 
@@ -33,15 +38,17 @@ const signup: MutationOperations['signup'] = async (
     if (isEmailTaken) {
       return {
         __typename: 'TakenUsernameOrEmail',
-        message: 'That email is taken, please choose a different one!',
+        message: 'That email is taken, please choose a different one',
       };
     }
 
     const password = await hash(data.password, 12);
+    const username = addAtToUsername(data.username);
 
     const newUser = await prisma.user.create({
-      data: { ...data, password },
+      data: { ...data, password, username },
     });
+
     const newSession = await createSession(newUser.id, redisClient);
 
     res.cookie('SessionID', newSession.sessionId, {

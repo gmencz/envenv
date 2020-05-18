@@ -35,7 +35,9 @@ export const callbackGoogleAuth = async (
       process.env.GRAPHQL_ENDPOINT!,
       `
       query GetUserById($id: String!) {
-        user(id: $id)
+        user(id: $id) {
+          __typename
+        }
       } 
     `,
       {
@@ -46,7 +48,6 @@ export const callbackGoogleAuth = async (
     const { user: userResult } = data as { user: UserResult };
 
     if (userResult.__typename === 'User') {
-      // Find user by email instead of id when automating login process
       res.cookie('TemporaryUserId', id, {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',

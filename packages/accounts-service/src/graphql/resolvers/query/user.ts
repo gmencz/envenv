@@ -6,29 +6,24 @@ import { reach } from 'yup';
 
 const user: QueryOperations['user'] = async (_, args, { prisma }) => {
   try {
-    let consumableUsername;
-
     if (args.username) {
-      consumableUsername = args.username;
-
-      if (args.username.startsWith('@')) {
-        const [, ...withoutAtUsername] = args.username;
-        consumableUsername = withoutAtUsername.join('');
-      }
-
-      await reach(createUserSchema, 'username').validate(consumableUsername);
+      await reach(createUserSchema, 'username').validate(args.username);
     }
 
     if (args.email) {
       await reach(createUserSchema, 'email').validate(args.email);
     }
 
-    const filter = {
-      ...args,
-      ...(consumableUsername && { username: consumableUsername }),
-    };
-
-    const user = await prisma.user.findOne({ where: { ...filter } });
+    const user = await prisma.user.findOne({
+      where: {
+        ...args,
+        ...(args.username && {
+          username: args.username.startsWith('@')
+            ? args.username
+            : `@${args.username}`,
+        }),
+      },
+    });
 
     if (!user) {
       return {

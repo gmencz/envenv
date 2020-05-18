@@ -88,6 +88,10 @@ type EmailMayHaveBeenSent {
   message: String!
 }
 
+type SkippedOAuthFlow {
+  message: String!
+}
+
 # Unions for auth which combine the previous types.
 # This is a better approach for error handling than just throwing errors.
 # The GraphQL Twitter representative talks about this in the following link
@@ -102,6 +106,12 @@ union ResetPasswordResult = User | InvalidOrExpiredToken | PasswordsDontMatch
 union AutomateLoginResult = SuccessfulLogin | InvalidOrMissingUserIdentifier
 
 union SignupResult = SuccessfulSignup | InvalidDataFormat | TakenUsernameOrEmail
+
+union SignupWithExternalProviderResult =
+    SuccessfulSignup
+  | InvalidDataFormat
+  | TakenUsernameOrEmail
+  | SkippedOAuthFlow
 
 union LoginResult = SuccessfulLogin | InvalidDataFormat | InvalidCredentials
 
