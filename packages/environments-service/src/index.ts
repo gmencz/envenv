@@ -6,6 +6,7 @@ import { buildFederatedSchema } from '@apollo/federation';
 import { PrismaClient } from '@prisma/client';
 import resolvers from './graphql/resolvers';
 import { importSchema } from 'graphql-import';
+import chalk from 'chalk';
 
 const prisma = new PrismaClient();
 try {
@@ -33,8 +34,23 @@ try {
   server.applyMiddleware({ app });
 
   const PORT = process.env.SERVICE_PORT;
+
   app.listen(PORT, () => {
-    console.log(`Environments service listening on http://localhost:${PORT}/`);
+    console.log(
+      `
+===================================================
+
+  Environments GraphQL service is up and running! 
+
+  - Locally (accessible via your browser): ✔️
+    http://localhost:${PORT}/graphql 
+
+  - Inside Docker network: ✔️
+    ${process.env.GRAPHQL_ENDPOINT} 
+
+===================================================
+    `
+    );
   });
 } catch (error) {
   console.error(error);

@@ -26,10 +26,28 @@ try {
 
   server.applyMiddleware({ app });
 
+  console.log(`Loaded graph from Apollo Graph Manager ✔️`);
+
   const PORT = process.env.API_GATEWAY_PORT;
 
   app.listen(PORT, () => {
-    console.log(`API Gateway listening on http://localhost:${PORT}/`);
+    console.log(
+      `
+  API gateway is up and running! 
+
+  - Locally (accessible via your browser): ✔️
+    http://localhost:${PORT}/graphql 
+
+  - Inside Docker network: ✔️
+    ${process.env.GRAPHQL_ENDPOINT}
+  
+  
+  ⚠️   Keep in mind the gateway might not be up to date so
+  ⚠️   you shouldn't use it unless you're working on the client.
+  ⚠️   If that isn't the case, use whatever service's endpoint
+  ⚠️   you're working on. 
+    `
+    );
   });
 } catch (error) {
   console.error(error);

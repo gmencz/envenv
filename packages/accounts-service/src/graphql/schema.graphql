@@ -1,3 +1,6 @@
+# =================
+# SDL for root types such as queries and mutations
+# =================
 extend type Query {
   requestPasswordResetEmail(email: String!): Boolean!
   user(id: String, username: String, email: String): UserResult!
@@ -11,19 +14,9 @@ extend type Mutation {
   resetPassword(data: ResetPasswordInput): ResetPasswordResult!
 }
 
-input ResetPasswordInput {
-  currentPassword: String!
-  newPassword: String!
-  token: String!
-}
-
-input CreateUserInput {
-  picture: String
-  username: String!
-  email: String!
-  name: String!
-  password: String!
-}
+# =================
+# User-related SDL
+# =================
 
 type User @key(fields: "id") {
   id: ID!
@@ -46,6 +39,11 @@ enum AccountProvider {
   GOOGLE
   NONE
 }
+
+# =================
+# Auth-related SDL:
+# types which will be used as the result to queries by using them in unions
+# =================
 
 type TakenUsernameOrEmail {
   message: String!
@@ -80,6 +78,11 @@ type UserNotFound {
   message: String!
 }
 
+# Unions for auth which combine the previous types.
+# This is a better approach for error handling than just throwing errors,
+# the GraphQL twitter representative talks about this in the following link
+# https://medium.com/@sachee/200-ok-error-handling-in-graphql-7ec869aec9bc
+
 union UserResult = User | UserNotFound | InvalidDataFormat
 
 union ResetPasswordResult = User | InvalidOrExpiredToken | PasswordsDontMatch
@@ -97,3 +100,21 @@ union LoginResult =
     SuccessfulAuthentication
   | InvalidDataFormat
   | InvalidCredentials
+
+# =================
+# SDL for input types used for this service's queries/mutations
+# =================
+
+input ResetPasswordInput {
+  currentPassword: String!
+  newPassword: String!
+  token: String!
+}
+
+input CreateUserInput {
+  picture: String
+  username: String!
+  email: String!
+  name: String!
+  password: String!
+}
