@@ -7,10 +7,12 @@ import {
   MutationSignupWithExternalProviderArgs,
   MutationLoginArgs,
   LoginResult,
+  LoginWithExternalProviderResult,
 } from '../../generated';
 import { ApolloContext } from '../../../typings';
 import signupWithExternalProvider from './signupWithExternalProvider';
 import login from './login';
+import loginWithExternalProvider from './loginWithExternalProvider';
 
 export interface MutationOperations {
   signup(
@@ -28,6 +30,11 @@ export interface MutationOperations {
     args: MutationLoginArgs,
     ctx: ApolloContext
   ): Promise<LoginResult>;
+  loginWithExternalProvider(
+    root: any,
+    args: {},
+    ctx: ApolloContext
+  ): Promise<LoginWithExternalProviderResult>;
 }
 
 const MutationResolvers: {
@@ -36,6 +43,7 @@ const MutationResolvers: {
   signup,
   signupWithExternalProvider,
   login,
+  loginWithExternalProvider,
 };
 
 export default MutationResolvers;

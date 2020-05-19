@@ -29,7 +29,7 @@ export type MutationCreateEnvironmentArgs = {
 
 export type Environment = {
   __typename?: 'Environment';
-  id: Scalars['Int'];
+  id: Scalars['ID'];
   name: Scalars['String'];
   owner: User;
   members?: Maybe<Array<Maybe<EnvironmentMember>>>;
@@ -37,7 +37,7 @@ export type Environment = {
 
 export type EnvironmentMember = {
   __typename?: 'EnvironmentMember';
-  id: Scalars['Int'];
+  id: Scalars['ID'];
   environment?: Maybe<Environment>;
   environmentRole?: Maybe<EnvironmentRole>;
   user: User;
@@ -45,7 +45,7 @@ export type EnvironmentMember = {
 
 export type CreateEnvironmentInput = {
   name: Scalars['String'];
-  userCreatingEnvironmentId: Scalars['Int'];
+  userCreatingEnvironmentId: Scalars['ID'];
 };
 
 export enum EnvironmentRole {
@@ -55,7 +55,7 @@ export enum EnvironmentRole {
 
 export type User = {
   __typename?: 'User';
-  id: Scalars['Int'];
+  id: Scalars['ID'];
   environments?: Maybe<Array<Maybe<Environment>>>;
 };
 
@@ -172,7 +172,7 @@ export type ResolversTypes = {
   Query: ResolverTypeWrapper<{}>;
   Mutation: ResolverTypeWrapper<{}>;
   Environment: ResolverTypeWrapper<Environment>;
-  Int: ResolverTypeWrapper<Scalars['Int']>;
+  ID: ResolverTypeWrapper<Scalars['ID']>;
   EnvironmentMember: ResolverTypeWrapper<EnvironmentMember>;
   CreateEnvironmentInput: CreateEnvironmentInput;
   EnvironmentRole: EnvironmentRole;
@@ -186,7 +186,7 @@ export type ResolversParentTypes = {
   Query: {};
   Mutation: {};
   Environment: Environment;
-  Int: Scalars['Int'];
+  ID: Scalars['ID'];
   EnvironmentMember: EnvironmentMember;
   CreateEnvironmentInput: CreateEnvironmentInput;
   EnvironmentRole: EnvironmentRole;
@@ -220,7 +220,7 @@ export type EnvironmentResolvers<
   ContextType = any,
   ParentType extends ResolversParentTypes['Environment'] = ResolversParentTypes['Environment']
 > = {
-  id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   owner?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
   members?: Resolver<
@@ -235,7 +235,7 @@ export type EnvironmentMemberResolvers<
   ContextType = any,
   ParentType extends ResolversParentTypes['EnvironmentMember'] = ResolversParentTypes['EnvironmentMember']
 > = {
-  id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   environment?: Resolver<
     Maybe<ResolversTypes['Environment']>,
     ParentType,
@@ -254,7 +254,7 @@ export type UserResolvers<
   ContextType = any,
   ParentType extends ResolversParentTypes['User'] = ResolversParentTypes['User']
 > = {
-  id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   environments?: Resolver<
     Maybe<Array<Maybe<ResolversTypes['Environment']>>>,
     ParentType,

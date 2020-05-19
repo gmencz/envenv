@@ -45,7 +45,9 @@ export const callbackGoogleAuth = async (
       }
     );
 
-    const { user: userResult } = data as { user: UserResult };
+    const { user: userResult } = data as {
+      user: Pick<UserResult, '__typename'>;
+    };
 
     if (userResult.__typename === 'User') {
       res.cookie('TemporaryUserId', id, {
@@ -68,7 +70,7 @@ export const callbackGoogleAuth = async (
           { ...req.user },
           process.env.SESSION_INFO_SECRET!,
           {
-            expiresIn: '1m',
+            expiresIn: '24h',
           },
           (error, data) => {
             if (error) {

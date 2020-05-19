@@ -6,7 +6,8 @@
   "scripts": {
     "gen-graphql": "graphql-codegen --config codegen.yml",
     "gen-graphql-watch": "graphql-codegen --config codegen.yml --watch src/graphql/schema.graphql",
-    "dev": "concurrently \"ts-node-dev --respawn --transpileOnly --poll --interval 1000 --watch src/graphql/schema.graphql src/index.ts\" \"npm run gen-graphql-watch\""
+    "dev": "concurrently \"ts-node-dev --respawn --transpileOnly --poll --interval 1000 --watch src/graphql/schema.graphql src/index.ts\" \"npm run gen-graphql-watch\"",
+    "apollo-push:dev": "apollo service:push --serviceURL=http://dev-accounts-service:5000/graphql --serviceName=Accounts"
   },
   "keywords": [],
   "author": "",

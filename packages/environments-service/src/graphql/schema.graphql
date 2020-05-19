@@ -7,14 +7,14 @@ extend type Mutation {
 }
 
 type Environment @key(fields: "id") {
-  id: Int!
+  id: ID!
   name: String!
   owner: User!
   members: [EnvironmentMember]
 }
 
 type EnvironmentMember @key(fields: "id") {
-  id: Int!
+  id: ID!
   environment: Environment
   environmentRole: EnvironmentRole
   user: User!
@@ -22,7 +22,7 @@ type EnvironmentMember @key(fields: "id") {
 
 input CreateEnvironmentInput {
   name: String!
-  userCreatingEnvironmentId: Int!
+  userCreatingEnvironmentId: ID!
 }
 
 enum EnvironmentRole {
@@ -31,6 +31,6 @@ enum EnvironmentRole {
 }
 
 extend type User @key(fields: "id") {
-  id: Int! @external
+  id: ID! @external
   environments: [Environment]
 }

@@ -9,6 +9,7 @@ import { hash } from 'bcryptjs';
 import addAtToUsername from '../../../helpers/addAtToUsername';
 import createSession from '../../../helpers/createSession';
 import redisClient from '../../../helpers/redisClient';
+import { AccountProvider } from '@prisma/client';
 
 const signupWithExternalProvider: MutationOperations['signupWithExternalProvider'] = async (
   _,
@@ -30,11 +31,18 @@ const signupWithExternalProvider: MutationOperations['signupWithExternalProvider
 
     const cookies = JSON.parse(req.headers.cookie);
 
-    if (!cookies.NewUserData) {
+    if (!cookies.NewUserData && !cookies.TemporaryUserId) {
       return {
         __typename: 'SkippedOAuthFlow',
         message:
           "Can't sign up with an external provider without going through the oauth flow",
+      };
+    }
+
+    if (cookies.TemporaryUserId) {
+      return {
+        __typename: 'ExternalProviderAccountAlreadyExists',
+        message: 'That account is already registered with us, login instead',
       };
     }
 
@@ -65,7 +73,9 @@ const signupWithExternalProvider: MutationOperations['signupWithExternalProvider
       };
     }
 
-    const isUsernameTaken = await prisma.user.findOne({ where: { username } });
+    const isUsernameTaken = await prisma.user.findOne({
+      where: { username: addAtToUsername(username) },
+    });
     if (isUsernameTaken) {
       return {
         __typename: 'TakenUsernameOrEmail',
@@ -88,7 +98,7 @@ const signupWithExternalProvider: MutationOperations['signupWithExternalProvider
         password,
         username: validUsername,
         picture,
-        provider,
+        provider: provider.toUpperCase() as AccountProvider,
       },
     });
 
@@ -120,6 +130,17 @@ const signupWithExternalProvider: MutationOperations['signupWithExternalProvider
       return {
         __typename: 'InvalidDataFormat',
         message: error.message,
+      };
+    }
+
+    if (
+      error.name === 'TokenExpiredError' ||
+      error.name === 'JsonWebTokenError' ||
+      error.name === 'NotBeforeError'
+    ) {
+      return {
+        __typename: 'InvalidOrExpiredToken',
+        message: 'The time to sign up has expired or token was invalid',
       };
     }
 

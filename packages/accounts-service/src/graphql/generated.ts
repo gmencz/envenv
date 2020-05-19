@@ -32,9 +32,9 @@ export type QueryUserArgs = {
 export type Mutation = {
   __typename?: 'Mutation';
   signup: SignupResult;
-  signupWithExternalProvider: SignupResult;
-  automateLoginProcess: AutomateLoginResult;
+  signupWithExternalProvider: SignupWithExternalProviderResult;
   login: LoginResult;
+  loginWithExternalProvider: LoginWithExternalProviderResult;
   resetPassword: ResetPasswordResult;
 };
 
@@ -135,6 +135,11 @@ export type SkippedOAuthFlow = {
   message: Scalars['String'];
 };
 
+export type ExternalProviderAccountAlreadyExists = {
+  __typename?: 'ExternalProviderAccountAlreadyExists';
+  message: Scalars['String'];
+};
+
 export type UserResult = User | UserNotFound | InvalidDataFormat;
 
 export type RequestPasswordResetEmailResult =
@@ -146,7 +151,7 @@ export type ResetPasswordResult =
   | InvalidOrExpiredToken
   | PasswordsDontMatch;
 
-export type AutomateLoginResult =
+export type LoginWithExternalProviderResult =
   | SuccessfulLogin
   | InvalidOrMissingUserIdentifier;
 
@@ -159,7 +164,9 @@ export type SignupWithExternalProviderResult =
   | SuccessfulSignup
   | InvalidDataFormat
   | TakenUsernameOrEmail
-  | SkippedOAuthFlow;
+  | SkippedOAuthFlow
+  | InvalidOrExpiredToken
+  | ExternalProviderAccountAlreadyExists;
 
 export type LoginResult =
   | SuccessfulLogin
@@ -309,6 +316,9 @@ export type ResolversTypes = {
   UserNotFound: ResolverTypeWrapper<UserNotFound>;
   EmailMayHaveBeenSent: ResolverTypeWrapper<EmailMayHaveBeenSent>;
   SkippedOAuthFlow: ResolverTypeWrapper<SkippedOAuthFlow>;
+  ExternalProviderAccountAlreadyExists: ResolverTypeWrapper<
+    ExternalProviderAccountAlreadyExists
+  >;
   UserResult:
     | ResolversTypes['User']
     | ResolversTypes['UserNotFound']
@@ -320,7 +330,7 @@ export type ResolversTypes = {
     | ResolversTypes['User']
     | ResolversTypes['InvalidOrExpiredToken']
     | ResolversTypes['PasswordsDontMatch'];
-  AutomateLoginResult:
+  LoginWithExternalProviderResult:
     | ResolversTypes['SuccessfulLogin']
     | ResolversTypes['InvalidOrMissingUserIdentifier'];
   SignupResult:
@@ -331,7 +341,9 @@ export type ResolversTypes = {
     | ResolversTypes['SuccessfulSignup']
     | ResolversTypes['InvalidDataFormat']
     | ResolversTypes['TakenUsernameOrEmail']
-    | ResolversTypes['SkippedOAuthFlow'];
+    | ResolversTypes['SkippedOAuthFlow']
+    | ResolversTypes['InvalidOrExpiredToken']
+    | ResolversTypes['ExternalProviderAccountAlreadyExists'];
   LoginResult:
     | ResolversTypes['SuccessfulLogin']
     | ResolversTypes['InvalidDataFormat']
@@ -361,6 +373,7 @@ export type ResolversParentTypes = {
   UserNotFound: UserNotFound;
   EmailMayHaveBeenSent: EmailMayHaveBeenSent;
   SkippedOAuthFlow: SkippedOAuthFlow;
+  ExternalProviderAccountAlreadyExists: ExternalProviderAccountAlreadyExists;
   UserResult:
     | ResolversParentTypes['User']
     | ResolversParentTypes['UserNotFound']
@@ -372,7 +385,7 @@ export type ResolversParentTypes = {
     | ResolversParentTypes['User']
     | ResolversParentTypes['InvalidOrExpiredToken']
     | ResolversParentTypes['PasswordsDontMatch'];
-  AutomateLoginResult:
+  LoginWithExternalProviderResult:
     | ResolversParentTypes['SuccessfulLogin']
     | ResolversParentTypes['InvalidOrMissingUserIdentifier'];
   SignupResult:
@@ -383,7 +396,9 @@ export type ResolversParentTypes = {
     | ResolversParentTypes['SuccessfulSignup']
     | ResolversParentTypes['InvalidDataFormat']
     | ResolversParentTypes['TakenUsernameOrEmail']
-    | ResolversParentTypes['SkippedOAuthFlow'];
+    | ResolversParentTypes['SkippedOAuthFlow']
+    | ResolversParentTypes['InvalidOrExpiredToken']
+    | ResolversParentTypes['ExternalProviderAccountAlreadyExists'];
   LoginResult:
     | ResolversParentTypes['SuccessfulLogin']
     | ResolversParentTypes['InvalidDataFormat']
@@ -421,21 +436,21 @@ export type MutationResolvers<
     RequireFields<MutationSignupArgs, 'data'>
   >;
   signupWithExternalProvider?: Resolver<
-    ResolversTypes['SignupResult'],
+    ResolversTypes['SignupWithExternalProviderResult'],
     ParentType,
     ContextType,
     RequireFields<MutationSignupWithExternalProviderArgs, 'username'>
-  >;
-  automateLoginProcess?: Resolver<
-    ResolversTypes['AutomateLoginResult'],
-    ParentType,
-    ContextType
   >;
   login?: Resolver<
     ResolversTypes['LoginResult'],
     ParentType,
     ContextType,
     RequireFields<MutationLoginArgs, 'username' | 'password'>
+  >;
+  loginWithExternalProvider?: Resolver<
+    ResolversTypes['LoginWithExternalProviderResult'],
+    ParentType,
+    ContextType
   >;
   resetPassword?: Resolver<
     ResolversTypes['ResetPasswordResult'],
@@ -559,6 +574,14 @@ export type SkippedOAuthFlowResolvers<
   __isTypeOf?: isTypeOfResolverFn<ParentType>;
 };
 
+export type ExternalProviderAccountAlreadyExistsResolvers<
+  ContextType = any,
+  ParentType extends ResolversParentTypes['ExternalProviderAccountAlreadyExists'] = ResolversParentTypes['ExternalProviderAccountAlreadyExists']
+> = {
+  message?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  __isTypeOf?: isTypeOfResolverFn<ParentType>;
+};
+
 export type UserResultResolvers<
   ContextType = any,
   ParentType extends ResolversParentTypes['UserResult'] = ResolversParentTypes['UserResult']
@@ -592,9 +615,9 @@ export type ResetPasswordResultResolvers<
   >;
 };
 
-export type AutomateLoginResultResolvers<
+export type LoginWithExternalProviderResultResolvers<
   ContextType = any,
-  ParentType extends ResolversParentTypes['AutomateLoginResult'] = ResolversParentTypes['AutomateLoginResult']
+  ParentType extends ResolversParentTypes['LoginWithExternalProviderResult'] = ResolversParentTypes['LoginWithExternalProviderResult']
 > = {
   __resolveType: TypeResolveFn<
     'SuccessfulLogin' | 'InvalidOrMissingUserIdentifier',
@@ -622,7 +645,9 @@ export type SignupWithExternalProviderResultResolvers<
     | 'SuccessfulSignup'
     | 'InvalidDataFormat'
     | 'TakenUsernameOrEmail'
-    | 'SkippedOAuthFlow',
+    | 'SkippedOAuthFlow'
+    | 'InvalidOrExpiredToken'
+    | 'ExternalProviderAccountAlreadyExists',
     ParentType,
     ContextType
   >;
@@ -656,10 +681,13 @@ export type Resolvers<ContextType = any> = {
   UserNotFound?: UserNotFoundResolvers<ContextType>;
   EmailMayHaveBeenSent?: EmailMayHaveBeenSentResolvers<ContextType>;
   SkippedOAuthFlow?: SkippedOAuthFlowResolvers<ContextType>;
+  ExternalProviderAccountAlreadyExists?: ExternalProviderAccountAlreadyExistsResolvers<
+    ContextType
+  >;
   UserResult?: UserResultResolvers;
   RequestPasswordResetEmailResult?: RequestPasswordResetEmailResultResolvers;
   ResetPasswordResult?: ResetPasswordResultResolvers;
-  AutomateLoginResult?: AutomateLoginResultResolvers;
+  LoginWithExternalProviderResult?: LoginWithExternalProviderResultResolvers;
   SignupResult?: SignupResultResolvers;
   SignupWithExternalProviderResult?: SignupWithExternalProviderResultResolvers;
   LoginResult?: LoginResultResolvers;

@@ -9,9 +9,11 @@ extend type Query {
 
 extend type Mutation {
   signup(data: CreateUserInput!): SignupResult!
-  signupWithExternalProvider(username: String!): SignupResult!
-  automateLoginProcess: AutomateLoginResult!
+  signupWithExternalProvider(
+    username: String!
+  ): SignupWithExternalProviderResult!
   login(username: String!, password: String!): LoginResult!
+  loginWithExternalProvider: LoginWithExternalProviderResult!
   resetPassword(data: ResetPasswordInput): ResetPasswordResult!
 }
 
@@ -92,6 +94,10 @@ type SkippedOAuthFlow {
   message: String!
 }
 
+type ExternalProviderAccountAlreadyExists {
+  message: String!
+}
+
 # Unions which combine the previous types.
 # This is a better approach for error handling than just throwing errors.
 # The GraphQL Twitter representative talks about this in the following link
@@ -103,7 +109,9 @@ union RequestPasswordResetEmailResult = EmailMayHaveBeenSent | InvalidDataFormat
 
 union ResetPasswordResult = User | InvalidOrExpiredToken | PasswordsDontMatch
 
-union AutomateLoginResult = SuccessfulLogin | InvalidOrMissingUserIdentifier
+union LoginWithExternalProviderResult =
+    SuccessfulLogin
+  | InvalidOrMissingUserIdentifier
 
 union SignupResult = SuccessfulSignup | InvalidDataFormat | TakenUsernameOrEmail
 
@@ -112,6 +120,8 @@ union SignupWithExternalProviderResult =
   | InvalidDataFormat
   | TakenUsernameOrEmail
   | SkippedOAuthFlow
+  | InvalidOrExpiredToken
+  | ExternalProviderAccountAlreadyExists
 
 union LoginResult = SuccessfulLogin | InvalidDataFormat | InvalidCredentials
 
