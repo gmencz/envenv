@@ -52,7 +52,7 @@ export type MutationLoginArgs = {
 };
 
 export type MutationResetPasswordArgs = {
-  data?: Maybe<ResetPasswordInput>;
+  data: ResetPasswordInput;
 };
 
 export type User = {
@@ -149,7 +149,8 @@ export type RequestPasswordResetEmailResult =
 export type ResetPasswordResult =
   | User
   | InvalidOrExpiredToken
-  | PasswordsDontMatch;
+  | PasswordsDontMatch
+  | InvalidDataFormat;
 
 export type LoginWithExternalProviderResult =
   | SuccessfulLogin
@@ -329,7 +330,8 @@ export type ResolversTypes = {
   ResetPasswordResult:
     | ResolversTypes['User']
     | ResolversTypes['InvalidOrExpiredToken']
-    | ResolversTypes['PasswordsDontMatch'];
+    | ResolversTypes['PasswordsDontMatch']
+    | ResolversTypes['InvalidDataFormat'];
   LoginWithExternalProviderResult:
     | ResolversTypes['SuccessfulLogin']
     | ResolversTypes['InvalidOrMissingUserIdentifier'];
@@ -384,7 +386,8 @@ export type ResolversParentTypes = {
   ResetPasswordResult:
     | ResolversParentTypes['User']
     | ResolversParentTypes['InvalidOrExpiredToken']
-    | ResolversParentTypes['PasswordsDontMatch'];
+    | ResolversParentTypes['PasswordsDontMatch']
+    | ResolversParentTypes['InvalidDataFormat'];
   LoginWithExternalProviderResult:
     | ResolversParentTypes['SuccessfulLogin']
     | ResolversParentTypes['InvalidOrMissingUserIdentifier'];
@@ -456,7 +459,7 @@ export type MutationResolvers<
     ResolversTypes['ResetPasswordResult'],
     ParentType,
     ContextType,
-    RequireFields<MutationResetPasswordArgs, never>
+    RequireFields<MutationResetPasswordArgs, 'data'>
   >;
 };
 
@@ -609,7 +612,10 @@ export type ResetPasswordResultResolvers<
   ParentType extends ResolversParentTypes['ResetPasswordResult'] = ResolversParentTypes['ResetPasswordResult']
 > = {
   __resolveType: TypeResolveFn<
-    'User' | 'InvalidOrExpiredToken' | 'PasswordsDontMatch',
+    | 'User'
+    | 'InvalidOrExpiredToken'
+    | 'PasswordsDontMatch'
+    | 'InvalidDataFormat',
     ParentType,
     ContextType
   >;

@@ -14,7 +14,7 @@ extend type Mutation {
   ): SignupWithExternalProviderResult!
   login(username: String!, password: String!): LoginResult!
   loginWithExternalProvider: LoginWithExternalProviderResult!
-  resetPassword(data: ResetPasswordInput): ResetPasswordResult!
+  resetPassword(data: ResetPasswordInput!): ResetPasswordResult!
 }
 
 # =================
@@ -107,7 +107,11 @@ union UserResult = User | UserNotFound | InvalidDataFormat
 
 union RequestPasswordResetEmailResult = EmailMayHaveBeenSent | InvalidDataFormat
 
-union ResetPasswordResult = User | InvalidOrExpiredToken | PasswordsDontMatch
+union ResetPasswordResult =
+    User
+  | InvalidOrExpiredToken
+  | PasswordsDontMatch
+  | InvalidDataFormat
 
 union LoginWithExternalProviderResult =
     SuccessfulLogin
