@@ -135,11 +135,6 @@ export type SkippedOAuthFlow = {
   message: Scalars['String'];
 };
 
-export type ExternalProviderAccountAlreadyExists = {
-  __typename?: 'ExternalProviderAccountAlreadyExists';
-  message: Scalars['String'];
-};
-
 export type UserResult = User | UserNotFound | InvalidDataFormat;
 
 export type RequestPasswordResetEmailResult =
@@ -154,7 +149,8 @@ export type ResetPasswordResult =
 
 export type LoginWithExternalProviderResult =
   | SuccessfulLogin
-  | InvalidOrMissingUserIdentifier;
+  | InvalidOrMissingUserIdentifier
+  | SkippedOAuthFlow;
 
 export type SignupResult =
   | SuccessfulSignup
@@ -166,8 +162,7 @@ export type SignupWithExternalProviderResult =
   | InvalidDataFormat
   | TakenUsernameOrEmail
   | SkippedOAuthFlow
-  | InvalidOrExpiredToken
-  | ExternalProviderAccountAlreadyExists;
+  | InvalidOrExpiredToken;
 
 export type LoginResult =
   | SuccessfulLogin
@@ -317,9 +312,6 @@ export type ResolversTypes = {
   UserNotFound: ResolverTypeWrapper<UserNotFound>;
   EmailMayHaveBeenSent: ResolverTypeWrapper<EmailMayHaveBeenSent>;
   SkippedOAuthFlow: ResolverTypeWrapper<SkippedOAuthFlow>;
-  ExternalProviderAccountAlreadyExists: ResolverTypeWrapper<
-    ExternalProviderAccountAlreadyExists
-  >;
   UserResult:
     | ResolversTypes['User']
     | ResolversTypes['UserNotFound']
@@ -334,7 +326,8 @@ export type ResolversTypes = {
     | ResolversTypes['InvalidDataFormat'];
   LoginWithExternalProviderResult:
     | ResolversTypes['SuccessfulLogin']
-    | ResolversTypes['InvalidOrMissingUserIdentifier'];
+    | ResolversTypes['InvalidOrMissingUserIdentifier']
+    | ResolversTypes['SkippedOAuthFlow'];
   SignupResult:
     | ResolversTypes['SuccessfulSignup']
     | ResolversTypes['InvalidDataFormat']
@@ -344,8 +337,7 @@ export type ResolversTypes = {
     | ResolversTypes['InvalidDataFormat']
     | ResolversTypes['TakenUsernameOrEmail']
     | ResolversTypes['SkippedOAuthFlow']
-    | ResolversTypes['InvalidOrExpiredToken']
-    | ResolversTypes['ExternalProviderAccountAlreadyExists'];
+    | ResolversTypes['InvalidOrExpiredToken'];
   LoginResult:
     | ResolversTypes['SuccessfulLogin']
     | ResolversTypes['InvalidDataFormat']
@@ -375,7 +367,6 @@ export type ResolversParentTypes = {
   UserNotFound: UserNotFound;
   EmailMayHaveBeenSent: EmailMayHaveBeenSent;
   SkippedOAuthFlow: SkippedOAuthFlow;
-  ExternalProviderAccountAlreadyExists: ExternalProviderAccountAlreadyExists;
   UserResult:
     | ResolversParentTypes['User']
     | ResolversParentTypes['UserNotFound']
@@ -390,7 +381,8 @@ export type ResolversParentTypes = {
     | ResolversParentTypes['InvalidDataFormat'];
   LoginWithExternalProviderResult:
     | ResolversParentTypes['SuccessfulLogin']
-    | ResolversParentTypes['InvalidOrMissingUserIdentifier'];
+    | ResolversParentTypes['InvalidOrMissingUserIdentifier']
+    | ResolversParentTypes['SkippedOAuthFlow'];
   SignupResult:
     | ResolversParentTypes['SuccessfulSignup']
     | ResolversParentTypes['InvalidDataFormat']
@@ -400,8 +392,7 @@ export type ResolversParentTypes = {
     | ResolversParentTypes['InvalidDataFormat']
     | ResolversParentTypes['TakenUsernameOrEmail']
     | ResolversParentTypes['SkippedOAuthFlow']
-    | ResolversParentTypes['InvalidOrExpiredToken']
-    | ResolversParentTypes['ExternalProviderAccountAlreadyExists'];
+    | ResolversParentTypes['InvalidOrExpiredToken'];
   LoginResult:
     | ResolversParentTypes['SuccessfulLogin']
     | ResolversParentTypes['InvalidDataFormat']
@@ -577,14 +568,6 @@ export type SkippedOAuthFlowResolvers<
   __isTypeOf?: isTypeOfResolverFn<ParentType>;
 };
 
-export type ExternalProviderAccountAlreadyExistsResolvers<
-  ContextType = any,
-  ParentType extends ResolversParentTypes['ExternalProviderAccountAlreadyExists'] = ResolversParentTypes['ExternalProviderAccountAlreadyExists']
-> = {
-  message?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  __isTypeOf?: isTypeOfResolverFn<ParentType>;
-};
-
 export type UserResultResolvers<
   ContextType = any,
   ParentType extends ResolversParentTypes['UserResult'] = ResolversParentTypes['UserResult']
@@ -626,7 +609,7 @@ export type LoginWithExternalProviderResultResolvers<
   ParentType extends ResolversParentTypes['LoginWithExternalProviderResult'] = ResolversParentTypes['LoginWithExternalProviderResult']
 > = {
   __resolveType: TypeResolveFn<
-    'SuccessfulLogin' | 'InvalidOrMissingUserIdentifier',
+    'SuccessfulLogin' | 'InvalidOrMissingUserIdentifier' | 'SkippedOAuthFlow',
     ParentType,
     ContextType
   >;
@@ -652,8 +635,7 @@ export type SignupWithExternalProviderResultResolvers<
     | 'InvalidDataFormat'
     | 'TakenUsernameOrEmail'
     | 'SkippedOAuthFlow'
-    | 'InvalidOrExpiredToken'
-    | 'ExternalProviderAccountAlreadyExists',
+    | 'InvalidOrExpiredToken',
     ParentType,
     ContextType
   >;
@@ -687,9 +669,6 @@ export type Resolvers<ContextType = any> = {
   UserNotFound?: UserNotFoundResolvers<ContextType>;
   EmailMayHaveBeenSent?: EmailMayHaveBeenSentResolvers<ContextType>;
   SkippedOAuthFlow?: SkippedOAuthFlowResolvers<ContextType>;
-  ExternalProviderAccountAlreadyExists?: ExternalProviderAccountAlreadyExistsResolvers<
-    ContextType
-  >;
   UserResult?: UserResultResolvers;
   RequestPasswordResetEmailResult?: RequestPasswordResetEmailResultResolvers;
   ResetPasswordResult?: ResetPasswordResultResolvers;

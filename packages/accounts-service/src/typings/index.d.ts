@@ -1,6 +1,5 @@
 import { Request, Response } from 'express';
-import User from '../entities/User';
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient, User } from '@prisma/client';
 
 export interface ApolloContext {
   req: Request;

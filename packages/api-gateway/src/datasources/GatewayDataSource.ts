@@ -12,7 +12,7 @@ export default class GatewayDataSource extends RemoteGraphQLDataSource {
     if (context && context.req && context.req.cookies) {
       // Perform authentication here
       // console.log(context.req.cookies);
-
+      request.http.headers.set('x-forwarded-from-gateway', 'true');
       request.http.headers.set('Cookie', JSON.stringify(context.req.cookies));
     }
   }

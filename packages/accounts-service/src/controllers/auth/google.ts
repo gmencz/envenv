@@ -1,9 +1,11 @@
 import passport from 'passport';
-import { Request, Response } from 'express';
+import { Request, Response, json } from 'express';
 import { sign } from 'jsonwebtoken';
 import { OAuth2Strategy as GoogleStrategy } from 'passport-google-oauth';
 import request from 'graphql-request';
 import { UserResult } from '../../graphql/generated';
+import getSession from '../../helpers/getSession';
+import redisClient from '../../helpers/redisClient';
 
 export const GoogleStrategyObj = new GoogleStrategy(
   {
@@ -27,6 +29,70 @@ export const callbackGoogleAuth = async (
   res: Response
 ): Promise<void> => {
   try {
+    const { state } = req.query;
+
+    if (!state) {
+      // User is trying to find a vulnerability or something similar so stop the oauth flow.
+      if (req.cookies.TemporaryUserID) {
+        res.clearCookie('TemporaryUserID');
+      }
+
+      if (req.cookies.NewUserData) {
+        res.clearCookie('NewUserData');
+      }
+
+      return res.redirect(
+        process.env.NODE_ENV === 'production'
+          ? 'https://envenv.com/auth/flow/error?reason=unknown'
+          : 'http://localhost:8080/auth/flow/error?reason=unknown'
+      );
+    }
+
+    const { operation } = JSON.parse(
+      Buffer.from(state as string, 'base64').toString()
+    );
+    const possibleOperations = ['login', 'signup'];
+
+    if (!possibleOperations.some(op => op === operation)) {
+      // User is trying to find a vulnerability or something similar so stop the oauth flow.
+      if (req.cookies.TemporaryUserID) {
+        res.clearCookie('TemporaryUserID');
+      }
+
+      if (req.cookies.NewUserData) {
+        res.clearCookie('NewUserData');
+      }
+
+      return res.redirect(
+        process.env.NODE_ENV === 'production'
+          ? 'https://envenv.com/auth/flow/error?reason=unknown'
+          : 'http://localhost:8080/auth/flow/error?reason=unknown'
+      );
+    }
+
+    // Find out if user is logged in or not
+    // Yes? Redirect to application
+    // No? Keep going with the oauth flow
+    if (req.cookies.SessionID) {
+      const session = await getSession(req.cookies.SessionID, redisClient);
+
+      if (session) {
+        if (req.cookies.TemporaryUserID) {
+          res.clearCookie('TemporaryUserID');
+        }
+
+        if (req.cookies.NewUserData) {
+          res.clearCookie('NewUserData');
+        }
+
+        return res.redirect(
+          process.env.NODE_ENV === 'production'
+            ? 'https://envenv.com/'
+            : 'http://localhost:8080/'
+        );
+      }
+    }
+
     const { id } = req.user as {
       id: string;
     };
@@ -49,65 +115,150 @@ export const callbackGoogleAuth = async (
       user: Pick<UserResult, '__typename'>;
     };
 
-    if (userResult.__typename === 'User') {
-      res.cookie('TemporaryUserId', id, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-      });
+    if (operation === 'login') {
+      // Check if the user has an account or not
+      // Yes? redirect to route where the login will be automated
+      // No? redirect to route where the client will display an error of no acc with that google acc.
 
-      // redirect to route on the client which will make a graphql
-      // request to a mutation which will automate the login
+      if (userResult.__typename === 'User') {
+        const encodedId = Buffer.from(id).toString('base64');
+
+        if (req.cookies.NewUserData) {
+          res.clearCookie('NewUserData');
+        }
+
+        res.cookie('TemporaryUserID', encodedId, {
+          httpOnly: true,
+          secure: process.env.NODE_ENV === 'production',
+        });
+
+        // redirect to route on the client which will make a graphql
+        // request to a mutation which will automate the login
+        return res.redirect(
+          process.env.NODE_ENV === 'production'
+            ? `https://envenv.com/auth/flow/lastStep?operation=login`
+            : `http://localhost:8080/auth/flow/lastStep?operation=login`
+        );
+      }
+
+      if (userResult.__typename === 'UserNotFound') {
+        if (req.cookies.TemporaryUserID) {
+          res.clearCookie('TemporaryUserID');
+        }
+
+        if (req.cookies.NewUserData) {
+          res.clearCookie('NewUserData');
+        }
+
+        return res.redirect(
+          process.env.NODE_ENV === 'production'
+            ? `https://envenv.com/auth/flow/error?reason=notRegistered`
+            : `http://localhost:8080/auth/flow/error?reason=notRegistered`
+        );
+      }
+
+      if (req.cookies.TemporaryUserID) {
+        res.clearCookie('TemporaryUserID');
+      }
+
+      if (req.cookies.NewUserData) {
+        res.clearCookie('NewUserData');
+      }
+
       return res.redirect(
         process.env.NODE_ENV === 'production'
-          ? 'https://envenv.com/auth/automateLoginProcess'
-          : 'http://localhost:8080/auth/automateLoginProcess'
+          ? 'https://envenv.com/auth/flow/error?reason=unknown'
+          : 'http://localhost:8080/auth/flow/error?reason=unknown'
       );
     }
 
-    if (userResult.__typename === 'UserNotFound') {
-      const signedNewUserData = await new Promise((resolve, reject) => {
-        sign(
-          { ...req.user },
-          process.env.SESSION_INFO_SECRET!,
-          {
-            expiresIn: '24h',
-          },
-          (error, data) => {
-            if (error) {
-              reject(error);
-            }
+    if (operation === 'signup') {
+      // Check if the user has an account or not
+      // Yes? redirect to route where the login will be automated
+      // No? redirect to route where the client will provide the username and finish signing up
+      if (userResult.__typename === 'User') {
+        const encodedId = Buffer.from(id).toString('base64');
 
-            resolve(data);
-          }
+        if (req.cookies.NewUserData) {
+          res.clearCookie('NewUserData');
+        }
+
+        res.cookie('TemporaryUserID', encodedId, {
+          httpOnly: true,
+          secure: process.env.NODE_ENV === 'production',
+        });
+
+        // redirect to route on the client which will make a graphql
+        // request to a mutation which will automate the login
+        return res.redirect(
+          process.env.NODE_ENV === 'production'
+            ? `https://envenv.com/auth/flow/lastStep?operation=login`
+            : `http://localhost:8080/auth/flow/lastStep?operation=login`
         );
-      });
+      }
 
-      res.cookie('NewUserData', signedNewUserData, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-      });
-      /* 
-        Redirect to route where the user will fill out 
-        needed information like their username, after doing that
-        we can create the user but this step is needed.
-      */
-      return res.redirect(
-        process.env.NODE_ENV === 'production'
-          ? 'https://envenv.com/auth/signup/lastStep'
-          : 'http://localhost:8080/auth/signup/lastStep'
-      );
+      if (userResult.__typename === 'UserNotFound') {
+        const signedNewUserData = await new Promise((resolve, reject) => {
+          sign(
+            { ...req.user },
+            process.env.SESSION_INFO_SECRET!,
+            {
+              expiresIn: '1y',
+            },
+            (error, data) => {
+              if (error) {
+                reject(error);
+              }
+
+              resolve(data);
+            }
+          );
+        });
+
+        if (req.cookies.TemporaryUserID) {
+          res.clearCookie('TemporaryUserID');
+        }
+
+        res.cookie('NewUserData', signedNewUserData, {
+          httpOnly: true,
+          secure: process.env.NODE_ENV === 'production',
+          maxAge: 31557600000,
+        });
+
+        return res.redirect(
+          process.env.NODE_ENV === 'production'
+            ? 'https://envenv.com/auth/flow/lastStep?operation=signup'
+            : 'http://localhost:8080/auth/flow/lastStep?operation=signup'
+        );
+      }
+    }
+
+    if (req.cookies.TemporaryUserID) {
+      res.clearCookie('TemporaryUserID');
+    }
+
+    if (req.cookies.NewUserData) {
+      res.clearCookie('NewUserData');
     }
 
     return res.redirect(
       process.env.NODE_ENV === 'production'
-        ? 'https://envenv.com/auth/signup/error/invalidGoogleResponse'
-        : 'http://localhost:8080/auth/signup/error/invalidGoogleResponse'
+        ? 'https://envenv.com/auth/flow/error?reason=unknown'
+        : 'http://localhost:8080/auth/flow/error?reason=unknown'
     );
   } catch (error) {
+    if (req.cookies.TemporaryUserID) {
+      res.clearCookie('TemporaryUserID');
+    }
+
+    if (req.cookies.NewUserData) {
+      res.clearCookie('NewUserData');
+    }
+
     return res.redirect(
       process.env.NODE_ENV === 'production'
-        ? 'https://envenv.com/auth/signup/error/googleAccountUnknownError'
-        : 'http://localhost:8080/auth/signup/error/googleAccountUnknownError'
+        ? 'https://envenv.com/auth/flow/error?reason=unknown'
+        : 'http://localhost:8080/auth/flow/error?reason=unknown'
     );
   }
 };

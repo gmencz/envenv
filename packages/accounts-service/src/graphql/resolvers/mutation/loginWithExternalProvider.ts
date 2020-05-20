@@ -9,27 +9,20 @@ const loginWithExternalProvider: MutationOperations['loginWithExternalProvider']
   { prisma, req, res }
 ) => {
   try {
-    if (!req.headers.cookie) {
-      throw new ApolloError(
-        `Something went wrong on our side, we're working on it!`,
-        '500',
-        {
-          errorCode: 'server_error',
-        }
-      );
-    }
-
-    const cookies = JSON.parse(req.headers.cookie);
-    if (!cookies.TemporaryUserId) {
+    if (!req.cookies.TemporaryUserID) {
       return {
-        __typename: 'InvalidOrMissingUserIdentifier',
-        message:
-          'Cannot login, this was caused because of skipping the auth flow (user did not try to login with the desired provider)',
+        __typename: 'SkippedOAuthFlow',
+        message: `Can't login with an external provider without going through the oauth flow`,
       };
     }
 
+    const decodedID = Buffer.from(
+      req.cookies.TemporaryUserID as string,
+      'base64'
+    ).toString();
+
     const user = await prisma.user.findOne({
-      where: { id: cookies.TemporaryUserId },
+      where: { id: decodedID },
     });
     if (!user) {
       return {
@@ -47,7 +40,7 @@ const loginWithExternalProvider: MutationOperations['loginWithExternalProvider']
       maxAge: Number(process.env.SESSION_REDIS_EXPIRY!),
     });
 
-    res.clearCookie('TemporaryUserId');
+    res.clearCookie('TemporaryUserID');
 
     return {
       __typename: 'SuccessfulLogin',

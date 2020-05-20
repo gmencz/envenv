@@ -94,10 +94,6 @@ type SkippedOAuthFlow {
   message: String!
 }
 
-type ExternalProviderAccountAlreadyExists {
-  message: String!
-}
-
 # Unions which combine the previous types.
 # This is a better approach for error handling than just throwing errors.
 # The GraphQL Twitter representative talks about this in the following link
@@ -116,6 +112,7 @@ union ResetPasswordResult =
 union LoginWithExternalProviderResult =
     SuccessfulLogin
   | InvalidOrMissingUserIdentifier
+  | SkippedOAuthFlow
 
 union SignupResult = SuccessfulSignup | InvalidDataFormat | TakenUsernameOrEmail
 
@@ -125,7 +122,6 @@ union SignupWithExternalProviderResult =
   | TakenUsernameOrEmail
   | SkippedOAuthFlow
   | InvalidOrExpiredToken
-  | ExternalProviderAccountAlreadyExists
 
 union LoginResult = SuccessfulLogin | InvalidDataFormat | InvalidCredentials
 

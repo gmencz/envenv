@@ -6,13 +6,14 @@ import { buildFederatedSchema } from '@apollo/federation';
 import { PrismaClient } from '@prisma/client';
 import resolvers from './graphql/resolvers';
 import { importSchema } from 'graphql-import';
-import chalk from 'chalk';
+import normalizeCookies from './helpers/normalizeCookies';
 
 const prisma = new PrismaClient();
 try {
   const app = express();
   app.use(cookieParser());
   app.use(express.json());
+  app.use(normalizeCookies);
 
   const typeDefs = gql(importSchema(`${__dirname}/graphql/schema.graphql`));
 

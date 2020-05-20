@@ -19,19 +19,7 @@ const signupWithExternalProvider: MutationOperations['signupWithExternalProvider
   try {
     await reach(createUserSchema, 'username').validate(username);
 
-    if (!req.headers.cookie) {
-      throw new ApolloError(
-        `Something went wrong on our side, we're working on it!`,
-        '500',
-        {
-          errorCode: 'server_error',
-        }
-      );
-    }
-
-    const cookies = JSON.parse(req.headers.cookie);
-
-    if (!cookies.NewUserData && !cookies.TemporaryUserId) {
+    if (!req.cookies.NewUserData) {
       return {
         __typename: 'SkippedOAuthFlow',
         message:
@@ -39,16 +27,11 @@ const signupWithExternalProvider: MutationOperations['signupWithExternalProvider
       };
     }
 
-    if (cookies.TemporaryUserId) {
-      return {
-        __typename: 'ExternalProviderAccountAlreadyExists',
-        message: 'That account is already registered with us, login instead',
-      };
-    }
-
+    // Check graphql-codegen with federation again, we have to make it work, we just
+    // can't be manually typing every single operation specially when our graph gets larger.
     const decodedUserData = await new Promise((resolve, reject) => {
       verify(
-        cookies.NewUserData,
+        req.cookies.NewUserData,
         process.env.SESSION_INFO_SECRET!,
         (error: any, sessionInfo: any) => {
           if (error) {
@@ -64,14 +47,6 @@ const signupWithExternalProvider: MutationOperations['signupWithExternalProvider
       User,
       'picture' | 'provider' | 'name' | 'id' | 'email'
     >;
-
-    const isEmailTaken = await prisma.user.findOne({ where: { email } });
-    if (isEmailTaken) {
-      return {
-        __typename: 'TakenUsernameOrEmail',
-        message: `That ${provider} account is already registered with us`,
-      };
-    }
 
     const isUsernameTaken = await prisma.user.findOne({
       where: { username: addAtToUsername(username) },
