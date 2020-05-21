@@ -69,6 +69,7 @@ try {
       user: null,
       prisma,
     }),
+    engine: false,
   });
 
   server.applyMiddleware({ app });

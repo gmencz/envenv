@@ -8,7 +8,7 @@
     "gen-graphql-watch": "graphql-codegen --config codegen.yml --watch src/graphql/schema.graphql",
     "sync-db-migrations": "prisma migrate up --experimental && prisma generate",
     "dev": "concurrently \"ts-node-dev --respawn --transpileOnly --poll --interval 1000 --watch src/graphql/schema.graphql src/index.ts\" \"npm run gen-graphql-watch\" \"npm run sync-db-migrations\"",
-    "apollo-push:dev": "apollo service:push --serviceURL=http://dev-accounts-service:5000/graphql --serviceName=Accounts",
+    "apollo-push:dev": "apollo service:push --serviceURL=http://dev-accounts-service:5000/graphql --serviceName=Accounts --variant=development",
     "test": "jest"
   },
   "keywords": [],
