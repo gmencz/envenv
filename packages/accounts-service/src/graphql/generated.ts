@@ -11,6 +11,7 @@ export type Scalars = {
   Boolean: boolean;
   Int: number;
   Float: number;
+  _FieldSet: any;
 };
 
 export type Query = {
@@ -36,6 +37,7 @@ export type Mutation = {
   login: LoginResult;
   loginWithExternalProvider: LoginWithExternalProviderResult;
   resetPassword: ResetPasswordResult;
+  deleteAllUsers: DeleteAllUsersResult;
 };
 
 export type MutationSignupArgs = {
@@ -135,6 +137,18 @@ export type SkippedOAuthFlow = {
   message: Scalars['String'];
 };
 
+export type NotInTestingEnvironment = {
+  __typename?: 'NotInTestingEnvironment';
+  message: Scalars['String'];
+};
+
+export type SuccessfulRemoval = {
+  __typename?: 'SuccessfulRemoval';
+  count: Scalars['Int'];
+};
+
+export type DeleteAllUsersResult = NotInTestingEnvironment | SuccessfulRemoval;
+
 export type UserResult = User | UserNotFound | InvalidDataFormat;
 
 export type RequestPasswordResetEmailResult =
@@ -184,6 +198,12 @@ export type CreateUserInput = {
 };
 
 export type ResolverTypeWrapper<T> = Promise<T> | T;
+
+export type ReferenceResolver<TResult, TReference, TContext> = (
+  reference: TReference,
+  context: TContext,
+  info: GraphQLResolveInfo
+) => Promise<TResult> | TResult;
 
 export type StitchingResolver<TResult, TParent, TContext, TArgs> = {
   fragment: string;
@@ -312,6 +332,12 @@ export type ResolversTypes = {
   UserNotFound: ResolverTypeWrapper<UserNotFound>;
   EmailMayHaveBeenSent: ResolverTypeWrapper<EmailMayHaveBeenSent>;
   SkippedOAuthFlow: ResolverTypeWrapper<SkippedOAuthFlow>;
+  NotInTestingEnvironment: ResolverTypeWrapper<NotInTestingEnvironment>;
+  SuccessfulRemoval: ResolverTypeWrapper<SuccessfulRemoval>;
+  Int: ResolverTypeWrapper<Scalars['Int']>;
+  DeleteAllUsersResult:
+    | ResolversTypes['NotInTestingEnvironment']
+    | ResolversTypes['SuccessfulRemoval'];
   UserResult:
     | ResolversTypes['User']
     | ResolversTypes['UserNotFound']
@@ -367,6 +393,12 @@ export type ResolversParentTypes = {
   UserNotFound: UserNotFound;
   EmailMayHaveBeenSent: EmailMayHaveBeenSent;
   SkippedOAuthFlow: SkippedOAuthFlow;
+  NotInTestingEnvironment: NotInTestingEnvironment;
+  SuccessfulRemoval: SuccessfulRemoval;
+  Int: Scalars['Int'];
+  DeleteAllUsersResult:
+    | ResolversParentTypes['NotInTestingEnvironment']
+    | ResolversParentTypes['SuccessfulRemoval'];
   UserResult:
     | ResolversParentTypes['User']
     | ResolversParentTypes['UserNotFound']
@@ -452,12 +484,22 @@ export type MutationResolvers<
     ContextType,
     RequireFields<MutationResetPasswordArgs, 'data'>
   >;
+  deleteAllUsers?: Resolver<
+    ResolversTypes['DeleteAllUsersResult'],
+    ParentType,
+    ContextType
+  >;
 };
 
 export type UserResolvers<
   ContextType = any,
   ParentType extends ResolversParentTypes['User'] = ResolversParentTypes['User']
 > = {
+  __resolveReference?: ReferenceResolver<
+    Maybe<ResolversTypes['User']>,
+    { __typename: 'User' } & Pick<ParentType, 'id'>,
+    ContextType
+  >;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   picture?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   provider?: Resolver<
@@ -568,6 +610,33 @@ export type SkippedOAuthFlowResolvers<
   __isTypeOf?: isTypeOfResolverFn<ParentType>;
 };
 
+export type NotInTestingEnvironmentResolvers<
+  ContextType = any,
+  ParentType extends ResolversParentTypes['NotInTestingEnvironment'] = ResolversParentTypes['NotInTestingEnvironment']
+> = {
+  message?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  __isTypeOf?: isTypeOfResolverFn<ParentType>;
+};
+
+export type SuccessfulRemovalResolvers<
+  ContextType = any,
+  ParentType extends ResolversParentTypes['SuccessfulRemoval'] = ResolversParentTypes['SuccessfulRemoval']
+> = {
+  count?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  __isTypeOf?: isTypeOfResolverFn<ParentType>;
+};
+
+export type DeleteAllUsersResultResolvers<
+  ContextType = any,
+  ParentType extends ResolversParentTypes['DeleteAllUsersResult'] = ResolversParentTypes['DeleteAllUsersResult']
+> = {
+  __resolveType: TypeResolveFn<
+    'NotInTestingEnvironment' | 'SuccessfulRemoval',
+    ParentType,
+    ContextType
+  >;
+};
+
 export type UserResultResolvers<
   ContextType = any,
   ParentType extends ResolversParentTypes['UserResult'] = ResolversParentTypes['UserResult']
@@ -669,6 +738,9 @@ export type Resolvers<ContextType = any> = {
   UserNotFound?: UserNotFoundResolvers<ContextType>;
   EmailMayHaveBeenSent?: EmailMayHaveBeenSentResolvers<ContextType>;
   SkippedOAuthFlow?: SkippedOAuthFlowResolvers<ContextType>;
+  NotInTestingEnvironment?: NotInTestingEnvironmentResolvers<ContextType>;
+  SuccessfulRemoval?: SuccessfulRemovalResolvers<ContextType>;
+  DeleteAllUsersResult?: DeleteAllUsersResultResolvers;
   UserResult?: UserResultResolvers;
   RequestPasswordResetEmailResult?: RequestPasswordResetEmailResultResolvers;
   ResetPasswordResult?: ResetPasswordResultResolvers;

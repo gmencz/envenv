@@ -48,9 +48,7 @@ describe('Login', () => {
       }
     `;
 
-    const loginResponse = (await request(GATEWAY_ENDPOINT, loginMutation)) as {
-      login: { user: User; csrfToken: string };
-    };
+    const loginResponse = await request(GATEWAY_ENDPOINT, loginMutation);
 
     expect(loginResponse.login.user.username).toBe('mockUsername');
     expect(isValid(loginResponse.login.csrfToken)).toBe(true);
