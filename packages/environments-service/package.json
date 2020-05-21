@@ -2,26 +2,36 @@
   "name": "environments-service",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "src/index.ts",
   "scripts": {
-    "dev": "ts-node-dev --no-deps --respawn --poll --interval 1000 src/index.ts"
+    "gen-graphql": "graphql-codegen --config codegen.yml",
+    "sync-db-migrations": "prisma migrate up --experimental && prisma generate",
+    "gen-graphql-watch": "graphql-codegen --config codegen.yml --watch src/graphql/schema.graphql",
+    "dev": "concurrently \"ts-node-dev --respawn --transpileOnly --poll --interval 1000 --watch src/graphql/schema.graphql src/index.ts\" \"npm run gen-graphql-watch\" \"npm run sync-db-migrations\"",
+    "apollo-push:dev": "apollo service:push --serviceURL=http://dev-environments-service:5001/graphql --serviceName=Environments"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
     "@apollo/federation": "^0.15.0",
+    "@prisma/client": "^2.0.0-beta.5",
     "apollo-server-express": "^2.13.0",
     "cookie-parser": "^1.4.5",
-    "graphql": "^14.6.0",
-    "pg": "^8.1.0",
-    "reflect-metadata": "^0.1.13",
-    "type-graphql": "^0.18.0-beta.16",
-    "typeorm": "^0.2.24"
+    "graphql": "^15.0.0",
+    "graphql-import": "^1.0.2",
+    "graphql-request": "^1.8.2"
   },
   "devDependencies": {
+    "@graphql-codegen/cli": "1.13.5",
+    "@graphql-codegen/typescript": "1.13.5",
+    "@graphql-codegen/typescript-resolvers": "1.13.5",
+    "@prisma/cli": "^2.0.0-beta.5",
     "@types/cookie-parser": "^1.4.2",
+    "@types/node": "^14.0.1",
+    "apollo": "^2.27.4",
+    "concurrently": "^5.2.0",
     "ts-node-dev": "^1.0.0-pre.44",
-    "typescript": "^3.8.3"
+    "typescript": "^3.9.2"
   }
 }

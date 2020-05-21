@@ -1,70 +1,54 @@
-import 'reflect-metadata';
+import { ApolloServer, gql } from 'apollo-server-express';
 import express from 'express';
 import cookieParser from 'cookie-parser';
-import { buildFederatedSchema } from './helpers/buildFederatedSchema';
-import { ApolloServer } from 'apollo-server-express';
-import { ApolloContext } from './graphqlShared/interfaces';
-import {
-  ConnectionOptions,
-  getConnectionOptions,
-  createConnection,
-} from 'typeorm';
-import EnvironmentResolver from './resolvers/Environment';
-import User from './entities/User';
-import EnvironmentMember, {
-  resolveEnvironmentMemberReference,
-} from './entities/Environment/Member';
-import Environment, {
-  resolveEnvironmentReference,
-} from './entities/Environment';
+import { ApolloContext } from './typings';
+import { buildFederatedSchema } from '@apollo/federation';
+import { PrismaClient } from '@prisma/client';
+import resolvers from './graphql/resolvers';
+import { importSchema } from 'graphql-import';
+import normalizeCookies from './helpers/normalizeCookies';
 
-(async (): Promise<void> => {
-  try {
-    const app = express();
-    app.use(cookieParser());
-    app.use(express.json());
+const prisma = new PrismaClient();
+try {
+  const app = express();
+  app.use(cookieParser());
+  app.use(express.json());
+  app.use(normalizeCookies);
 
-    const schema = await buildFederatedSchema(
+  const typeDefs = gql(importSchema(`${__dirname}/graphql/schema.graphql`));
+
+  const server = new ApolloServer({
+    schema: buildFederatedSchema([
       {
-        resolvers: [EnvironmentResolver],
-        orphanedTypes: [User, EnvironmentMember, Environment],
+        typeDefs,
+        resolvers: resolvers as any,
       },
-      {
-        Environment: { __resolveReference: resolveEnvironmentReference },
-        EnvironmentMember: {
-          __resolveReference: resolveEnvironmentMemberReference,
-        },
-      }
+    ]),
+    context: ({ req, res }: ApolloContext): ApolloContext => ({
+      req,
+      res,
+      prisma,
+    }),
+    engine: false,
+  });
+
+  server.applyMiddleware({ app });
+
+  const PORT = process.env.SERVICE_PORT;
+
+  app.listen(PORT, () => {
+    console.log(
+      `
+  Environments GraphQL service is up and running! 
+
+  - Locally (accessible via your browser): ✔️
+    http://localhost:${PORT}/graphql 
+
+  - Inside Docker network: ✔️
+    ${process.env.GRAPHQL_ENDPOINT} 
+    `
     );
-
-    const server = new ApolloServer({
-      schema,
-      tracing: false,
-      playground: true,
-      context: ({ req, res }: ApolloContext): ApolloContext => ({
-        req,
-        res,
-      }),
-    });
-
-    server.applyMiddleware({ app });
-
-    let connectionOptions: ConnectionOptions = await getConnectionOptions(
-      'EnvenvMainDatabase'
-    );
-
-    if (process.env.NODE_ENV === 'test') {
-      connectionOptions = await getConnectionOptions('EnvenvMockDatabase');
-    }
-
-    await createConnection({ ...connectionOptions, name: 'default' });
-
-    app.listen(process.env.SERVICE_PORT, () => {
-      console.log(
-        `Environments service listening on http://localhost:${process.env.SERVICE_PORT}/`
-      );
-    });
-  } catch (error) {
-    console.error(error);
-  }
-})();
+  });
+} catch (error) {
+  console.error(error);
+}

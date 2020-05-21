@@ -7,28 +7,16 @@ services:
       dockerfile: Dockerfile.dev
     ports:
       - '8080:80'
-  dev-auth-service:
+  dev-accounts-service:
     build:
-      context: ./packages/auth-service
+      context: ./packages/accounts-service
       dockerfile: Dockerfile.dev
     volumes:
-      - ./packages/auth-service:/dev-auth-service
+      - ./packages/accounts-service:/dev-accounts-service
     ports:
       - '5000:5000'
     env_file:
-      - ./packages/auth-service/development.env
-    environment:
-      - NODE_ENV=development
-  dev-users-service:
-    build:
-      context: ./packages/users-service
-      dockerfile: Dockerfile.dev
-    volumes:
-      - ./packages/users-service:/dev-users-service
-    ports:
-      - '5005:5005'
-    env_file:
-      - ./packages/users-service/development.env
+      - ./packages/accounts-service/development.env
     environment:
       - NODE_ENV=development
   dev-environments-service:
@@ -38,7 +26,7 @@ services:
     volumes:
       - ./packages/environments-service:/dev-environments-service
     ports:
-      - '5006:5006'
+      - '5001:5001'
     env_file:
       - ./packages/environments-service/development.env
     environment:

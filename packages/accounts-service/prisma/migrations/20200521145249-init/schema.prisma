@@ -1,0 +1,31 @@
+datasource db {
+  provider = "postgresql"
+  url = "***"
+}
+
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["debian-openssl-1.1.x"]
+}
+
+model User {
+  id                 String          @default(cuid()) @id
+  picture            String?
+  provider           AccountProvider @default(NONE)
+  username           String          @unique
+  email              String          @unique
+  name               String
+  password           String
+  role               UserRole        @default(USER)
+  lastPasswordChange DateTime?
+}
+
+enum UserRole {
+  USER
+  ADMIN
+}
+
+enum AccountProvider {
+  GOOGLE
+  NONE
+}

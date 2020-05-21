@@ -1,0 +1,8 @@
+FROM node:lts
+WORKDIR /dev-accounts-service
+
+COPY ./package*.json ./
+RUN npm install
+COPY . .
+
+CMD ["npm", "run", "dev"]
