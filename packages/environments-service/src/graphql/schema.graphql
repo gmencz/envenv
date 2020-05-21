@@ -13,7 +13,7 @@ type Environment @key(fields: "id") {
   members: [EnvironmentMember]
 }
 
-type EnvironmentMember @key(fields: "id") {
+type EnvironmentMember {
   id: ID!
   environment: Environment
   environmentRole: EnvironmentRole
