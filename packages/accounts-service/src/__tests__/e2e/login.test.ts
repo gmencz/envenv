@@ -1,54 +1,62 @@
 import request from 'graphql-request';
 import getSession from '../../helpers/getSession';
 import redisClient from '../../helpers/redisClient';
-import { ApolloError } from 'apollo-server-express';
+import { LoginResult, SuccessfulLogin } from '../../graphql/generated';
+import { isValid } from 'shortid';
 
 describe('Login', () => {
   beforeAll(async () => {
     const truncateUsersTableQuery = `
       mutation {
-        deleteAllUsers
-      }
-    `;
-
-    await request(GATEWAY_ENDPOINT, truncateUsersTableQuery);
-
-    const signupMutation = `
-      mutation {
-        signup(newUserData: {
-          username: "mockUsername",
-          name: "Gabriel",
-          password: "mockPassword",
-          email: "gabriel@envenv.com"
-        }) {
-          user {
-            username
-            name
-          }
-          csrfToken
+        deleteAllUsers {
+          __typename
         }
       }
     `;
 
-    await request(GATEWAY_ENDPOINT, signupMutation);
+    await request(process.env.GRAPHQL_ENDPOINT!, truncateUsersTableQuery);
+
+    const signupMutation = `
+      mutation {
+        signup(data: {
+          username: "mock",
+          email: "mock@mock.com",
+          name: "Mock",
+          password: "mockpw123"
+        }) {
+          __typename
+        }
+      }
+    `;
+
+    await request(process.env.GRAPHQL_ENDPOINT!, signupMutation);
   });
 
   it('logs user in if credentials are valid and creates a valid and secure session', async () => {
     const loginMutation = `
       mutation {
-        login(username: "mockUsername", password: "mockPassword") {
-          user {
-            username
+        login(username: "mock", password: "mockpw123") {
+          __typename
+          ... on SuccessfulLogin {
+            user {
+              username
+            }
+            csrfToken
           }
-          csrfToken
         }
       }
     `;
 
-    const loginResponse = await request(GATEWAY_ENDPOINT, loginMutation);
+    const loginResponse: { login: LoginResult } = await request(
+      process.env.GRAPHQL_ENDPOINT!,
+      loginMutation
+    );
 
-    expect(loginResponse.login.user.username).toBe('mockUsername');
-    expect(isValid(loginResponse.login.csrfToken)).toBe(true);
+    expect(loginResponse.login.__typename).toBe('SuccessfulLogin');
+
+    const { user, csrfToken } = loginResponse.login as SuccessfulLogin;
+    expect(user.username).toBe('@mock');
+    expect(isValid(csrfToken)).toBe(true);
 
     const redisKeys: string[] = await new Promise((res, rej) => {
       redisClient.keys('*', (err, keys) => {
@@ -63,10 +71,7 @@ describe('Login', () => {
     const validSessionWasCreated = redisKeys.some(async redisKey => {
       const session = await getSession(redisKey.split('_')[1], redisClient);
 
-      if (
-        session?.userId === loginResponse.login.user.id &&
-        session?.csrfToken === loginResponse.login.csrfToken
-      ) {
+      if (session?.userId === user.id && session?.csrfToken === csrfToken) {
         return true;
       }
 
@@ -76,77 +81,49 @@ describe('Login', () => {
     expect(validSessionWasCreated).toBe(true);
   });
 
-  it('throws error if username/password do not meet security requirements', async () => {
+  it('informs client via custom `error type` if username/password do not meet security requirements', async () => {
     const loginMutation = `
       mutation {
         login(username: "m", password: "mockPassword") {
-          user {
-            username
-          }
-          csrfToken
+          __typename
         }
       }
     `;
 
-    await request(GATEWAY_ENDPOINT, loginMutation).catch(error => {
-      let validationError = false;
-
-      if (error.response && error.response.errors) {
-        validationError = error.response.errors.some(
-          (err: ApolloError) => err.message === 'That username is too short!'
-        );
-      }
-
-      expect(validationError).toBeTruthy();
-    });
+    const response: { login: LoginResult } = await request(
+      process.env.GRAPHQL_ENDPOINT!,
+      loginMutation
+    );
+    expect(response.login.__typename).toBe('InvalidDataFormat');
 
     const loginMutation2 = `
       mutation {
         login(username: "mockUsername", password: "123") {
-          user {
-            username
-          }
-          csrfToken
+          __typename
         }
       }
     `;
 
-    await request(GATEWAY_ENDPOINT, loginMutation2).catch(error => {
-      let validationError = false;
-
-      if (error.response && error.response.errors) {
-        validationError = error.response.errors.some(
-          (err: ApolloError) => err.message === 'That password is too short!'
-        );
-      }
-
-      expect(validationError).toBeTruthy();
-    });
+    const secondResponse: { login: LoginResult } = await request(
+      process.env.GRAPHQL_ENDPOINT!,
+      loginMutation2
+    );
+    expect(secondResponse.login.__typename).toBe('InvalidDataFormat');
   });
 
-  it('throws error if credentials are invalid', async () => {
+  it(' informs client via custom `error type` if credentials are invalid', async () => {
     const loginMutation = `
       mutation {
         login(username: "invalidUsername", password: "mockPassword") {
-          user {
-            username
-          }
-          csrfToken
+          __typename
         }
       }
     `;
 
-    await request(GATEWAY_ENDPOINT, loginMutation).catch(error => {
-      let invalidCredentials = false;
-
-      if (error.response && error.response.errors) {
-        invalidCredentials = error.response.errors.some(
-          (err: ApolloError) =>
-            err.extensions.errorCode === 'invalid_credentials'
-        );
-      }
-
-      expect(invalidCredentials).toBe(true);
-    });
+    const response: { login: LoginResult } = await request(
+      process.env.GRAPHQL_ENDPOINT!,
+      loginMutation
+    );
+    expect(response.login.__typename).toBe('InvalidCredentials');
   });
 });
