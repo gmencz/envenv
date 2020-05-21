@@ -31,7 +31,7 @@ const signup: MutationOperations['signup'] = async (
     }
 
     const isEmailTaken = await prisma.user.findOne({
-      where: { username: data.username },
+      where: { email: data.email },
       select: { id: true },
     });
 

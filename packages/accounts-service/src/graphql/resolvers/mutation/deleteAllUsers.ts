@@ -22,6 +22,7 @@ const deleteAllUsers: MutationOperations['deleteAllUsers'] = async (
       count: deleteOperation.count,
     };
   } catch (error) {
+    console.log(error);
     throw new ApolloError(
       `Something went wrong on our side, we're working on it!`,
       '500',

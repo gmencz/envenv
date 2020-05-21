@@ -11,9 +11,8 @@ interface CreateSessionReturnType {
 export default async function createSession(
   userId: string | number,
   preferedRedisClient: RedisClient,
-  sessionSecret: string = process.env.SESSION_INFO_SECRET as string,
-  sessionExpiryTime: string | number = process.env
-    .SESSION_REDIS_EXPIRY as string
+  sessionSecret: string = process.env.SESSION_INFO_SECRET!,
+  sessionExpiryTime: string | number = process.env.SESSION_REDIS_EXPIRY!
 ): Promise<CreateSessionReturnType> {
   try {
     const sessionInfo = {

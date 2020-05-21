@@ -103,6 +103,10 @@ type SuccessfulRemoval {
   count: Int!
 }
 
+type WantsSamePassword {
+  message: String!
+}
+
 # Unions which combine the previous types.
 # This is a better approach for error handling than just throwing errors.
 # The GraphQL Twitter representative talks about this in the following link
@@ -118,6 +122,7 @@ union ResetPasswordResult =
     User
   | InvalidOrExpiredToken
   | PasswordsDontMatch
+  | WantsSamePassword
   | InvalidDataFormat
 
 union LoginWithExternalProviderResult =

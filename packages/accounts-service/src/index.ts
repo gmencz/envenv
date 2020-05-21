@@ -7,7 +7,6 @@ import { PrismaClient } from '@prisma/client';
 import { importSchema } from 'graphql-import';
 import {
   callbackGoogleAuth,
-  scopeFn,
   GoogleStrategyObj,
 } from './controllers/auth/google';
 import resolvers from './graphql/resolvers';

@@ -1,6 +1,6 @@
-# Migration `20200518210928-change-ids-from-uuid-to-cuid`
+# Migration `20200521145506-init`
 
-This migration has been generated at 5/18/2020, 9:09:28 PM.
+This migration has been generated at 5/21/2020, 2:55:06 PM.
 You can check out the [state of the schema](./schema.prisma) after the migration.
 
 ## Database Steps
@@ -23,32 +23,37 @@ ALTER TABLE "environments"."EnvironmentMember" ADD FOREIGN KEY ("environmentId")
 
 ```diff
 diff --git schema.prisma schema.prisma
-migration 20200518145637-init..20200518210928-change-ids-from-uuid-to-cuid
+migration ..20200521145506-init
 --- datamodel.dml
 +++ datamodel.dml
-@@ -1,24 +1,24 @@
- datasource db {
-   provider = "postgresql"
--  url = "***"
-+  url      = env("DATABASE_URL")
- }
- generator client {
-   provider      = "prisma-client-js"
-   binaryTargets = ["debian-openssl-1.1.x"]
- }
- model EnvironmentMember {
--  id              String          @default(uuid()) @id
+@@ -1,0 +1,29 @@
++datasource db {
++  provider = "postgresql"
++  url      = env("POSTGRES_DB_URI")
++}
++
++generator client {
++  provider      = "prisma-client-js"
++  binaryTargets = ["debian-openssl-1.1.x"]
++}
++
++model EnvironmentMember {
 +  id              String          @default(cuid()) @id
-   environment     Environment?    @relation(fields: [environmentId], references: [id])
-   environmentId   String?
-   environmentRole EnvironmentRole @default(CONTRIBUTOR)
-   userId          String
- }
- model Environment {
--  id          String              @default(uuid()) @id
++  environment     Environment?    @relation(fields: [environmentId], references: [id])
++  environmentId   String?
++  environmentRole EnvironmentRole @default(CONTRIBUTOR)
++  userId          String
++}
++
++model Environment {
 +  id          String              @default(cuid()) @id
-   name        String
-   members     EnvironmentMember[]
-   ownerUserId String
- }
++  name        String
++  members     EnvironmentMember[]
++  ownerUserId String
++}
++
++enum EnvironmentRole {
++  ADMIN
++  CONTRIBUTOR
++}
 ```

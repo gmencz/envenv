@@ -1,6 +1,6 @@
-# Migration `20200518210759-init`
+# Migration `20200521145249-init`
 
-This migration has been generated at 5/18/2020, 9:07:59 PM.
+This migration has been generated at 5/21/2020, 2:52:49 PM.
 You can check out the [state of the schema](./schema.prisma) after the migration.
 
 ## Database Steps
@@ -23,13 +23,13 @@ CREATE UNIQUE INDEX "User.email" ON "accounts"."User"("email")
 
 ```diff
 diff --git schema.prisma schema.prisma
-migration ..20200518210759-init
+migration ..20200521145249-init
 --- datamodel.dml
 +++ datamodel.dml
 @@ -1,0 +1,31 @@
 +datasource db {
 +  provider = "postgresql"
-+  url      = env("DATABASE_URL")
++  url      = env("POSTGRES_DB_URI")
 +}
 +
 +generator client {

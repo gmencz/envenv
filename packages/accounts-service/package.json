@@ -7,7 +7,8 @@
     "gen-graphql": "graphql-codegen --config codegen.yml",
     "gen-graphql-watch": "graphql-codegen --config codegen.yml --watch src/graphql/schema.graphql",
     "dev": "concurrently \"ts-node-dev --respawn --transpileOnly --poll --interval 1000 --watch src/graphql/schema.graphql src/index.ts\" \"npm run gen-graphql-watch\"",
-    "apollo-push:dev": "apollo service:push --serviceURL=http://dev-accounts-service:5000/graphql --serviceName=Accounts"
+    "apollo-push:dev": "apollo service:push --serviceURL=http://dev-accounts-service:5000/graphql --serviceName=Accounts",
+    "test": "jest"
   },
   "keywords": [],
   "author": "",
@@ -53,7 +54,6 @@
     "concurrently": "^5.2.0",
     "dotenv": "^8.2.0",
     "jest": "^26.0.1",
-    "jest-puppeteer": "^4.4.0",
     "redis-mock": "^0.49.0",
     "ts-jest": "^25.5.0",
     "ts-node-dev": "^1.0.0-pre.44",

@@ -1,258 +1,157 @@
 import request from 'graphql-request';
-import { GATEWAY_ENDPOINT } from './signup.test';
 import { sign } from 'jsonwebtoken';
-import User from '../../entities/User';
-import { compare } from 'bcryptjs';
-import { ApolloError } from 'apollo-server';
+import { compare, hash } from 'bcryptjs';
+import {
+  SignupResult,
+  SuccessfulSignup,
+  User,
+  ResetPasswordResult,
+} from '../../graphql/generated';
+import { PrismaClient } from '@prisma/client';
 
 describe('Password reset', () => {
+  const prisma = new PrismaClient();
+
   beforeAll(async () => {
     const truncateUsersTableQuery = `
-      mutation {
-        deleteAllUsers
+      mutation DeleteUsersForTesting {
+        deleteAllUsers {
+          __typename
+        }
       }
     `;
 
-    await request(GATEWAY_ENDPOINT, truncateUsersTableQuery);
+    await request(process.env.GRAPHQL_ENDPOINT!, truncateUsersTableQuery);
   });
 
   afterEach(async () => {
     const truncateUsersTableQuery = `
-      mutation {
-        deleteAllUsers
+      mutation DeleteUsersForTesting {
+        deleteAllUsers {
+          __typename
+        }
       }
     `;
 
-    await request(GATEWAY_ENDPOINT, truncateUsersTableQuery);
+    await request(process.env.GRAPHQL_ENDPOINT!, truncateUsersTableQuery);
+  });
+
+  afterAll(async () => {
+    await prisma.disconnect();
   });
 
   it('resets password and invalidates token afterwards', async () => {
     const signupMutation = `
-      mutation {
-        signup(newUserData: {
+      mutation SignUp {
+        signup(data: {
           username: "mockUsername",
-          name: "Gabriel",
+          name: "mockUser",
           password: "mockPassword",
-          email: "gabriel@envenv.com"
+          email: "mock@envenv.com"
         }) {
-          user {
-            id
-            lastPasswordChange
-            username
-            name
+          __typename
+          ... on SuccessfulSignup {
+            user {
+              id
+              username
+              email
+              password
+              lastPasswordChange
+            }
           }
-          csrfToken
         }
       }
     `;
 
-    const signupResponse = await request(GATEWAY_ENDPOINT, signupMutation);
+    const signupResponse: { signup: SignupResult } = await request(
+      process.env.GRAPHQL_ENDPOINT!,
+      signupMutation
+    );
 
-    const {
-      signup: { user },
-    } = signupResponse as { signup: { user: User } };
+    const { signup } = signupResponse;
+    expect(signup.__typename).toBe('SuccessfulSignup');
+
+    const { user } = signup as SuccessfulSignup;
 
     const mockToken = sign(
       { userId: user.id, lastPasswordChange: user.lastPasswordChange },
-      process.env.PASSWORD_RESET_SECRET as string,
+      process.env.PASSWORD_RESET_SECRET!,
       {
-        expiresIn: 900000,
+        expiresIn: 900000, // 15 mins
       }
     );
 
     const resetPasswordMutation = `
-      mutation resetPassword($token: String!) {
-        resetPassword(
+      mutation ResetPassword($token: String!) {
+        resetPassword(data: {
           newPassword: "mockResetPassword",
           currentPassword: "mockPassword",
           token: $token
-        ) {
-          password
+        }) {
+          __typename
+          ... on User {
+            password
+          }
         }
       }
     `;
 
-    const resetPasswordResponse = await request(
-      GATEWAY_ENDPOINT,
-      resetPasswordMutation,
-      {
-        token: mockToken,
-      }
-    );
+    await request(process.env.GRAPHQL_ENDPOINT!, resetPasswordMutation, {
+      token: mockToken,
+    });
 
-    const { resetPassword: resetPasswordUser } = resetPasswordResponse as {
-      resetPassword: Pick<User, 'password'>;
-    };
+    const updatedUser = await prisma.user.findOne({ where: { id: user.id } });
 
-    const getUserQuery = `
-      query queryUserById($userId: String!) {
-        queryUser(by: id, byValue: $userId) {
-          id
-          username
-          password
-          lastPasswordChange
-        }
-      }
-    `;
+    expect(updatedUser).toBeTruthy();
+    if (!updatedUser) return;
 
-    const data = await request(
-      process.env.USERS_SERVICE_URL as string,
-      getUserQuery,
-      {
-        userId: user.id,
-      }
-    );
-
-    const { queryUser: updatedUser } = data as { queryUser: User };
     const passwordsMatch = await compare(
       'mockResetPassword',
       updatedUser.password
     );
 
-    expect(updatedUser.password).toBe(resetPasswordUser.password);
     expect(passwordsMatch).toBe(true);
 
     const secondResetPasswordMutation = `
       mutation resetPassword($token: String!) {
-        resetPassword(
+        resetPassword(data: {
           newPassword: "mockResetPassword2",
           currentPassword: "mockResetPassword",
           token: $token
-        ) {
-          password
-        }
-      }
-    `;
-
-    await request(GATEWAY_ENDPOINT, secondResetPasswordMutation, {
-      token: mockToken,
-    }).catch(error => {
-      let validationError = false;
-
-      if (error.response && error.response.errors) {
-        validationError = error.response.errors.some(
-          (err: ApolloError) => err.extensions.errorCode === 'invalid_token'
-        );
-      }
-
-      expect(validationError).toBe(true);
-    });
-  });
-
-  it('allows to reset password as many times as needed', async () => {
-    const signupMutation2 = `
-      mutation {
-        signup(newUserData: {
-          username: "mockUsername",
-          name: "Gabriel",
-          password: "mockPassword",
-          email: "gabriel@envenv.com"
         }) {
-          user {
-            id
-            lastPasswordChange
-            username
-            name
+          __typename
+          ... on User {
+            password
           }
-          csrfToken
         }
       }
     `;
 
-    const signupResponse2 = await request(GATEWAY_ENDPOINT, signupMutation2);
-
-    const {
-      signup: { user: user2 },
-    } = signupResponse2 as { signup: { user: User } };
-
-    const mockToken = sign(
-      { userId: user2.id, lastPasswordChange: user2.lastPasswordChange },
-      process.env.PASSWORD_RESET_SECRET as string,
-      {
-        expiresIn: 900000,
-      }
-    );
-
-    const resetPasswordMutation2 = `
-      mutation resetPassword($token: String!) {
-        resetPassword(
-          newPassword: "mockResetPassword",
-          currentPassword: "mockPassword",
-          token: $token
-        ) {
-          password
-        }
-      }
-    `;
-
-    const resetPasswordResponse2 = await request(
-      GATEWAY_ENDPOINT,
-      resetPasswordMutation2,
+    const response: { resetPassword: ResetPasswordResult } = await request(
+      process.env.GRAPHQL_ENDPOINT!,
+      secondResetPasswordMutation,
       {
         token: mockToken,
       }
     );
 
-    const { resetPassword: resetPasswordUser } = resetPasswordResponse2 as {
-      resetPassword: Pick<User, 'password'>;
-    };
+    expect(response.resetPassword.__typename).toBe('InvalidOrExpiredToken');
+  });
 
-    const getUserQuery = `
-      query queryUserById($userId: String!) {
-        queryUser(by: id, byValue: $userId) {
-          id
-          username
-          password
-          lastPasswordChange
-        }
-      }
-    `;
+  it('allows to reset password as many times as needed', async () => {
+    // First reset ->
+    const user = await prisma.user.create({
+      data: {
+        username: 'mockUsername',
+        name: 'mockUser',
+        password: await hash('mockPassword', 12),
+        email: 'mock@envenv.com',
+      },
+    });
 
-    const data = await request(
-      process.env.USERS_SERVICE_URL as string,
-      getUserQuery,
-      {
-        userId: user2.id,
-      }
-    );
-
-    const { queryUser: updatedUser2 } = data as { queryUser: User };
-    const passwordsMatch = await compare(
-      'mockResetPassword',
-      updatedUser2.password
-    );
-
-    expect(updatedUser2.password).toBe(resetPasswordUser.password);
-    expect(passwordsMatch).toBe(true);
-
-    const signupMutation = `
-      mutation {
-        signup(newUserData: {
-          username: "mockUsername2",
-          name: "Gabriel",
-          password: "mockPassword",
-          email: "gabriel@envenv2.com"
-        }) {
-          user {
-            id
-            lastPasswordChange
-            username
-            name
-          }
-          csrfToken
-        }
-      }
-    `;
-
-    const signupResponse = await request(GATEWAY_ENDPOINT, signupMutation);
-
-    const {
-      signup: { user },
-    } = signupResponse as { signup: { user: User } };
-
-    const mockToken2 = sign(
+    const mockToken = sign(
       { userId: user.id, lastPasswordChange: user.lastPasswordChange },
-      process.env.PASSWORD_RESET_SECRET as string,
+      process.env.PASSWORD_RESET_SECRET!,
       {
         expiresIn: 900000,
       }
@@ -260,86 +159,132 @@ describe('Password reset', () => {
 
     const resetPasswordMutation = `
       mutation resetPassword($token: String!) {
-        resetPassword(
+        resetPassword(data: {
           newPassword: "mockResetPassword",
           currentPassword: "mockPassword",
           token: $token
-        ) {
-          password
+        }) {
+          __typename
+          ... on User {
+            id
+            password
+          }
         }
       }
     `;
 
-    const resetPasswordResponse = await request(
-      GATEWAY_ENDPOINT,
-      resetPasswordMutation,
-      {
-        token: mockToken2,
-      }
-    );
+    const resetPasswordResponse: {
+      resetPassword: ResetPasswordResult;
+    } = await request(process.env.GRAPHQL_ENDPOINT!, resetPasswordMutation, {
+      token: mockToken,
+    });
 
-    const { resetPassword: resetPasswordUser2 } = resetPasswordResponse as {
-      resetPassword: Pick<User, 'password'>;
-    };
+    expect(resetPasswordResponse.resetPassword.__typename).toBe('User');
 
-    const getUserQuery2 = `
-      query queryUserById($userId: String!) {
-        queryUser(by: id, byValue: $userId) {
-          id
-          username
-          password
-          lastPasswordChange
-        }
-      }
-    `;
+    const { id } = resetPasswordResponse.resetPassword as User;
+    const updatedUser = await prisma.user.findOne({ where: { id } });
 
-    const data2 = await request(
-      process.env.USERS_SERVICE_URL as string,
-      getUserQuery2,
-      {
-        userId: user.id,
-      }
-    );
+    expect(updatedUser).toBeTruthy();
+    if (!updatedUser) return;
 
-    const { queryUser: updatedUser } = data2 as { queryUser: User };
-    const passwordsMatch2 = await compare(
+    const passwordsMatch = await compare(
       'mockResetPassword',
       updatedUser.password
     );
 
-    expect(updatedUser.password).toBe(resetPasswordUser2.password);
-    expect(passwordsMatch2).toBe(true);
-  });
+    expect(passwordsMatch).toBe(true);
 
-  it(`can't reset password after token has expired`, async () => {
-    const signupMutation = `
-      mutation {
-        signup(newUserData: {
-          username: "mockUsername2",
-          name: "Gabriel",
-          password: "mockPassword",
-          email: "gabriel@envenv2.com"
+    const secondMockToken = sign(
+      {
+        userId: updatedUser.id,
+        lastPasswordChange: updatedUser.lastPasswordChange,
+      },
+      process.env.PASSWORD_RESET_SECRET!,
+      {
+        expiresIn: 900000,
+      }
+    );
+
+    const secondResetPasswordMutation = `
+      mutation resetPassword($token: String!) {
+        resetPassword(data: {
+          newPassword: "mockResetPassword2",
+          currentPassword: "mockResetPassword",
+          token: $token
         }) {
-          user {
+          __typename
+          ... on User {
             id
-            lastPasswordChange
-            username
-            name
+            password
           }
-          csrfToken
         }
       }
     `;
 
-    const signupResponse = await request(GATEWAY_ENDPOINT, signupMutation);
+    const secondResetPasswordResponse: {
+      resetPassword: ResetPasswordResult;
+    } = await request(
+      process.env.GRAPHQL_ENDPOINT!,
+      secondResetPasswordMutation,
+      {
+        token: secondMockToken,
+      }
+    );
+
+    expect(secondResetPasswordResponse.resetPassword.__typename).toBe('User');
 
     const {
-      signup: { user },
-    } = signupResponse as { signup: { user: User } };
+      id: secondUserId,
+    } = secondResetPasswordResponse.resetPassword as User;
+    const secondUpdatedUser = await prisma.user.findOne({
+      where: { id: secondUserId },
+    });
+
+    expect(secondUpdatedUser).toBeTruthy();
+    if (!secondUpdatedUser) return;
+
+    const secondPasswordsMatch = await compare(
+      'mockResetPassword2',
+      secondUpdatedUser.password
+    );
+
+    expect(secondPasswordsMatch).toBe(true);
+  });
+
+  it(`can't reset password after token has expired`, async () => {
+    const signupMutation = `
+      mutation SignUp {
+        signup(data: {
+          username: "mockUsername",
+          name: "mockUser",
+          password: "mockPassword",
+          email: "mock@envenv.com"
+        }) {
+          __typename
+          ... on SuccessfulSignup {
+            user {
+              id
+              username
+              email
+              password
+              lastPasswordChange
+            }
+          }
+        }
+      }
+    `;
+
+    const signupResponse: { signup: SignupResult } = await request(
+      process.env.GRAPHQL_ENDPOINT!,
+      signupMutation
+    );
+
+    expect(signupResponse.signup.__typename).toBe('SuccessfulSignup');
+    const { user } = signupResponse.signup as SuccessfulSignup;
 
     const mockToken = sign(
       { userId: user.id, lastPasswordChange: user.lastPasswordChange },
-      process.env.PASSWORD_RESET_SECRET as string,
+      process.env.PASSWORD_RESET_SECRET!,
       {
         expiresIn: -1,
       }
@@ -347,28 +292,30 @@ describe('Password reset', () => {
 
     const resetPasswordMutation = `
       mutation resetPassword($token: String!) {
-        resetPassword(
-          newPassword: "mockResetPassword",
-          currentPassword: "mockPassword",
+        resetPassword(data: {
+          newPassword: "mockResetPassword2",
+          currentPassword: "mockResetPassword",
           token: $token
-        ) {
-          password
+        }) {
+          __typename
+          ... on User {
+            id
+            password
+          }
         }
       }
     `;
 
-    await request(GATEWAY_ENDPOINT, resetPasswordMutation, {
-      token: mockToken,
-    }).catch(error => {
-      let validationError = false;
-
-      if (error.response && error.response.errors) {
-        validationError = error.response.errors.some(
-          (err: ApolloError) => err.extensions.errorCode === 'invalid_token'
-        );
+    const resetResponse: { resetPassword: ResetPasswordResult } = await request(
+      process.env.GRAPHQL_ENDPOINT!,
+      resetPasswordMutation,
+      {
+        token: mockToken,
       }
+    );
 
-      expect(validationError).toBe(true);
-    });
+    expect(resetResponse.resetPassword.__typename).toBe(
+      'InvalidOrExpiredToken'
+    );
   });
 });

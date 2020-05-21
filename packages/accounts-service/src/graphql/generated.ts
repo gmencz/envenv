@@ -11,7 +11,6 @@ export type Scalars = {
   Boolean: boolean;
   Int: number;
   Float: number;
-  _FieldSet: any;
 };
 
 export type Query = {
@@ -147,6 +146,11 @@ export type SuccessfulRemoval = {
   count: Scalars['Int'];
 };
 
+export type WantsSamePassword = {
+  __typename?: 'WantsSamePassword';
+  message: Scalars['String'];
+};
+
 export type DeleteAllUsersResult = NotInTestingEnvironment | SuccessfulRemoval;
 
 export type UserResult = User | UserNotFound | InvalidDataFormat;
@@ -159,6 +163,7 @@ export type ResetPasswordResult =
   | User
   | InvalidOrExpiredToken
   | PasswordsDontMatch
+  | WantsSamePassword
   | InvalidDataFormat;
 
 export type LoginWithExternalProviderResult =
@@ -198,12 +203,6 @@ export type CreateUserInput = {
 };
 
 export type ResolverTypeWrapper<T> = Promise<T> | T;
-
-export type ReferenceResolver<TResult, TReference, TContext> = (
-  reference: TReference,
-  context: TContext,
-  info: GraphQLResolveInfo
-) => Promise<TResult> | TResult;
 
 export type StitchingResolver<TResult, TParent, TContext, TArgs> = {
   fragment: string;
@@ -335,6 +334,7 @@ export type ResolversTypes = {
   NotInTestingEnvironment: ResolverTypeWrapper<NotInTestingEnvironment>;
   SuccessfulRemoval: ResolverTypeWrapper<SuccessfulRemoval>;
   Int: ResolverTypeWrapper<Scalars['Int']>;
+  WantsSamePassword: ResolverTypeWrapper<WantsSamePassword>;
   DeleteAllUsersResult:
     | ResolversTypes['NotInTestingEnvironment']
     | ResolversTypes['SuccessfulRemoval'];
@@ -349,6 +349,7 @@ export type ResolversTypes = {
     | ResolversTypes['User']
     | ResolversTypes['InvalidOrExpiredToken']
     | ResolversTypes['PasswordsDontMatch']
+    | ResolversTypes['WantsSamePassword']
     | ResolversTypes['InvalidDataFormat'];
   LoginWithExternalProviderResult:
     | ResolversTypes['SuccessfulLogin']
@@ -396,6 +397,7 @@ export type ResolversParentTypes = {
   NotInTestingEnvironment: NotInTestingEnvironment;
   SuccessfulRemoval: SuccessfulRemoval;
   Int: Scalars['Int'];
+  WantsSamePassword: WantsSamePassword;
   DeleteAllUsersResult:
     | ResolversParentTypes['NotInTestingEnvironment']
     | ResolversParentTypes['SuccessfulRemoval'];
@@ -410,6 +412,7 @@ export type ResolversParentTypes = {
     | ResolversParentTypes['User']
     | ResolversParentTypes['InvalidOrExpiredToken']
     | ResolversParentTypes['PasswordsDontMatch']
+    | ResolversParentTypes['WantsSamePassword']
     | ResolversParentTypes['InvalidDataFormat'];
   LoginWithExternalProviderResult:
     | ResolversParentTypes['SuccessfulLogin']
@@ -495,11 +498,6 @@ export type UserResolvers<
   ContextType = any,
   ParentType extends ResolversParentTypes['User'] = ResolversParentTypes['User']
 > = {
-  __resolveReference?: ReferenceResolver<
-    Maybe<ResolversTypes['User']>,
-    { __typename: 'User' } & Pick<ParentType, 'id'>,
-    ContextType
-  >;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   picture?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   provider?: Resolver<
@@ -626,6 +624,14 @@ export type SuccessfulRemovalResolvers<
   __isTypeOf?: isTypeOfResolverFn<ParentType>;
 };
 
+export type WantsSamePasswordResolvers<
+  ContextType = any,
+  ParentType extends ResolversParentTypes['WantsSamePassword'] = ResolversParentTypes['WantsSamePassword']
+> = {
+  message?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  __isTypeOf?: isTypeOfResolverFn<ParentType>;
+};
+
 export type DeleteAllUsersResultResolvers<
   ContextType = any,
   ParentType extends ResolversParentTypes['DeleteAllUsersResult'] = ResolversParentTypes['DeleteAllUsersResult']
@@ -667,6 +673,7 @@ export type ResetPasswordResultResolvers<
     | 'User'
     | 'InvalidOrExpiredToken'
     | 'PasswordsDontMatch'
+    | 'WantsSamePassword'
     | 'InvalidDataFormat',
     ParentType,
     ContextType
@@ -740,6 +747,7 @@ export type Resolvers<ContextType = any> = {
   SkippedOAuthFlow?: SkippedOAuthFlowResolvers<ContextType>;
   NotInTestingEnvironment?: NotInTestingEnvironmentResolvers<ContextType>;
   SuccessfulRemoval?: SuccessfulRemovalResolvers<ContextType>;
+  WantsSamePassword?: WantsSamePasswordResolvers<ContextType>;
   DeleteAllUsersResult?: DeleteAllUsersResultResolvers;
   UserResult?: UserResultResolvers;
   RequestPasswordResetEmailResult?: RequestPasswordResetEmailResultResolvers;

@@ -1,10 +1,7 @@
 import request from 'graphql-request';
-import { GATEWAY_ENDPOINT } from './signup.test';
-import User from '../../entities/User';
-import { isValid } from 'shortid';
 import getSession from '../../helpers/getSession';
 import redisClient from '../../helpers/redisClient';
-import { ApolloError } from 'apollo-server';
+import { ApolloError } from 'apollo-server-express';
 
 describe('Login', () => {
   beforeAll(async () => {

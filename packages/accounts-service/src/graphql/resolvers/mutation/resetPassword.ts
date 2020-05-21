@@ -4,6 +4,50 @@ import { verify } from 'jsonwebtoken';
 import { reach } from 'yup';
 import { createUserSchema } from '../../../validation/createUser';
 import { compare, hash } from 'bcryptjs';
+import { PrismaClient } from '@prisma/client';
+import { ResetPasswordResult } from '../../generated';
+
+const updateUserPassword = async (
+  prisma: PrismaClient,
+  currentSuggestedPassword: string,
+  currentValidPassword: string,
+  newPassword: string,
+  userId: string
+): Promise<ResetPasswordResult> => {
+  await reach(createUserSchema, 'password').validate(newPassword);
+  const validCurrentPassword = await compare(
+    currentSuggestedPassword,
+    currentValidPassword
+  );
+
+  if (!validCurrentPassword) {
+    return {
+      __typename: 'PasswordsDontMatch',
+      message: 'Your current password does not match the one you provided',
+    };
+  }
+
+  const updatedUser = await prisma.user.update({
+    where: { id: userId },
+    data: {
+      password: await hash(newPassword, 12),
+      lastPasswordChange: new Date(),
+    },
+  });
+
+  return {
+    __typename: 'User',
+    email: updatedUser.email,
+    id: updatedUser.id,
+    name: updatedUser.name,
+    password: updatedUser.password,
+    provider: updatedUser.provider as any,
+    role: updatedUser.role as any,
+    username: updatedUser.username,
+    picture: updatedUser.picture,
+    lastPasswordChange: updatedUser.lastPasswordChange?.getTime().toString(),
+  };
+};
 
 const resetPassword: MutationOperations['resetPassword'] = async (
   _,
@@ -14,11 +58,12 @@ const resetPassword: MutationOperations['resetPassword'] = async (
     const decodedToken = verify(
       data.token,
       process.env.PASSWORD_RESET_SECRET!
-    ) as { userId: string; lastPasswordChange: string | null };
+    ) as { userId: string; lastPasswordChange: Date | null };
 
     const user = await prisma.user.findOne({
       where: { id: decodedToken.userId },
     });
+
     if (!user) {
       return {
         __typename: 'InvalidOrExpiredToken',
@@ -27,97 +72,54 @@ const resetPassword: MutationOperations['resetPassword'] = async (
       };
     }
 
-    // Conditions to check:
-    // - If one is a date but the other is null, throw
-    // - If they are not equal, throw
-    if (!decodedToken.lastPasswordChange && user.lastPasswordChange) {
+    const wantsTheSamePassword = await compare(data.newPassword, user.password);
+
+    if (wantsTheSamePassword) {
       return {
-        __typename: 'InvalidOrExpiredToken',
+        __typename: 'WantsSamePassword',
         message:
-          'The token/link to reset your password is invalid, request another password reset if you wish to change your password',
+          "Can't change password to your current password, please choose a new/different password than your current one",
       };
-    }
-
-    // If both are null, reset password
-    if (decodedToken.lastPasswordChange === user.lastPasswordChange) {
-      await reach(createUserSchema, 'password').validate(data.newPassword);
-      const validCurrentPassword = await compare(
-        data.currentPassword,
-        user.password
-      );
-
-      if (!validCurrentPassword) {
-        return {
-          __typename: 'PasswordsDontMatch',
-          message: 'Your current password does not match the one you provided',
-        };
-      }
-
-      await prisma.user.update({
-        where: { id: user.id },
-        data: {
-          password: await hash(data.newPassword, 12),
-        },
-      });
-
-      await prisma.user.update({
-        where: { id: user.id },
-        data: {
-          lastPasswordChange: new Date(),
-        },
-      });
     }
 
     if (
-      decodedToken.lastPasswordChange !==
-      user.lastPasswordChange?.getTime().toString()
+      decodedToken.lastPasswordChange === null &&
+      user.lastPasswordChange === null
     ) {
-      return {
-        __typename: 'InvalidOrExpiredToken',
-        message:
-          'The token/link to reset your password is invalid, request another password reset if you wish to change your password',
-      };
+      const result = await updateUserPassword(
+        prisma,
+        data.currentPassword,
+        user.password,
+        data.newPassword,
+        user.id
+      );
+      return result;
     }
 
-    // Outsource this into its own helper function for reusability here and above
-    await reach(createUserSchema, 'password').validate(data.newPassword);
-    const validCurrentPassword = await compare(
-      data.currentPassword,
-      user.password
-    );
+    if (user.lastPasswordChange instanceof Date) {
+      const usableTokenDate = new Date(decodedToken.lastPasswordChange as any);
+      if (usableTokenDate.getTime() !== user.lastPasswordChange.getTime()) {
+        return {
+          __typename: 'InvalidOrExpiredToken',
+          message:
+            'The token/link to reset your password is invalid, request another password reset if you wish to change your password',
+        };
+      }
 
-    if (!validCurrentPassword) {
-      return {
-        __typename: 'PasswordsDontMatch',
-        message: 'Your current password does not match the one you provided',
-      };
+      const result = await updateUserPassword(
+        prisma,
+        data.currentPassword,
+        user.password,
+        data.newPassword,
+        user.id
+      );
+      return result;
     }
-
-    await prisma.user.update({
-      where: { id: user.id },
-      data: {
-        password: await hash(data.newPassword, 12),
-      },
-    });
-
-    const updatedUser = await prisma.user.update({
-      where: { id: user.id },
-      data: {
-        lastPasswordChange: new Date(),
-      },
-    });
 
     return {
-      __typename: 'User',
-      email: updatedUser.email,
-      id: updatedUser.id,
-      name: updatedUser.name,
-      password: updatedUser.password,
-      provider: updatedUser.provider as any,
-      role: updatedUser.role as any,
-      username: updatedUser.username,
-      picture: updatedUser.picture,
-      lastPasswordChange: updatedUser.lastPasswordChange?.getTime().toString(),
+      __typename: 'InvalidOrExpiredToken',
+      message:
+        'The token/link to reset your password is invalid, request another password reset if you wish to change your password',
     };
   } catch (error) {
     if (error.name === 'ValidationError') {
