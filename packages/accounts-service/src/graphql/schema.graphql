@@ -1,109 +1,196 @@
-# =================
-# SDL for root types
-# =================
-
 extend type Query {
-  requestPasswordResetEmail(email: String!): RequestPasswordResetEmailResult!
-  user(id: String, username: String, email: String): UserResult!
+  "Request an email with the instructions to reset an account's password."
+  requestPasswordResetEmail(
+    "The email address of the account for which we want to reset the password."
+    email: String!
+  ): RequestPasswordResetEmailResult!
+
+  "Look up an user by id, username or email."
+  user(
+    "The id of the user."
+    id: String
+
+    "The username of the user."
+    username: String
+
+    "The email of the user."
+    email: String
+  ): UserResult!
 }
 
 extend type Mutation {
+  "Signs user up."
   signup(data: CreateUserInput!): SignupResult!
+
+  "Signs user up. Use this after going through the OAuth flow."
   signupWithExternalProvider(
+    "The desired username."
     username: String!
   ): SignupWithExternalProviderResult!
-  login(username: String!, password: String!): LoginResult!
+
+  "Logs user in."
+  login(
+    "The username of the user trying to log in."
+    username: String!
+
+    "The password of the user trying to log in."
+    password: String!
+  ): LoginResult!
+
+  "Logs user in. Use this after going through the OAuth flow."
   loginWithExternalProvider: LoginWithExternalProviderResult!
+
+  "Resets an account's password."
   resetPassword(data: ResetPasswordInput!): ResetPasswordResult!
+
+  "Deletes every user. This is only available in a testing environment."
   deleteAllUsers: DeleteAllUsersResult!
 }
 
-# =================
-# User-related SDL
-# =================
-
+"A user is an individual's account on Envenv that owns environments and can make new content."
 type User @key(fields: "id") {
+  "The unique id of the user."
   id: ID!
+
+  "The picture / profile picture of the user."
   picture: String
+
+  "The provider of the account."
   provider: AccountProvider!
+
+  "The username of the user."
   username: String!
+
+  "The email of the user."
   email: String!
+
+  "The name of the user."
   name: String!
+
+  "The encrypted password of the user."
   password: String!
+
+  "The role of the user."
   role: UserRole!
+
+  "The date on which the user last changed their password."
   lastPasswordChange: String
 }
 
+"The possible roles a user can have, represents what rights a user has."
 enum UserRole {
+  """
+  User has basic rights on Envenv such as:
+  Creating environments,
+  Deleting environments,
+  Following other users...
+  This is the default value for every new user.
+  """
   USER
+
+  """
+  User has admin rights on Envenv such as:
+  Managing other users,
+  Suspending other users,
+  Deleting other users environments...
+  """
   ADMIN
 }
 
+"The possible providers of a user's account."
 enum AccountProvider {
+  "The user provided their account details via google."
   GOOGLE
+
+  "The user provided their own account details to use exclusively on Envenv."
   NONE
 }
 
-# =================
-# Auth-related SDL:
-# types which will be used as the result to queries by using them in unions
-# =================
-
+"Represents the result of an operation in which the provided username or email are taken."
 type TakenUsernameOrEmail {
+  "A detailed explanation of why the username or the email are taken."
   message: String!
 }
 
+"Represents the result of an operation in which the provided data did not meet Envenv's security requirements or overall data requirements."
 type InvalidDataFormat {
+  "A detailed explanation of why the data was invalid and which piece of the data caused the issue."
   message: String!
 }
 
+"Represents a successful user signup."
 type SuccessfulSignup {
   user: User!
+
+  "The CSRF token for the started session."
   csrfToken: String!
 }
 
+"Represents a successful login."
 type SuccessfulLogin {
   user: User!
+
+  "The CSRF token for the started session."
   csrfToken: String!
 }
 
+"Represents the result of an operation in which the provided credentials were invalid."
 type InvalidCredentials {
+  "A detailed explanation of why the credentials were invalid."
   message: String!
 }
 
+"Represents the result of an operation in which the user identifer was invalid or missing."
 type InvalidOrMissingUserIdentifier {
+  "A detailed explanation of why the user identifier was invalid or missing."
   message: String!
 }
 
+"Represents the result of an operation in which the provided token was invalid or expired."
 type InvalidOrExpiredToken {
+  "A detailed explanation of why the token was invalid or expired."
   message: String!
 }
 
+"Represents the result of an operation in which the provided password did not match the current one."
 type PasswordsDontMatch {
+  "A detailed explanation of why the passwords did not match."
   message: String!
 }
 
+"Represents the result of an operation in which the requested user could not be found."
 type UserNotFound {
+  "A detailed explanation of why the requested user could not be found."
   message: String!
 }
 
+"Represents the result of an operation in which the email may have been sent or not depending on the email's validity."
 type EmailMayHaveBeenSent {
+  "A detailed explanation of why the email may or may not have been sent."
   message: String!
 }
 
+"Represents the result of an operation in which the OAuth flow was skipped."
 type SkippedOAuthFlow {
+  "A detailed explanation of what happened."
   message: String!
 }
 
+"Represents the result of a development-only operation which was attempted to be executed on a non-development environment."
 type NotInTestingEnvironment {
+  "A detailed explanation of why the operation could not be executed in the attempted environment."
   message: String!
 }
 
+"Represents the successful removal of a resource."
 type SuccessfulRemoval {
+  "The amount of resources removed."
   count: Int!
 }
 
+"Represents the result of an operation in which a password was attempted to be changed to the current password."
 type WantsSamePassword {
+  "A detailed explanation of what happened."
   message: String!
 }
 
@@ -112,12 +199,16 @@ type WantsSamePassword {
 # The GraphQL Twitter representative talks about this in the following link
 # https://medium.com/@sachee/200-ok-error-handling-in-graphql-7ec869aec9bc
 
+"Represents the result of an operation which deletes all users."
 union DeleteAllUsersResult = NotInTestingEnvironment | SuccessfulRemoval
 
+"Represents the result of an operation which queries a specific user."
 union UserResult = User | UserNotFound | InvalidDataFormat
 
+"Represents the result of an operation which requests an email with the instructions to reset an account's password."
 union RequestPasswordResetEmailResult = EmailMayHaveBeenSent | InvalidDataFormat
 
+"Represents the result of an operation which resets an account's password."
 union ResetPasswordResult =
     User
   | InvalidOrExpiredToken
@@ -125,13 +216,16 @@ union ResetPasswordResult =
   | WantsSamePassword
   | InvalidDataFormat
 
+"Represents the result of an operation which logs in with an external provider like Google."
 union LoginWithExternalProviderResult =
     SuccessfulLogin
   | InvalidOrMissingUserIdentifier
   | SkippedOAuthFlow
 
+"Represents the result of an operation which signs a user up."
 union SignupResult = SuccessfulSignup | InvalidDataFormat | TakenUsernameOrEmail
 
+"Represents the result of an operation which signs a user up via an external provider like Google."
 union SignupWithExternalProviderResult =
     SuccessfulSignup
   | InvalidDataFormat
@@ -139,22 +233,35 @@ union SignupWithExternalProviderResult =
   | SkippedOAuthFlow
   | InvalidOrExpiredToken
 
+"Represents the result of an operation which logs a user in."
 union LoginResult = SuccessfulLogin | InvalidDataFormat | InvalidCredentials
 
-# =================
-# SDL for input types used for this service's queries/mutations
-# =================
-
+"The data required to reset an account's password."
 input ResetPasswordInput {
+  "The current password."
   currentPassword: String!
+
+  "The new password."
   newPassword: String!
+
+  "The token needed to reset the password."
   token: String!
 }
 
+"The data required to create a new user."
 input CreateUserInput {
+  "The URL of the new user's picture/profile picture."
   picture: String
+
+  "The username of the new user."
   username: String!
+
+  "The email of the new user."
   email: String!
+
+  "The name of the new user."
   name: String!
+
+  "The plain password of the new user."
   password: String!
 }
