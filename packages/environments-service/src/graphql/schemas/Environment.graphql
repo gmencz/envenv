@@ -1,0 +1,6 @@
+type Environment @key(fields: "id") {
+  id: ID!
+  name: String!
+  owner: User!
+  members: [EnvironmentMember]
+}

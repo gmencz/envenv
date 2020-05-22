@@ -1,0 +1,11 @@
+type EnvironmentMember {
+  id: ID!
+  environment: Environment
+  environmentRole: EnvironmentRole
+  user: User!
+}
+
+enum EnvironmentRole {
+  ADMIN
+  CONTRIBUTOR
+}
