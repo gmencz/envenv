@@ -1,7 +1,7 @@
 import { ApolloError } from 'apollo-server-express';
-import { MutationOperations } from '.';
+import { MutationResolvers, Environment } from '../../generated';
 
-const createEnvironment: MutationOperations['createEnvironment'] = async (
+const createEnvironment: MutationResolvers['createEnvironment'] = async (
   _,
   { data },
   { prisma }
@@ -9,18 +9,16 @@ const createEnvironment: MutationOperations['createEnvironment'] = async (
   try {
     const environment = await prisma.environment.create({
       data: {
-        name: data!.name,
-        ownerUserId: data!.userCreatingEnvironmentId,
+        name: data.name,
+        ownerUserId: data.userCreatingEnvironmentId,
       },
     });
 
-    console.log('before return');
-
-    return {
+    return ({
       id: environment.id,
       name: environment.name,
       ownerUserId: environment.ownerUserId,
-    };
+    } as unknown) as Environment;
   } catch (error) {
     if (error instanceof ApolloError) {
       throw error;
