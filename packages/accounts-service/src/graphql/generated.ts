@@ -16,22 +16,28 @@ export type Scalars = {
   _FieldSet: any;
 };
 
-export type Query = {
-  __typename?: 'Query';
-  /** Request an email with the instructions to reset an account's password. */
-  requestPasswordResetEmail: RequestPasswordResetEmailResult;
-  /** Look up an user by id, username or email. */
-  user: UserResult;
+/** The data required to reset an account's password. */
+export type ResetPasswordInput = {
+  /** The current password. */
+  currentPassword: Scalars['String'];
+  /** The new password. */
+  newPassword: Scalars['String'];
+  /** The token needed to reset the password. */
+  token: Scalars['String'];
 };
 
-export type QueryRequestPasswordResetEmailArgs = {
+/** The data required to create a new user. */
+export type CreateUserInput = {
+  /** The URL of the new user's picture/profile picture. */
+  picture?: Maybe<Scalars['String']>;
+  /** The username of the new user. */
+  username: Scalars['String'];
+  /** The email of the new user. */
   email: Scalars['String'];
-};
-
-export type QueryUserArgs = {
-  id?: Maybe<Scalars['String']>;
-  username?: Maybe<Scalars['String']>;
-  email?: Maybe<Scalars['String']>;
+  /** The name of the new user. */
+  name: Scalars['String'];
+  /** The plain password of the new user. */
+  password: Scalars['String'];
 };
 
 export type Mutation = {
@@ -67,55 +73,50 @@ export type MutationResetPasswordArgs = {
   data: ResetPasswordInput;
 };
 
-/** A user is an individual's account on Envenv that owns environments and can make new content. */
-export type User = {
-  __typename?: 'User';
-  /** The unique id of the user. */
-  id: Scalars['ID'];
-  /** The picture / profile picture of the user. */
-  picture?: Maybe<Scalars['String']>;
-  /** The provider of the account. */
-  provider: AccountProvider;
-  /** The username of the user. */
-  username: Scalars['String'];
-  /** The email of the user. */
-  email: Scalars['String'];
-  /** The name of the user. */
-  name: Scalars['String'];
-  /** The encrypted password of the user. */
-  password: Scalars['String'];
-  /** The role of the user. */
-  role: UserRole;
-  /** The date on which the user last changed their password. */
-  lastPasswordChange?: Maybe<Scalars['String']>;
-};
+/** Represents the result of an operation which deletes all users. */
+export type DeleteAllUsersResult = NotInTestingEnvironment | SuccessfulRemoval;
 
-/** The possible roles a user can have, represents what rights a user has. */
-export enum UserRole {
-  /**
-   * User has basic rights on Envenv such as:
-   * Creating environments,
-   * Deleting environments,
-   * Following other users...
-   * This is the default value for every new user.
-   */
-  User = 'USER',
-  /**
-   * User has admin rights on Envenv such as:
-   * Managing other users,
-   * Suspending other users,
-   * Deleting other users environments...
-   */
-  Admin = 'ADMIN',
-}
+/** Represents the result of an operation which queries a specific user. */
+export type UserResult = User | UserNotFound | InvalidDataFormat;
 
-/** The possible providers of a user's account. */
-export enum AccountProvider {
-  /** The user provided their account details via google. */
-  Google = 'GOOGLE',
-  /** The user provided their own account details to use exclusively on Envenv. */
-  None = 'NONE',
-}
+/** Represents the result of an operation which requests an email with the instructions to reset an account's password. */
+export type RequestPasswordResetEmailResult =
+  | EmailMayHaveBeenSent
+  | InvalidDataFormat;
+
+/** Represents the result of an operation which resets an account's password. */
+export type ResetPasswordResult =
+  | User
+  | InvalidOrExpiredToken
+  | PasswordsDontMatch
+  | WantsSamePassword
+  | InvalidDataFormat;
+
+/** Represents the result of an operation which logs in with an external provider like Google. */
+export type LoginWithExternalProviderResult =
+  | SuccessfulLogin
+  | InvalidOrMissingUserIdentifier
+  | SkippedOAuthFlow;
+
+/** Represents the result of an operation which signs a user up. */
+export type SignupResult =
+  | SuccessfulSignup
+  | InvalidDataFormat
+  | TakenUsernameOrEmail;
+
+/** Represents the result of an operation which signs a user up via an external provider like Google. */
+export type SignupWithExternalProviderResult =
+  | SuccessfulSignup
+  | InvalidDataFormat
+  | TakenUsernameOrEmail
+  | SkippedOAuthFlow
+  | InvalidOrExpiredToken;
+
+/** Represents the result of an operation which logs a user in. */
+export type LoginResult =
+  | SuccessfulLogin
+  | InvalidDataFormat
+  | InvalidCredentials;
 
 /** Represents the result of an operation in which the provided username or email are taken. */
 export type TakenUsernameOrEmail = {
@@ -217,74 +218,73 @@ export type WantsSamePassword = {
   message: Scalars['String'];
 };
 
-/** Represents the result of an operation which deletes all users. */
-export type DeleteAllUsersResult = NotInTestingEnvironment | SuccessfulRemoval;
-
-/** Represents the result of an operation which queries a specific user. */
-export type UserResult = User | UserNotFound | InvalidDataFormat;
-
-/** Represents the result of an operation which requests an email with the instructions to reset an account's password. */
-export type RequestPasswordResetEmailResult =
-  | EmailMayHaveBeenSent
-  | InvalidDataFormat;
-
-/** Represents the result of an operation which resets an account's password. */
-export type ResetPasswordResult =
-  | User
-  | InvalidOrExpiredToken
-  | PasswordsDontMatch
-  | WantsSamePassword
-  | InvalidDataFormat;
-
-/** Represents the result of an operation which logs in with an external provider like Google. */
-export type LoginWithExternalProviderResult =
-  | SuccessfulLogin
-  | InvalidOrMissingUserIdentifier
-  | SkippedOAuthFlow;
-
-/** Represents the result of an operation which signs a user up. */
-export type SignupResult =
-  | SuccessfulSignup
-  | InvalidDataFormat
-  | TakenUsernameOrEmail;
-
-/** Represents the result of an operation which signs a user up via an external provider like Google. */
-export type SignupWithExternalProviderResult =
-  | SuccessfulSignup
-  | InvalidDataFormat
-  | TakenUsernameOrEmail
-  | SkippedOAuthFlow
-  | InvalidOrExpiredToken;
-
-/** Represents the result of an operation which logs a user in. */
-export type LoginResult =
-  | SuccessfulLogin
-  | InvalidDataFormat
-  | InvalidCredentials;
-
-/** The data required to reset an account's password. */
-export type ResetPasswordInput = {
-  /** The current password. */
-  currentPassword: Scalars['String'];
-  /** The new password. */
-  newPassword: Scalars['String'];
-  /** The token needed to reset the password. */
-  token: Scalars['String'];
+export type Query = {
+  __typename?: 'Query';
+  /** Request an email with the instructions to reset an account's password. */
+  requestPasswordResetEmail: RequestPasswordResetEmailResult;
+  /** Look up an user by id, username or email. */
+  user: UserResult;
 };
 
-/** The data required to create a new user. */
-export type CreateUserInput = {
-  /** The URL of the new user's picture/profile picture. */
-  picture?: Maybe<Scalars['String']>;
-  /** The username of the new user. */
-  username: Scalars['String'];
-  /** The email of the new user. */
+export type QueryRequestPasswordResetEmailArgs = {
   email: Scalars['String'];
-  /** The name of the new user. */
-  name: Scalars['String'];
-  /** The plain password of the new user. */
-  password: Scalars['String'];
 };
+
+export type QueryUserArgs = {
+  id?: Maybe<Scalars['String']>;
+  username?: Maybe<Scalars['String']>;
+  email?: Maybe<Scalars['String']>;
+};
+
+/** A user is an individual's account on Envenv that owns environments and can make new content. */
+export type User = {
+  __typename?: 'User';
+  /** The unique id of the user. */
+  id: Scalars['ID'];
+  /** The picture / profile picture of the user. */
+  picture?: Maybe<Scalars['String']>;
+  /** The provider of the account. */
+  provider: AccountProvider;
+  /** The username of the user. */
+  username: Scalars['String'];
+  /** The email of the user. */
+  email: Scalars['String'];
+  /** The name of the user. */
+  name: Scalars['String'];
+  /** The encrypted password of the user. */
+  password: Scalars['String'];
+  /** The role of the user. */
+  role: UserRole;
+  /** The date on which the user last changed their password. */
+  lastPasswordChange?: Maybe<Scalars['String']>;
+};
+
+/** The possible roles a user can have, represents what rights a user has. */
+export enum UserRole {
+  /**
+   * User has basic rights on Envenv such as:
+   * Creating environments,
+   * Deleting environments,
+   * Following other users...
+   * This is the default value for every new user.
+   */
+  User = 'USER',
+  /**
+   * User has admin rights on Envenv such as:
+   * Managing other users,
+   * Suspending other users,
+   * Deleting other users environments...
+   */
+  Admin = 'ADMIN',
+}
+
+/** The possible providers of a user's account. */
+export enum AccountProvider {
+  /** The user provided their account details via google. */
+  Google = 'GOOGLE',
+  /** The user provided their own account details to use exclusively on Envenv. */
+  None = 'NONE',
+}
 
 export type ResolverTypeWrapper<T> = Promise<T> | T;
 
@@ -402,29 +402,9 @@ export type DirectiveResolverFn<
 export type ResolversTypes = {
   String: ResolverTypeWrapper<Scalars['String']>;
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
-  Query: ResolverTypeWrapper<{}>;
+  ResetPasswordInput: ResetPasswordInput;
+  CreateUserInput: CreateUserInput;
   Mutation: ResolverTypeWrapper<{}>;
-  User: ResolverTypeWrapper<User>;
-  ID: ResolverTypeWrapper<Scalars['ID']>;
-  UserRole: UserRole;
-  AccountProvider: AccountProvider;
-  TakenUsernameOrEmail: ResolverTypeWrapper<TakenUsernameOrEmail>;
-  InvalidDataFormat: ResolverTypeWrapper<InvalidDataFormat>;
-  SuccessfulSignup: ResolverTypeWrapper<SuccessfulSignup>;
-  SuccessfulLogin: ResolverTypeWrapper<SuccessfulLogin>;
-  InvalidCredentials: ResolverTypeWrapper<InvalidCredentials>;
-  InvalidOrMissingUserIdentifier: ResolverTypeWrapper<
-    InvalidOrMissingUserIdentifier
-  >;
-  InvalidOrExpiredToken: ResolverTypeWrapper<InvalidOrExpiredToken>;
-  PasswordsDontMatch: ResolverTypeWrapper<PasswordsDontMatch>;
-  UserNotFound: ResolverTypeWrapper<UserNotFound>;
-  EmailMayHaveBeenSent: ResolverTypeWrapper<EmailMayHaveBeenSent>;
-  SkippedOAuthFlow: ResolverTypeWrapper<SkippedOAuthFlow>;
-  NotInTestingEnvironment: ResolverTypeWrapper<NotInTestingEnvironment>;
-  SuccessfulRemoval: ResolverTypeWrapper<SuccessfulRemoval>;
-  Int: ResolverTypeWrapper<Scalars['Int']>;
-  WantsSamePassword: ResolverTypeWrapper<WantsSamePassword>;
   DeleteAllUsersResult:
     | ResolversTypes['NotInTestingEnvironment']
     | ResolversTypes['SuccessfulRemoval'];
@@ -459,35 +439,37 @@ export type ResolversTypes = {
     | ResolversTypes['SuccessfulLogin']
     | ResolversTypes['InvalidDataFormat']
     | ResolversTypes['InvalidCredentials'];
-  ResetPasswordInput: ResetPasswordInput;
-  CreateUserInput: CreateUserInput;
+  TakenUsernameOrEmail: ResolverTypeWrapper<TakenUsernameOrEmail>;
+  InvalidDataFormat: ResolverTypeWrapper<InvalidDataFormat>;
+  SuccessfulSignup: ResolverTypeWrapper<SuccessfulSignup>;
+  SuccessfulLogin: ResolverTypeWrapper<SuccessfulLogin>;
+  InvalidCredentials: ResolverTypeWrapper<InvalidCredentials>;
+  InvalidOrMissingUserIdentifier: ResolverTypeWrapper<
+    InvalidOrMissingUserIdentifier
+  >;
+  InvalidOrExpiredToken: ResolverTypeWrapper<InvalidOrExpiredToken>;
+  PasswordsDontMatch: ResolverTypeWrapper<PasswordsDontMatch>;
+  UserNotFound: ResolverTypeWrapper<UserNotFound>;
+  EmailMayHaveBeenSent: ResolverTypeWrapper<EmailMayHaveBeenSent>;
+  SkippedOAuthFlow: ResolverTypeWrapper<SkippedOAuthFlow>;
+  NotInTestingEnvironment: ResolverTypeWrapper<NotInTestingEnvironment>;
+  SuccessfulRemoval: ResolverTypeWrapper<SuccessfulRemoval>;
+  Int: ResolverTypeWrapper<Scalars['Int']>;
+  WantsSamePassword: ResolverTypeWrapper<WantsSamePassword>;
+  Query: ResolverTypeWrapper<{}>;
+  User: ResolverTypeWrapper<User>;
+  ID: ResolverTypeWrapper<Scalars['ID']>;
+  UserRole: UserRole;
+  AccountProvider: AccountProvider;
 };
 
 /** Mapping between all available schema types and the resolvers parents */
 export type ResolversParentTypes = {
   String: Scalars['String'];
   Boolean: Scalars['Boolean'];
-  Query: {};
+  ResetPasswordInput: ResetPasswordInput;
+  CreateUserInput: CreateUserInput;
   Mutation: {};
-  User: User;
-  ID: Scalars['ID'];
-  UserRole: UserRole;
-  AccountProvider: AccountProvider;
-  TakenUsernameOrEmail: TakenUsernameOrEmail;
-  InvalidDataFormat: InvalidDataFormat;
-  SuccessfulSignup: SuccessfulSignup;
-  SuccessfulLogin: SuccessfulLogin;
-  InvalidCredentials: InvalidCredentials;
-  InvalidOrMissingUserIdentifier: InvalidOrMissingUserIdentifier;
-  InvalidOrExpiredToken: InvalidOrExpiredToken;
-  PasswordsDontMatch: PasswordsDontMatch;
-  UserNotFound: UserNotFound;
-  EmailMayHaveBeenSent: EmailMayHaveBeenSent;
-  SkippedOAuthFlow: SkippedOAuthFlow;
-  NotInTestingEnvironment: NotInTestingEnvironment;
-  SuccessfulRemoval: SuccessfulRemoval;
-  Int: Scalars['Int'];
-  WantsSamePassword: WantsSamePassword;
   DeleteAllUsersResult:
     | ResolversParentTypes['NotInTestingEnvironment']
     | ResolversParentTypes['SuccessfulRemoval'];
@@ -522,26 +504,26 @@ export type ResolversParentTypes = {
     | ResolversParentTypes['SuccessfulLogin']
     | ResolversParentTypes['InvalidDataFormat']
     | ResolversParentTypes['InvalidCredentials'];
-  ResetPasswordInput: ResetPasswordInput;
-  CreateUserInput: CreateUserInput;
-};
-
-export type QueryResolvers<
-  ContextType = ApolloContext,
-  ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']
-> = {
-  requestPasswordResetEmail?: Resolver<
-    ResolversTypes['RequestPasswordResetEmailResult'],
-    ParentType,
-    ContextType,
-    RequireFields<QueryRequestPasswordResetEmailArgs, 'email'>
-  >;
-  user?: Resolver<
-    ResolversTypes['UserResult'],
-    ParentType,
-    ContextType,
-    RequireFields<QueryUserArgs, never>
-  >;
+  TakenUsernameOrEmail: TakenUsernameOrEmail;
+  InvalidDataFormat: InvalidDataFormat;
+  SuccessfulSignup: SuccessfulSignup;
+  SuccessfulLogin: SuccessfulLogin;
+  InvalidCredentials: InvalidCredentials;
+  InvalidOrMissingUserIdentifier: InvalidOrMissingUserIdentifier;
+  InvalidOrExpiredToken: InvalidOrExpiredToken;
+  PasswordsDontMatch: PasswordsDontMatch;
+  UserNotFound: UserNotFound;
+  EmailMayHaveBeenSent: EmailMayHaveBeenSent;
+  SkippedOAuthFlow: SkippedOAuthFlow;
+  NotInTestingEnvironment: NotInTestingEnvironment;
+  SuccessfulRemoval: SuccessfulRemoval;
+  Int: Scalars['Int'];
+  WantsSamePassword: WantsSamePassword;
+  Query: {};
+  User: User;
+  ID: Scalars['ID'];
+  UserRole: UserRole;
+  AccountProvider: AccountProvider;
 };
 
 export type MutationResolvers<
@@ -584,33 +566,100 @@ export type MutationResolvers<
   >;
 };
 
-export type UserResolvers<
+export type DeleteAllUsersResultResolvers<
   ContextType = ApolloContext,
-  ParentType extends ResolversParentTypes['User'] = ResolversParentTypes['User']
+  ParentType extends ResolversParentTypes['DeleteAllUsersResult'] = ResolversParentTypes['DeleteAllUsersResult']
 > = {
-  __resolveReference?: ReferenceResolver<
-    Maybe<ResolversTypes['User']>,
-    { __typename: 'User' } & Pick<ParentType, 'id'>,
-    ContextType
-  >;
-  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
-  picture?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  provider?: Resolver<
-    ResolversTypes['AccountProvider'],
+  __resolveType: TypeResolveFn<
+    'NotInTestingEnvironment' | 'SuccessfulRemoval',
     ParentType,
     ContextType
   >;
-  username?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  email?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  password?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  role?: Resolver<ResolversTypes['UserRole'], ParentType, ContextType>;
-  lastPasswordChange?: Resolver<
-    Maybe<ResolversTypes['String']>,
+};
+
+export type UserResultResolvers<
+  ContextType = ApolloContext,
+  ParentType extends ResolversParentTypes['UserResult'] = ResolversParentTypes['UserResult']
+> = {
+  __resolveType: TypeResolveFn<
+    'User' | 'UserNotFound' | 'InvalidDataFormat',
     ParentType,
     ContextType
   >;
-  __isTypeOf?: isTypeOfResolverFn<ParentType>;
+};
+
+export type RequestPasswordResetEmailResultResolvers<
+  ContextType = ApolloContext,
+  ParentType extends ResolversParentTypes['RequestPasswordResetEmailResult'] = ResolversParentTypes['RequestPasswordResetEmailResult']
+> = {
+  __resolveType: TypeResolveFn<
+    'EmailMayHaveBeenSent' | 'InvalidDataFormat',
+    ParentType,
+    ContextType
+  >;
+};
+
+export type ResetPasswordResultResolvers<
+  ContextType = ApolloContext,
+  ParentType extends ResolversParentTypes['ResetPasswordResult'] = ResolversParentTypes['ResetPasswordResult']
+> = {
+  __resolveType: TypeResolveFn<
+    | 'User'
+    | 'InvalidOrExpiredToken'
+    | 'PasswordsDontMatch'
+    | 'WantsSamePassword'
+    | 'InvalidDataFormat',
+    ParentType,
+    ContextType
+  >;
+};
+
+export type LoginWithExternalProviderResultResolvers<
+  ContextType = ApolloContext,
+  ParentType extends ResolversParentTypes['LoginWithExternalProviderResult'] = ResolversParentTypes['LoginWithExternalProviderResult']
+> = {
+  __resolveType: TypeResolveFn<
+    'SuccessfulLogin' | 'InvalidOrMissingUserIdentifier' | 'SkippedOAuthFlow',
+    ParentType,
+    ContextType
+  >;
+};
+
+export type SignupResultResolvers<
+  ContextType = ApolloContext,
+  ParentType extends ResolversParentTypes['SignupResult'] = ResolversParentTypes['SignupResult']
+> = {
+  __resolveType: TypeResolveFn<
+    'SuccessfulSignup' | 'InvalidDataFormat' | 'TakenUsernameOrEmail',
+    ParentType,
+    ContextType
+  >;
+};
+
+export type SignupWithExternalProviderResultResolvers<
+  ContextType = ApolloContext,
+  ParentType extends ResolversParentTypes['SignupWithExternalProviderResult'] = ResolversParentTypes['SignupWithExternalProviderResult']
+> = {
+  __resolveType: TypeResolveFn<
+    | 'SuccessfulSignup'
+    | 'InvalidDataFormat'
+    | 'TakenUsernameOrEmail'
+    | 'SkippedOAuthFlow'
+    | 'InvalidOrExpiredToken',
+    ParentType,
+    ContextType
+  >;
+};
+
+export type LoginResultResolvers<
+  ContextType = ApolloContext,
+  ParentType extends ResolversParentTypes['LoginResult'] = ResolversParentTypes['LoginResult']
+> = {
+  __resolveType: TypeResolveFn<
+    'SuccessfulLogin' | 'InvalidDataFormat' | 'InvalidCredentials',
+    ParentType,
+    ContextType
+  >;
 };
 
 export type TakenUsernameOrEmailResolvers<
@@ -727,106 +776,63 @@ export type WantsSamePasswordResolvers<
   __isTypeOf?: isTypeOfResolverFn<ParentType>;
 };
 
-export type DeleteAllUsersResultResolvers<
+export type QueryResolvers<
   ContextType = ApolloContext,
-  ParentType extends ResolversParentTypes['DeleteAllUsersResult'] = ResolversParentTypes['DeleteAllUsersResult']
+  ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']
 > = {
-  __resolveType: TypeResolveFn<
-    'NotInTestingEnvironment' | 'SuccessfulRemoval',
+  requestPasswordResetEmail?: Resolver<
+    ResolversTypes['RequestPasswordResetEmailResult'],
     ParentType,
-    ContextType
+    ContextType,
+    RequireFields<QueryRequestPasswordResetEmailArgs, 'email'>
+  >;
+  user?: Resolver<
+    ResolversTypes['UserResult'],
+    ParentType,
+    ContextType,
+    RequireFields<QueryUserArgs, never>
   >;
 };
 
-export type UserResultResolvers<
+export type UserResolvers<
   ContextType = ApolloContext,
-  ParentType extends ResolversParentTypes['UserResult'] = ResolversParentTypes['UserResult']
+  ParentType extends ResolversParentTypes['User'] = ResolversParentTypes['User']
 > = {
-  __resolveType: TypeResolveFn<
-    'User' | 'UserNotFound' | 'InvalidDataFormat',
+  __resolveReference?: ReferenceResolver<
+    Maybe<ResolversTypes['User']>,
+    { __typename: 'User' } & Pick<ParentType, 'id'>,
+    ContextType
+  >;
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  picture?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  provider?: Resolver<
+    ResolversTypes['AccountProvider'],
     ParentType,
     ContextType
   >;
-};
-
-export type RequestPasswordResetEmailResultResolvers<
-  ContextType = ApolloContext,
-  ParentType extends ResolversParentTypes['RequestPasswordResetEmailResult'] = ResolversParentTypes['RequestPasswordResetEmailResult']
-> = {
-  __resolveType: TypeResolveFn<
-    'EmailMayHaveBeenSent' | 'InvalidDataFormat',
+  username?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  email?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  password?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  role?: Resolver<ResolversTypes['UserRole'], ParentType, ContextType>;
+  lastPasswordChange?: Resolver<
+    Maybe<ResolversTypes['String']>,
     ParentType,
     ContextType
   >;
-};
-
-export type ResetPasswordResultResolvers<
-  ContextType = ApolloContext,
-  ParentType extends ResolversParentTypes['ResetPasswordResult'] = ResolversParentTypes['ResetPasswordResult']
-> = {
-  __resolveType: TypeResolveFn<
-    | 'User'
-    | 'InvalidOrExpiredToken'
-    | 'PasswordsDontMatch'
-    | 'WantsSamePassword'
-    | 'InvalidDataFormat',
-    ParentType,
-    ContextType
-  >;
-};
-
-export type LoginWithExternalProviderResultResolvers<
-  ContextType = ApolloContext,
-  ParentType extends ResolversParentTypes['LoginWithExternalProviderResult'] = ResolversParentTypes['LoginWithExternalProviderResult']
-> = {
-  __resolveType: TypeResolveFn<
-    'SuccessfulLogin' | 'InvalidOrMissingUserIdentifier' | 'SkippedOAuthFlow',
-    ParentType,
-    ContextType
-  >;
-};
-
-export type SignupResultResolvers<
-  ContextType = ApolloContext,
-  ParentType extends ResolversParentTypes['SignupResult'] = ResolversParentTypes['SignupResult']
-> = {
-  __resolveType: TypeResolveFn<
-    'SuccessfulSignup' | 'InvalidDataFormat' | 'TakenUsernameOrEmail',
-    ParentType,
-    ContextType
-  >;
-};
-
-export type SignupWithExternalProviderResultResolvers<
-  ContextType = ApolloContext,
-  ParentType extends ResolversParentTypes['SignupWithExternalProviderResult'] = ResolversParentTypes['SignupWithExternalProviderResult']
-> = {
-  __resolveType: TypeResolveFn<
-    | 'SuccessfulSignup'
-    | 'InvalidDataFormat'
-    | 'TakenUsernameOrEmail'
-    | 'SkippedOAuthFlow'
-    | 'InvalidOrExpiredToken',
-    ParentType,
-    ContextType
-  >;
-};
-
-export type LoginResultResolvers<
-  ContextType = ApolloContext,
-  ParentType extends ResolversParentTypes['LoginResult'] = ResolversParentTypes['LoginResult']
-> = {
-  __resolveType: TypeResolveFn<
-    'SuccessfulLogin' | 'InvalidDataFormat' | 'InvalidCredentials',
-    ParentType,
-    ContextType
-  >;
+  __isTypeOf?: isTypeOfResolverFn<ParentType>;
 };
 
 export type Resolvers<ContextType = ApolloContext> = {
-  Query?: QueryResolvers<ContextType>;
   Mutation?: MutationResolvers<ContextType>;
-  User?: UserResolvers<ContextType>;
+  DeleteAllUsersResult?: DeleteAllUsersResultResolvers;
+  UserResult?: UserResultResolvers;
+  RequestPasswordResetEmailResult?: RequestPasswordResetEmailResultResolvers;
+  ResetPasswordResult?: ResetPasswordResultResolvers;
+  LoginWithExternalProviderResult?: LoginWithExternalProviderResultResolvers;
+  SignupResult?: SignupResultResolvers;
+  SignupWithExternalProviderResult?: SignupWithExternalProviderResultResolvers;
+  LoginResult?: LoginResultResolvers;
   TakenUsernameOrEmail?: TakenUsernameOrEmailResolvers<ContextType>;
   InvalidDataFormat?: InvalidDataFormatResolvers<ContextType>;
   SuccessfulSignup?: SuccessfulSignupResolvers<ContextType>;
@@ -843,14 +849,8 @@ export type Resolvers<ContextType = ApolloContext> = {
   NotInTestingEnvironment?: NotInTestingEnvironmentResolvers<ContextType>;
   SuccessfulRemoval?: SuccessfulRemovalResolvers<ContextType>;
   WantsSamePassword?: WantsSamePasswordResolvers<ContextType>;
-  DeleteAllUsersResult?: DeleteAllUsersResultResolvers;
-  UserResult?: UserResultResolvers;
-  RequestPasswordResetEmailResult?: RequestPasswordResetEmailResultResolvers;
-  ResetPasswordResult?: ResetPasswordResultResolvers;
-  LoginWithExternalProviderResult?: LoginWithExternalProviderResultResolvers;
-  SignupResult?: SignupResultResolvers;
-  SignupWithExternalProviderResult?: SignupWithExternalProviderResultResolvers;
-  LoginResult?: LoginResultResolvers;
+  Query?: QueryResolvers<ContextType>;
+  User?: UserResolvers<ContextType>;
 };
 
 /**

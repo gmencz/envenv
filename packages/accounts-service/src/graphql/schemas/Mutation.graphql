@@ -1,0 +1,28 @@
+extend type Mutation {
+  "Signs user up."
+  signup(data: CreateUserInput!): SignupResult!
+
+  "Signs user up. Use this after going through the OAuth flow."
+  signupWithExternalProvider(
+    "The desired username."
+    username: String!
+  ): SignupWithExternalProviderResult!
+
+  "Logs user in."
+  login(
+    "The username of the user trying to log in."
+    username: String!
+
+    "The password of the user trying to log in."
+    password: String!
+  ): LoginResult!
+
+  "Logs user in. Use this after going through the OAuth flow."
+  loginWithExternalProvider: LoginWithExternalProviderResult!
+
+  "Resets an account's password."
+  resetPassword(data: ResetPasswordInput!): ResetPasswordResult!
+
+  "Deletes every user. This is only available in a testing environment."
+  deleteAllUsers: DeleteAllUsersResult!
+}

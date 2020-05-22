@@ -1,0 +1,19 @@
+extend type Query {
+  "Request an email with the instructions to reset an account's password."
+  requestPasswordResetEmail(
+    "The email address of the account for which we want to reset the password."
+    email: String!
+  ): RequestPasswordResetEmailResult!
+
+  "Look up an user by id, username or email."
+  user(
+    "The id of the user."
+    id: String
+
+    "The username of the user."
+    username: String
+
+    "The email of the user."
+    email: String
+  ): UserResult!
+}

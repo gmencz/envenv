@@ -1,0 +1,29 @@
+"The data required to reset an account's password."
+input ResetPasswordInput {
+  "The current password."
+  currentPassword: String!
+
+  "The new password."
+  newPassword: String!
+
+  "The token needed to reset the password."
+  token: String!
+}
+
+"The data required to create a new user."
+input CreateUserInput {
+  "The URL of the new user's picture/profile picture."
+  picture: String
+
+  "The username of the new user."
+  username: String!
+
+  "The email of the new user."
+  email: String!
+
+  "The name of the new user."
+  name: String!
+
+  "The plain password of the new user."
+  password: String!
+}
