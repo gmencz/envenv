@@ -3,7 +3,7 @@ extend type Query {
 }
 
 extend type Mutation {
-  createEnvironment(data: CreateEnvironmentInput): Environment
+  createEnvironment(data: CreateEnvironmentInput!): Environment
 }
 
 type Environment @key(fields: "id") {

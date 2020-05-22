@@ -1,11 +1,16 @@
-import { MutationOperations } from '.';
 import { ApolloError } from 'apollo-server-express';
 import { verify } from 'jsonwebtoken';
 import { reach } from 'yup';
 import { createUserSchema } from '../../../validation/createUser';
 import { compare, hash } from 'bcryptjs';
 import { PrismaClient } from '@prisma/client';
-import { ResetPasswordResult } from '../../generated';
+import {
+  ResetPasswordResult,
+  MutationResolvers,
+  InvalidOrExpiredToken,
+  WantsSamePassword,
+  InvalidDataFormat,
+} from '../../generated';
 
 const updateUserPassword = async (
   prisma: PrismaClient,
@@ -49,11 +54,11 @@ const updateUserPassword = async (
   };
 };
 
-const resetPassword: MutationOperations['resetPassword'] = async (
+const resetPassword: MutationResolvers['resetPassword'] = async (
   _,
   { data },
   { prisma }
-) => {
+): Promise<ResetPasswordResult> => {
   try {
     const decodedToken = verify(
       data.token,

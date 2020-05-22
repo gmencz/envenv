@@ -1,18 +1,23 @@
-import { MutationOperations } from '.';
 import { ApolloError } from 'apollo-server-express';
 import { reach } from 'yup';
 import { createUserSchema } from '../../../validation/createUser';
 import addAtToUsername from '../../../helpers/addAtToUsername';
 import { compare } from 'bcryptjs';
-import { InvalidCredentials } from '../../generated';
+import {
+  InvalidCredentials,
+  MutationResolvers,
+  SuccessfulLogin,
+  InvalidDataFormat,
+  LoginResult,
+} from '../../generated';
 import createSession from '../../../helpers/createSession';
 import redisClient from '../../../helpers/redisClient';
 
-const login: MutationOperations['login'] = async (
+const login: MutationResolvers['login'] = async (
   _,
   { username, password },
   { prisma, res }
-) => {
+): Promise<LoginResult> => {
   try {
     await reach(createUserSchema, 'username').validate(username);
     await reach(createUserSchema, 'password').validate(password);

@@ -1,10 +1,21 @@
-import { QueryOperations } from '.';
 import { ApolloError } from 'apollo-server-express';
-import { User } from '../../generated';
+import {
+  QueryResolvers,
+  UserNotFound,
+  InvalidDataFormat,
+  User,
+  UserResult,
+  AccountProvider,
+  UserRole,
+} from '../../generated';
 import { createUserSchema } from '../../../validation/createUser';
 import { reach } from 'yup';
 
-const user: QueryOperations['user'] = async (_, args, { prisma }) => {
+const user: QueryResolvers['user'] = async (
+  _,
+  args,
+  { prisma }
+): Promise<UserResult> => {
   try {
     if (args.username) {
       await reach(createUserSchema, 'username').validate(args.username);
@@ -38,12 +49,12 @@ const user: QueryOperations['user'] = async (_, args, { prisma }) => {
       id: user.id,
       name: user.name,
       username: user.username,
-      provider: user.provider,
+      provider: user.provider as AccountProvider,
       password: user.password,
-      role: user.role,
-      lastPasswordChange: user.lastPasswordChange,
+      role: user.role as UserRole,
+      lastPasswordChange: (user.lastPasswordChange as unknown) as string,
       picture: user.picture,
-    } as User;
+    };
   } catch (error) {
     if (error.name === 'ValidationError') {
       return {

@@ -3,14 +3,14 @@ import { createUserSchema } from '../../../validation/createUser';
 import createSession from '../../../helpers/createSession';
 import redisClient from '../../../helpers/redisClient';
 import { hash } from 'bcryptjs';
-import { MutationOperations } from '.';
 import addAtToUsername from '../../../helpers/addAtToUsername';
+import { MutationResolvers, SignupResult } from '../../generated';
 
-const signup: MutationOperations['signup'] = async (
+const signup: MutationResolvers['signup'] = async (
   _,
   { data },
   { prisma, res }
-) => {
+): Promise<SignupResult> => {
   try {
     await createUserSchema.validate({ ...data });
 

@@ -1,8 +1,8 @@
 import { ApolloContext } from '../../../typings';
 import { ApolloError } from 'apollo-server-express';
-import { UserOperations } from '.';
+import { UserResolvers, Environment } from '../../generated';
 
-const resolveEnvironments: UserOperations['resolveEnvironments'] = async (
+const resolveEnvironments: UserResolvers['environments'] = async (
   user,
   __,
   { prisma }: ApolloContext
@@ -12,7 +12,7 @@ const resolveEnvironments: UserOperations['resolveEnvironments'] = async (
       where: { ownerUserId: user.id },
     });
 
-    return foundEnvironments;
+    return (foundEnvironments as unknown) as Environment[];
   } catch (error) {
     if (error instanceof ApolloError) {
       throw error;

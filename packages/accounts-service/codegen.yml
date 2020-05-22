@@ -4,7 +4,9 @@ documents: null
 generates:
   src/graphql/generated.ts:
     plugins:
+      - add: "import { ApolloContext } from '../typings';" # make sure the path is relative to generated file
       - 'typescript'
       - 'typescript-resolvers'
     config:
       federation: true
+      contextType: ApolloContext

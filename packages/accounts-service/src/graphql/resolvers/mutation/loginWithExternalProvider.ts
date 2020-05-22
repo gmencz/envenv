@@ -1,13 +1,16 @@
-import { MutationOperations } from '.';
 import { ApolloError } from 'apollo-server-express';
 import createSession from '../../../helpers/createSession';
 import redisClient from '../../../helpers/redisClient';
+import {
+  MutationResolvers,
+  LoginWithExternalProviderResult,
+} from '../../generated';
 
-const loginWithExternalProvider: MutationOperations['loginWithExternalProvider'] = async (
+const loginWithExternalProvider: MutationResolvers['loginWithExternalProvider'] = async (
   _,
   __,
   { prisma, req, res }
-) => {
+): Promise<LoginWithExternalProviderResult> => {
   try {
     if (!req.cookies.TemporaryUserID) {
       return {

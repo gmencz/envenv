@@ -1,9 +1,17 @@
-import { MutationOperations } from '.';
 import { ApolloError } from 'apollo-server-express';
 import { reach } from 'yup';
 import { createUserSchema } from '../../../validation/createUser';
 import { verify } from 'jsonwebtoken';
-import { User } from '../../generated';
+import {
+  User,
+  MutationResolvers,
+  SkippedOAuthFlow,
+  TakenUsernameOrEmail,
+  SuccessfulSignup,
+  InvalidDataFormat,
+  InvalidOrExpiredToken,
+  SignupWithExternalProviderResult,
+} from '../../generated';
 import { generate } from 'generate-password';
 import { hash } from 'bcryptjs';
 import addAtToUsername from '../../../helpers/addAtToUsername';
@@ -11,11 +19,11 @@ import createSession from '../../../helpers/createSession';
 import redisClient from '../../../helpers/redisClient';
 import { AccountProvider } from '@prisma/client';
 
-const signupWithExternalProvider: MutationOperations['signupWithExternalProvider'] = async (
+const signupWithExternalProvider: MutationResolvers['signupWithExternalProvider'] = async (
   _,
   { username },
   { prisma, req, res }
-) => {
+): Promise<SignupWithExternalProviderResult> => {
   try {
     await reach(createUserSchema, 'username').validate(username);
 

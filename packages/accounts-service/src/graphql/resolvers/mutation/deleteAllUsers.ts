@@ -1,11 +1,11 @@
-import { MutationOperations } from '.';
 import { ApolloError } from 'apollo-server-express';
+import { MutationResolvers, DeleteAllUsersResult } from '../../generated';
 
-const deleteAllUsers: MutationOperations['deleteAllUsers'] = async (
+const deleteAllUsers: MutationResolvers['deleteAllUsers'] = async (
   _,
   __,
   { prisma }
-) => {
+): Promise<DeleteAllUsersResult> => {
   try {
     if (process.env.NODE_ENV !== 'test') {
       return {
