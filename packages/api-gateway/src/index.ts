@@ -1,55 +1,10 @@
-import { ApolloGateway } from '@apollo/gateway';
-import { ApolloServer } from 'apollo-server-express';
-import express from 'express';
-import cookieParser from 'cookie-parser';
-import GatewayDataSource from './datasources/GatewayDataSource';
-import { GatewayContext } from './typings';
-
-const gateway = new ApolloGateway({
-  buildService({ url }): GatewayDataSource {
-    return new GatewayDataSource({ url });
-  },
-});
+import initExpress, { start } from './helpers/express';
+import initGateway from './helpers/gateway';
 
 try {
-  const app = express();
-  app.use(cookieParser());
-
-  const server = new ApolloServer({
-    gateway,
-    subscriptions: false,
-    engine: {
-      apiKey: process.env.APOLLO_KEY,
-      schemaTag: process.env.APOLLO_GRAPH_VARIANT,
-    },
-    context: ({ req, res }: GatewayContext): GatewayContext => ({ req, res }),
-  });
-
-  server.applyMiddleware({ app });
-
-  console.log(`Loaded graph from Apollo Graph Manager ✔️`);
-
-  const PORT = process.env.API_GATEWAY_PORT;
-
-  app.listen(PORT, () => {
-    console.log(
-      `
-  API gateway is up and running! 
-
-  - Locally (accessible via your browser): ✔️
-    http://localhost:${PORT}/graphql 
-
-  - Inside Docker network: ✔️
-    ${process.env.GRAPHQL_ENDPOINT}
-  
-  
-  ⚠️   Keep in mind the gateway might not be up to date so
-  ⚠️   you shouldn't use it unless you're working on the client.
-  ⚠️   If that isn't the case, use whatever service's endpoint
-  ⚠️   you're working on. 
-    `
-    );
-  });
+  const app = initExpress();
+  initGateway(app);
+  start(app);
 } catch (error) {
   console.error(error);
 }
