@@ -1,4 +1,4 @@
-import initExpress, { start } from './helpers/initExpress';
+import initExpress, { start } from './helpers/express';
 import initApolloFederatedService from './helpers/initApolloFederatedService';
 import { PrismaClient } from '@prisma/client';
 
