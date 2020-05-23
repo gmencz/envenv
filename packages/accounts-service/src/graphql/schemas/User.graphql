@@ -1,0 +1,58 @@
+"A user is an individual's account on Envenv that owns environments and can make new content."
+type User @key(fields: "id") {
+  "The unique id of the user."
+  id: ID!
+
+  "The picture / profile picture of the user."
+  picture: String
+
+  "The provider of the account."
+  provider: AccountProvider!
+
+  "The username of the user."
+  username: String!
+
+  "The email of the user."
+  email: String!
+
+  "The name of the user."
+  name: String!
+
+  "The encrypted password of the user."
+  password: String!
+
+  "The role of the user."
+  role: UserRole!
+
+  "The date on which the user last changed their password."
+  lastPasswordChange: String
+}
+
+"The possible roles a user can have, represents what rights a user has."
+enum UserRole {
+  """
+  User has basic rights on Envenv such as:
+  Creating environments,
+  Deleting environments,
+  Following other users...
+  This is the default value for every new user.
+  """
+  USER
+
+  """
+  User has admin rights on Envenv such as:
+  Managing other users,
+  Suspending other users,
+  Deleting other users environments...
+  """
+  ADMIN
+}
+
+"The possible providers of a user's account."
+enum AccountProvider {
+  "The user provided their account details via google."
+  GOOGLE
+
+  "The user provided their own account details to use exclusively on Envenv."
+  NONE
+}

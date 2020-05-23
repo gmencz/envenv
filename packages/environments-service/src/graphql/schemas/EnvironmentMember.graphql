@@ -1,0 +1,36 @@
+"En environment member is a user who's part of an environment with specific rights."
+type EnvironmentMember {
+  "The unique id of the environment member."
+  id: ID!
+
+  "The environment to which the environment member belongs."
+  environment: Environment
+
+  "The role the environment member has."
+  environmentRole: EnvironmentRole
+
+  "The user which is the environment member."
+  user: User!
+}
+
+"""
+Represents the roles an environment member can have,
+it describes which rights an environment member
+has on an environment.
+"""
+enum EnvironmentRole {
+  """
+  Environment member has admin rights on the environment such as:
+  Promoting other environment members.
+  Removing environment members from the environment.
+  """
+  ADMIN
+
+  """
+  Environment member has basic rights on the environment such as:
+  Contributing to the environment.
+  Commenting on the environment chat.
+  This is the default role for an environment member.
+  """
+  CONTRIBUTOR
+}

@@ -1,0 +1,4 @@
+extend type Query {
+  "Looks up all environments."
+  getEnvironments: [Environment]
+}

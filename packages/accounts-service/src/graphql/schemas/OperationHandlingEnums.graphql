@@ -1,0 +1,40 @@
+# This is a better approach for error handling than just throwing errors.
+# The GraphQL Twitter representative talks about this in the following link
+# https://medium.com/@sachee/200-ok-error-handling-in-graphql-7ec869aec9bc
+
+"Represents the result of an operation which deletes all users."
+union DeleteAllUsersResult = NotInTestingEnvironment | SuccessfulRemoval
+
+"Represents the result of an operation which queries a specific user."
+union UserResult = User | UserNotFound | InvalidDataFormat
+
+"Represents the result of an operation which requests an email with the instructions to reset an account's password."
+union RequestPasswordResetEmailResult = EmailMayHaveBeenSent | InvalidDataFormat
+
+"Represents the result of an operation which resets an account's password."
+union ResetPasswordResult =
+    User
+  | InvalidOrExpiredToken
+  | PasswordsDontMatch
+  | WantsSamePassword
+  | InvalidDataFormat
+
+"Represents the result of an operation which logs in with an external provider like Google."
+union LoginWithExternalProviderResult =
+    SuccessfulLogin
+  | InvalidOrMissingUserIdentifier
+  | SkippedOAuthFlow
+
+"Represents the result of an operation which signs a user up."
+union SignupResult = SuccessfulSignup | InvalidDataFormat | TakenUsernameOrEmail
+
+"Represents the result of an operation which signs a user up via an external provider like Google."
+union SignupWithExternalProviderResult =
+    SuccessfulSignup
+  | InvalidDataFormat
+  | TakenUsernameOrEmail
+  | SkippedOAuthFlow
+  | InvalidOrExpiredToken
+
+"Represents the result of an operation which logs a user in."
+union LoginResult = SuccessfulLogin | InvalidDataFormat | InvalidCredentials
