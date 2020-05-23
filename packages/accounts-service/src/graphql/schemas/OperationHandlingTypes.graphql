@@ -20,6 +20,7 @@ type SuccessfulSignup {
 
 "Represents a successful login."
 type SuccessfulLogin {
+  "The user who logged in."
   user: User!
 
   "The CSRF token for the started session."
@@ -68,7 +69,7 @@ type SkippedOAuthFlow {
   message: String!
 }
 
-"Represents the result of a development-only operation which was attempted to be executed on a non-development environment."
+"Represents the result of a testing-only operation which was attempted to be executed on a non-testing environment."
 type NotInTestingEnvironment {
   "A detailed explanation of why the operation could not be executed in the attempted environment."
   message: String!
