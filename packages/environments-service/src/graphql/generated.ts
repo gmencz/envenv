@@ -1,7 +1,10 @@
 import { ApolloContext } from '../../typings';
 import { GraphQLResolveInfo } from 'graphql';
 export type Maybe<T> = T | null;
-export type RequireFields<T, K extends keyof T> = { [X in Exclude<keyof T, K>]?: T[X] } & { [P in K]-?: NonNullable<T[P]> };
+export type RequireFields<T, K extends keyof T> = {
+  [X in Exclude<keyof T, K>]?: T[X];
+} &
+  { [P in K]-?: NonNullable<T[P]> };
 
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
@@ -13,67 +16,91 @@ export type Scalars = {
   _FieldSet: any;
 };
 
-
-
-
-
+/** An environment is an Envenv project owned by a user which contains the remote (Github, BitBucket, etc) non-production project secrets. */
 export type Environment = {
-   __typename?: 'Environment';
+  __typename?: 'Environment';
+  /** The unique id of the environment. */
   id: Scalars['ID'];
+  /** The name of the environment. */
   name: Scalars['String'];
+  /** The owner of the environment. */
   owner: User;
+  /** The members of the environment. */
   members?: Maybe<Array<Maybe<EnvironmentMember>>>;
 };
 
+/** En environment member is a user who's part of an environment with specific rights. */
 export type EnvironmentMember = {
-   __typename?: 'EnvironmentMember';
+  __typename?: 'EnvironmentMember';
+  /** The unique id of the environment member. */
   id: Scalars['ID'];
+  /** The environment to which the environment member belongs. */
   environment?: Maybe<Environment>;
+  /** The role the environment member has. */
   environmentRole?: Maybe<EnvironmentRole>;
+  /** The user which is the environment member. */
   user: User;
 };
 
+/**
+ * Represents the roles an environment member can have,
+ * it describes which rights an environment member
+ * has on an environment.
+ */
 export enum EnvironmentRole {
+  /**
+   * Environment member has admin rights on the environment such as:
+   * Promoting other environment members.
+   * Removing environment members from the environment.
+   */
   Admin = 'ADMIN',
-  Contributor = 'CONTRIBUTOR'
+  /**
+   * Environment member has basic rights on the environment such as:
+   * Contributing to the environment.
+   * Commenting on the environment chat.
+   * This is the default role for an environment member.
+   */
+  Contributor = 'CONTRIBUTOR',
 }
 
 export type User = {
-   __typename?: 'User';
+  __typename?: 'User';
   id: Scalars['ID'];
+  /** The environments which the user owns. */
   environments?: Maybe<Array<Maybe<Environment>>>;
 };
 
+/** The data required to create an environment. */
 export type CreateEnvironmentInput = {
+  /** The name of the environment. */
   name: Scalars['String'];
+  /** The id of the user creating the environment. */
   userCreatingEnvironmentId: Scalars['ID'];
 };
 
 export type Mutation = {
-   __typename?: 'Mutation';
+  __typename?: 'Mutation';
+  /** Creates a new environment. */
   createEnvironment?: Maybe<Environment>;
 };
-
 
 export type MutationCreateEnvironmentArgs = {
   data: CreateEnvironmentInput;
 };
 
 export type Query = {
-   __typename?: 'Query';
+  __typename?: 'Query';
+  /** Looks up all environments. */
   getEnvironments?: Maybe<Array<Maybe<Environment>>>;
 };
-
-
-
 
 export type ResolverTypeWrapper<T> = Promise<T> | T;
 
 export type ReferenceResolver<TResult, TReference, TContext> = (
-      reference: TReference,
-      context: TContext,
-      info: GraphQLResolveInfo
-    ) => Promise<TResult> | TResult;
+  reference: TReference,
+  context: TContext,
+  info: GraphQLResolveInfo
+) => Promise<TResult> | TResult;
 
 export type StitchingResolver<TResult, TParent, TContext, TArgs> = {
   fragment: string;
@@ -105,9 +132,25 @@ export type SubscriptionResolveFn<TResult, TParent, TContext, TArgs> = (
   info: GraphQLResolveInfo
 ) => TResult | Promise<TResult>;
 
-export interface SubscriptionSubscriberObject<TResult, TKey extends string, TParent, TContext, TArgs> {
-  subscribe: SubscriptionSubscribeFn<{ [key in TKey]: TResult }, TParent, TContext, TArgs>;
-  resolve?: SubscriptionResolveFn<TResult, { [key in TKey]: TResult }, TContext, TArgs>;
+export interface SubscriptionSubscriberObject<
+  TResult,
+  TKey extends string,
+  TParent,
+  TContext,
+  TArgs
+> {
+  subscribe: SubscriptionSubscribeFn<
+    { [key in TKey]: TResult },
+    TParent,
+    TContext,
+    TArgs
+  >;
+  resolve?: SubscriptionResolveFn<
+    TResult,
+    { [key in TKey]: TResult },
+    TContext,
+    TArgs
+  >;
 }
 
 export interface SubscriptionResolverObject<TResult, TParent, TContext, TArgs> {
@@ -115,12 +158,26 @@ export interface SubscriptionResolverObject<TResult, TParent, TContext, TArgs> {
   resolve: SubscriptionResolveFn<TResult, any, TContext, TArgs>;
 }
 
-export type SubscriptionObject<TResult, TKey extends string, TParent, TContext, TArgs> =
+export type SubscriptionObject<
+  TResult,
+  TKey extends string,
+  TParent,
+  TContext,
+  TArgs
+> =
   | SubscriptionSubscriberObject<TResult, TKey, TParent, TContext, TArgs>
   | SubscriptionResolverObject<TResult, TParent, TContext, TArgs>;
 
-export type SubscriptionResolver<TResult, TKey extends string, TParent = {}, TContext = {}, TArgs = {}> =
-  | ((...args: any[]) => SubscriptionObject<TResult, TKey, TParent, TContext, TArgs>)
+export type SubscriptionResolver<
+  TResult,
+  TKey extends string,
+  TParent = {},
+  TContext = {},
+  TArgs = {}
+> =
+  | ((
+      ...args: any[]
+    ) => SubscriptionObject<TResult, TKey, TParent, TContext, TArgs>)
   | SubscriptionObject<TResult, TKey, TParent, TContext, TArgs>;
 
 export type TypeResolveFn<TTypes, TParent = {}, TContext = {}> = (
@@ -129,11 +186,19 @@ export type TypeResolveFn<TTypes, TParent = {}, TContext = {}> = (
   info: GraphQLResolveInfo
 ) => Maybe<TTypes> | Promise<Maybe<TTypes>>;
 
-export type isTypeOfResolverFn<T = {}> = (obj: T, info: GraphQLResolveInfo) => boolean | Promise<boolean>;
+export type isTypeOfResolverFn<T = {}> = (
+  obj: T,
+  info: GraphQLResolveInfo
+) => boolean | Promise<boolean>;
 
 export type NextResolverFn<T> = () => Promise<T>;
 
-export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs = {}> = (
+export type DirectiveResolverFn<
+  TResult = {},
+  TParent = {},
+  TContext = {},
+  TArgs = {}
+> = (
   next: NextResolverFn<TResult>,
   parent: TParent,
   args: TArgs,
@@ -143,72 +208,119 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = {
-  String: ResolverTypeWrapper<Scalars['String']>,
-  Boolean: ResolverTypeWrapper<Scalars['Boolean']>,
-  Environment: ResolverTypeWrapper<Environment>,
-  ID: ResolverTypeWrapper<Scalars['ID']>,
-  EnvironmentMember: ResolverTypeWrapper<EnvironmentMember>,
-  EnvironmentRole: EnvironmentRole,
-  User: ResolverTypeWrapper<User>,
-  CreateEnvironmentInput: CreateEnvironmentInput,
-  Mutation: ResolverTypeWrapper<{}>,
-  Query: ResolverTypeWrapper<{}>,
+  String: ResolverTypeWrapper<Scalars['String']>;
+  Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
+  Environment: ResolverTypeWrapper<Environment>;
+  ID: ResolverTypeWrapper<Scalars['ID']>;
+  EnvironmentMember: ResolverTypeWrapper<EnvironmentMember>;
+  EnvironmentRole: EnvironmentRole;
+  User: ResolverTypeWrapper<User>;
+  CreateEnvironmentInput: CreateEnvironmentInput;
+  Mutation: ResolverTypeWrapper<{}>;
+  Query: ResolverTypeWrapper<{}>;
 };
 
 /** Mapping between all available schema types and the resolvers parents */
 export type ResolversParentTypes = {
-  String: Scalars['String'],
-  Boolean: Scalars['Boolean'],
-  Environment: Environment,
-  ID: Scalars['ID'],
-  EnvironmentMember: EnvironmentMember,
-  EnvironmentRole: EnvironmentRole,
-  User: User,
-  CreateEnvironmentInput: CreateEnvironmentInput,
-  Mutation: {},
-  Query: {},
+  String: Scalars['String'];
+  Boolean: Scalars['Boolean'];
+  Environment: Environment;
+  ID: Scalars['ID'];
+  EnvironmentMember: EnvironmentMember;
+  EnvironmentRole: EnvironmentRole;
+  User: User;
+  CreateEnvironmentInput: CreateEnvironmentInput;
+  Mutation: {};
+  Query: {};
 };
 
-export type EnvironmentResolvers<ContextType = ApolloContext, ParentType extends ResolversParentTypes['Environment'] = ResolversParentTypes['Environment']> = {
-  __resolveReference?: ReferenceResolver<Maybe<ResolversTypes['Environment']>, { __typename: 'Environment' } & Pick<ParentType, 'id'>, ContextType>,
-  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>,
-  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>,
-  owner?: Resolver<ResolversTypes['User'], ParentType, ContextType>,
-  members?: Resolver<Maybe<Array<Maybe<ResolversTypes['EnvironmentMember']>>>, ParentType, ContextType>,
-  __isTypeOf?: isTypeOfResolverFn<ParentType>,
+export type EnvironmentResolvers<
+  ContextType = ApolloContext,
+  ParentType extends ResolversParentTypes['Environment'] = ResolversParentTypes['Environment']
+> = {
+  __resolveReference?: ReferenceResolver<
+    Maybe<ResolversTypes['Environment']>,
+    { __typename: 'Environment' } & Pick<ParentType, 'id'>,
+    ContextType
+  >;
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  owner?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
+  members?: Resolver<
+    Maybe<Array<Maybe<ResolversTypes['EnvironmentMember']>>>,
+    ParentType,
+    ContextType
+  >;
+  __isTypeOf?: isTypeOfResolverFn<ParentType>;
 };
 
-export type EnvironmentMemberResolvers<ContextType = ApolloContext, ParentType extends ResolversParentTypes['EnvironmentMember'] = ResolversParentTypes['EnvironmentMember']> = {
-  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>,
-  environment?: Resolver<Maybe<ResolversTypes['Environment']>, ParentType, ContextType>,
-  environmentRole?: Resolver<Maybe<ResolversTypes['EnvironmentRole']>, ParentType, ContextType>,
-  user?: Resolver<ResolversTypes['User'], ParentType, ContextType>,
-  __isTypeOf?: isTypeOfResolverFn<ParentType>,
+export type EnvironmentMemberResolvers<
+  ContextType = ApolloContext,
+  ParentType extends ResolversParentTypes['EnvironmentMember'] = ResolversParentTypes['EnvironmentMember']
+> = {
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  environment?: Resolver<
+    Maybe<ResolversTypes['Environment']>,
+    ParentType,
+    ContextType
+  >;
+  environmentRole?: Resolver<
+    Maybe<ResolversTypes['EnvironmentRole']>,
+    ParentType,
+    ContextType
+  >;
+  user?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
+  __isTypeOf?: isTypeOfResolverFn<ParentType>;
 };
 
-export type UserResolvers<ContextType = ApolloContext, ParentType extends ResolversParentTypes['User'] = ResolversParentTypes['User']> = {
-  __resolveReference?: ReferenceResolver<Maybe<ResolversTypes['User']>, { __typename: 'User' } & Pick<ParentType, 'id'>, ContextType>,
+export type UserResolvers<
+  ContextType = ApolloContext,
+  ParentType extends ResolversParentTypes['User'] = ResolversParentTypes['User']
+> = {
+  __resolveReference?: ReferenceResolver<
+    Maybe<ResolversTypes['User']>,
+    { __typename: 'User' } & Pick<ParentType, 'id'>,
+    ContextType
+  >;
 
-  environments?: Resolver<Maybe<Array<Maybe<ResolversTypes['Environment']>>>, ParentType, ContextType>,
-  __isTypeOf?: isTypeOfResolverFn<ParentType>,
+  environments?: Resolver<
+    Maybe<Array<Maybe<ResolversTypes['Environment']>>>,
+    ParentType,
+    ContextType
+  >;
+  __isTypeOf?: isTypeOfResolverFn<ParentType>;
 };
 
-export type MutationResolvers<ContextType = ApolloContext, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
-  createEnvironment?: Resolver<Maybe<ResolversTypes['Environment']>, ParentType, ContextType, RequireFields<MutationCreateEnvironmentArgs, 'data'>>,
+export type MutationResolvers<
+  ContextType = ApolloContext,
+  ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']
+> = {
+  createEnvironment?: Resolver<
+    Maybe<ResolversTypes['Environment']>,
+    ParentType,
+    ContextType,
+    RequireFields<MutationCreateEnvironmentArgs, 'data'>
+  >;
 };
 
-export type QueryResolvers<ContextType = ApolloContext, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
-  getEnvironments?: Resolver<Maybe<Array<Maybe<ResolversTypes['Environment']>>>, ParentType, ContextType>,
+export type QueryResolvers<
+  ContextType = ApolloContext,
+  ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']
+> = {
+  getEnvironments?: Resolver<
+    Maybe<Array<Maybe<ResolversTypes['Environment']>>>,
+    ParentType,
+    ContextType
+  >;
 };
 
 export type Resolvers<ContextType = ApolloContext> = {
-  Environment?: EnvironmentResolvers<ContextType>,
-  EnvironmentMember?: EnvironmentMemberResolvers<ContextType>,
-  User?: UserResolvers<ContextType>,
-  Mutation?: MutationResolvers<ContextType>,
-  Query?: QueryResolvers<ContextType>,
+  Environment?: EnvironmentResolvers<ContextType>;
+  EnvironmentMember?: EnvironmentMemberResolvers<ContextType>;
+  User?: UserResolvers<ContextType>;
+  Mutation?: MutationResolvers<ContextType>;
+  Query?: QueryResolvers<ContextType>;
 };
-
 
 /**
  * @deprecated

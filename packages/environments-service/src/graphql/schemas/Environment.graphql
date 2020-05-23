@@ -1,6 +1,14 @@
+"An environment is an Envenv project owned by a user which contains the remote (Github, BitBucket, etc) non-production project secrets."
 type Environment @key(fields: "id") {
+  "The unique id of the environment."
   id: ID!
+
+  "The name of the environment."
   name: String!
+
+  "The owner of the environment."
   owner: User!
+
+  "The members of the environment."
   members: [EnvironmentMember]
 }

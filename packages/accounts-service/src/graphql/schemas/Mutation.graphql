@@ -1,4 +1,3 @@
-# Root mutation type
 extend type Mutation {
   "Signs user up."
   signup(data: CreateUserInput!): SignupResult!

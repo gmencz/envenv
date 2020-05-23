@@ -1,4 +1,8 @@
+"The data required to create an environment."
 input CreateEnvironmentInput {
+  "The name of the environment."
   name: String!
+
+  "The id of the user creating the environment."
   userCreatingEnvironmentId: ID!
 }

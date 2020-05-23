@@ -1,4 +1,6 @@
 extend type User @key(fields: "id") {
   id: ID! @external
+
+  "The environments which the user owns."
   environments: [Environment]
 }
