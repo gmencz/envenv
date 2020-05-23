@@ -143,6 +143,7 @@ export type SuccessfulSignup = {
 /** Represents a successful login. */
 export type SuccessfulLogin = {
   __typename?: 'SuccessfulLogin';
+  /** The user who logged in. */
   user: User;
   /** The CSRF token for the started session. */
   csrfToken: Scalars['String'];
@@ -197,7 +198,7 @@ export type SkippedOAuthFlow = {
   message: Scalars['String'];
 };
 
-/** Represents the result of a development-only operation which was attempted to be executed on a non-development environment. */
+/** Represents the result of a testing-only operation which was attempted to be executed on a non-testing environment. */
 export type NotInTestingEnvironment = {
   __typename?: 'NotInTestingEnvironment';
   /** A detailed explanation of why the operation could not be executed in the attempted environment. */

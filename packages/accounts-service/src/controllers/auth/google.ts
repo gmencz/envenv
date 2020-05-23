@@ -1,5 +1,5 @@
 import passport from 'passport';
-import { Request, Response, json } from 'express';
+import { Request, Response } from 'express';
 import { sign } from 'jsonwebtoken';
 import { OAuth2Strategy as GoogleStrategy } from 'passport-google-oauth';
 import request from 'graphql-request';
@@ -7,7 +7,7 @@ import { UserResult } from '../../graphql/generated';
 import getSession from '../../helpers/getSession';
 import redisClient from '../../helpers/redisClient';
 
-export const GoogleStrategyObj = new GoogleStrategy(
+export const googleStrategy = new GoogleStrategy(
   {
     clientID:
       '697747522167-8f3eobskkb8pm2pk8kft37tarl1nmcqb.apps.googleusercontent.com',
