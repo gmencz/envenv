@@ -7,10 +7,7 @@ import {
 } from '../../generated';
 import { createUserSchema } from '../../../validation/createUser';
 import { reach } from 'yup';
-import {
-  getCachedUser,
-  cacheUser,
-} from '../../../helpers/cachedUserOperations';
+import { getCachedUser, cacheUser } from '../../../helpers/cache/user';
 
 const user: QueryResolvers['user'] = async (
   _,
@@ -29,7 +26,6 @@ const user: QueryResolvers['user'] = async (
     if (args.id) {
       const cachedUser = await getCachedUser(args.id);
 
-      console.log(cachedUser);
       if (cachedUser) {
         return {
           __typename: 'User',

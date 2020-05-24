@@ -195,6 +195,8 @@ export type Query = {
   requestPasswordResetEmail: RequestPasswordResetEmailResult;
   /** Look up an user by id, username or email. */
   user: UserResult;
+  /** Look up the currently logged in user. */
+  me: User;
 };
 
 export type QueryRequestPasswordResetEmailArgs = {
@@ -698,6 +700,7 @@ export type QueryResolvers<
     ContextType,
     RequireFields<QueryUserArgs, never>
   >;
+  me?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
 };
 
 export type UserResolvers<

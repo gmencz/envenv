@@ -1,6 +1,6 @@
 import { promisify } from 'util';
-import redisClient from './redisClient';
 import { User } from '@prisma/client';
+import redisClient from '../redisClient';
 
 export const getCachedUser = async (userId: string): Promise<User | null> => {
   // eslint-disable-next-line @typescript-eslint/unbound-method

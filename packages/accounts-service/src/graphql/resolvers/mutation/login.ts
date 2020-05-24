@@ -10,7 +10,7 @@ import {
 } from '../../generated';
 import createSession from '../../../helpers/createSession';
 import redisClient from '../../../helpers/redisClient';
-import { cacheUser } from '../../../helpers/cachedUserOperations';
+import { cacheUser } from '../../../helpers/cache/user';
 
 const login: MutationResolvers['login'] = async (
   _,

@@ -1,5 +1,5 @@
 import { UserResolvers, User } from '../../generated';
-import { getCachedUser } from '../../../helpers/cachedUserOperations';
+import { getCachedUser } from '../../../helpers/cache/user';
 
 const __resolveReference: UserResolvers['__resolveReference'] = async (
   { id },

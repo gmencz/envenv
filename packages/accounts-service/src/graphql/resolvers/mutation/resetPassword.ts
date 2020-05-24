@@ -9,7 +9,7 @@ import {
   getCachedUser,
   invalidateUser,
   cacheUser,
-} from '../../../helpers/cachedUserOperations';
+} from '../../../helpers/cache/user';
 
 const updateUserPassword = async (
   prisma: PrismaClient,

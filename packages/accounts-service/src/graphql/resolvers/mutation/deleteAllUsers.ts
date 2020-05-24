@@ -2,7 +2,7 @@ import { ApolloError } from 'apollo-server-express';
 import { MutationResolvers, DeleteAllUsersResult } from '../../generated';
 import redisClient from '../../../helpers/redisClient';
 import { promisify } from 'util';
-import { invalidateUser } from '../../../helpers/cachedUserOperations';
+import { invalidateUser } from '../../../helpers/cache/user';
 
 const deleteAllUsers: MutationResolvers['deleteAllUsers'] = async (
   _,

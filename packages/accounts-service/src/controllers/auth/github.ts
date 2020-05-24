@@ -8,6 +8,7 @@ import createSession from '../../helpers/createSession';
 import { generate } from 'generate-password';
 import { hash } from 'bcryptjs';
 import addAtToUsername from '../../helpers/addAtToUsername';
+import { getCachedUser, cacheUser } from '../../helpers/cache/user';
 
 export const githubStrategy = new GithubStrategy(
   {
@@ -91,7 +92,12 @@ export const callbackGithubAuth = async (
       username: string;
     };
 
-    const user = await prisma.user.findOne({ where: { id } });
+    let user = await getCachedUser(id);
+    let comesFromCache = true;
+    if (!user) {
+      comesFromCache = false;
+      user = await prisma.user.findOne({ where: { id } });
+    }
 
     if (operation === 'login') {
       // Check if the user has an account or not
@@ -105,6 +111,11 @@ export const callbackGithubAuth = async (
           secure: process.env.NODE_ENV === 'production',
           maxAge: Number(process.env.SESSION_REDIS_EXPIRY!),
         });
+
+        if (!comesFromCache) {
+          await cacheUser(user);
+        }
+
         // redirect to route on the client which will make a graphql
         // request to a mutation which will automate the login
         return res.redirect(
@@ -141,6 +152,10 @@ export const callbackGithubAuth = async (
           secure: process.env.NODE_ENV === 'production',
           maxAge: Number(process.env.SESSION_REDIS_EXPIRY!),
         });
+
+        if (!comesFromCache) {
+          await cacheUser(user);
+        }
         // redirect to route on the client which will make a graphql
         // request to a mutation which will automate the login
         return res.redirect(
@@ -175,6 +190,8 @@ export const callbackGithubAuth = async (
           secure: process.env.NODE_ENV === 'production',
           maxAge: Number(process.env.SESSION_REDIS_EXPIRY!),
         });
+
+        await cacheUser(newUser);
 
         return res.redirect(
           process.env.NODE_ENV === 'production'

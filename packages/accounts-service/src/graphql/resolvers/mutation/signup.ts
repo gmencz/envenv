@@ -5,7 +5,7 @@ import redisClient from '../../../helpers/redisClient';
 import { hash } from 'bcryptjs';
 import addAtToUsername from '../../../helpers/addAtToUsername';
 import { MutationResolvers, SignupResult } from '../../generated';
-import { cacheUser } from '../../../helpers/cachedUserOperations';
+import { cacheUser } from '../../../helpers/cache/user';
 
 const signup: MutationResolvers['signup'] = async (
   _,
