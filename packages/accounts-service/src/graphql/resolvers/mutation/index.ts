@@ -1,5 +1,5 @@
 import signup from './signup';
-import signupWithExternalProvider from './signupWithExternalProvider';
+import signupWithGithub from './signupWithGithub';
 import login from './login';
 import loginWithExternalProvider from './loginWithExternalProvider';
 import resetPassword from './resetPassword';
@@ -8,7 +8,7 @@ import { MutationResolvers } from '../../generated';
 
 const MutationResolvers: MutationResolvers = {
   signup,
-  signupWithExternalProvider,
+  signupWithGithub,
   login,
   loginWithExternalProvider,
   resetPassword,

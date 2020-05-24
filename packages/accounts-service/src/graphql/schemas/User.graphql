@@ -13,7 +13,7 @@ type User @key(fields: "id") {
   username: String!
 
   "The email of the user."
-  email: String!
+  email: String
 
   "The name of the user."
   name: String!
@@ -50,8 +50,8 @@ enum UserRole {
 
 "The possible providers of a user's account."
 enum AccountProvider {
-  "The user provided their account details via google."
-  GOOGLE
+  "The user provided their account details via github."
+  GITHUB
 
   "The user provided their own account details to use exclusively on Envenv."
   NONE

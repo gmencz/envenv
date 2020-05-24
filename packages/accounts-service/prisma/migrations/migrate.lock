@@ -4,3 +4,6 @@
 # Read more about conflict resolution here: TODO
 
 20200521145249-init
+20200524003414-add-github-to-user-provider
+20200524014409-make-email-optional
+20200524024323-remove-google-from-providers

@@ -1,9 +1,11 @@
 import express, { Express } from 'express';
 import cookieParser from 'cookie-parser';
 import { Server } from 'http';
+import helmet from 'helmet';
 
 export default function initExpress(): Express {
   const app = express();
+  app.use(helmet());
   app.use(cookieParser());
 
   return app;

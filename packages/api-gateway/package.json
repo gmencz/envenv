@@ -14,11 +14,13 @@
     "@apollo/gateway": "^0.16.0",
     "apollo-server-express": "^2.12.0",
     "cookie-parser": "^1.4.5",
-    "graphql": "^15.0.0"
+    "graphql": "^15.0.0",
+    "helmet": "^3.22.0"
   },
   "devDependencies": {
     "@types/cookie-parser": "^1.4.2",
     "@types/graphql": "^14.5.0",
+    "@types/helmet": "^0.0.47",
     "@types/jest": "^25.2.1",
     "@types/node": "^14.0.1",
     "jest": "^25.5.4",

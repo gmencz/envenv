@@ -1,30 +1,39 @@
-import passport from 'passport';
+import { Strategy as GithubStrategy, Profile } from 'passport-github2';
 import { Request, Response } from 'express';
-import { sign } from 'jsonwebtoken';
-import { OAuth2Strategy as GoogleStrategy } from 'passport-google-oauth';
-import request from 'graphql-request';
-import { UserResult } from '../../graphql/generated';
 import getSession from '../../helpers/getSession';
 import redisClient from '../../helpers/redisClient';
+import request from 'graphql-request';
+import { UserResult } from '../../graphql/generated';
+import { sign } from 'jsonwebtoken';
 
-export const googleStrategy = new GoogleStrategy(
+export const githubStrategy = new GithubStrategy(
   {
-    clientID:
-      '697747522167-8f3eobskkb8pm2pk8kft37tarl1nmcqb.apps.googleusercontent.com',
-    clientSecret: process.env.SECRET_GOOGLE!,
-    callbackURL: `${process.env.GOOGLE_CALLBACK_URL}/auth/google/callback`,
+    clientID: process.env.GITHUB_CLIENT_ID!,
+    clientSecret: process.env.GITHUB_CLIENT_SECRET!,
+    callbackURL: process.env.GITHUB_CALLBACK_URL!,
+    scope: ['user:email'],
   },
-  (_, __, { provider, id, _json: { name, picture, email } }, done) => {
-    done(null, { picture, provider, name, id, email });
+  (
+    _: any,
+    __: any,
+    { id, provider, emails, displayName, username, photos }: Profile,
+    done: any
+  ) => {
+    const picture = photos ? photos[0]?.value : null;
+    const email = emails ? emails[0]?.value : null;
+
+    done(null, {
+      picture,
+      provider: provider.toUpperCase(),
+      name: displayName,
+      id,
+      email,
+      username,
+    });
   }
 );
 
-export const scopeFn = (): any =>
-  passport.authenticate('google', {
-    scope: ['profile', 'email'],
-  });
-
-export const callbackGoogleAuth = async (
+export const callbackGithubAuth = async (
   req: Request,
   res: Response
 ): Promise<void> => {
@@ -118,7 +127,7 @@ export const callbackGoogleAuth = async (
     if (operation === 'login') {
       // Check if the user has an account or not
       // Yes? redirect to route where the login will be automated
-      // No? redirect to route where the client will display an error of no acc with that google acc.
+      // No? redirect to route where the client will display an error of no acc with that github acc.
 
       if (userResult.__typename === 'User') {
         const encodedId = Buffer.from(id).toString('base64');
@@ -225,10 +234,14 @@ export const callbackGoogleAuth = async (
           maxAge: 31557600000,
         });
 
+        const { provider } = req.user as {
+          provider: string;
+        };
+
         return res.redirect(
           process.env.NODE_ENV === 'production'
-            ? 'https://envenv.com/auth/flow/lastStep?operation=signup'
-            : 'http://localhost:8080/auth/flow/lastStep?operation=signup'
+            ? `https://envenv.com/auth/flow/lastStep?operation=signup&provider=${provider?.toLowerCase()}`
+            : `http://localhost:8080/auth/flow/lastStep?operation=signup&provider=${provider?.toLowerCase()}`
         );
       }
     }
