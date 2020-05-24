@@ -1,18 +1,33 @@
 import { RemoteGraphQLDataSource } from '@apollo/gateway';
 import parseCookies from '../helpers/parseCookies';
 import { GatewayContext } from '../typings';
+import getSession from '../helpers/getSession';
+import redisClient from '../helpers/redisClient';
 
 type WillSendRequestParams = {
   request: any;
   context: GatewayContext;
 };
 
-export default class GatewayDataSource extends RemoteGraphQLDataSource {
-  willSendRequest({ request, context }: WillSendRequestParams): void {
+export default class AuthenticatedDataSource extends RemoteGraphQLDataSource {
+  async willSendRequest({
+    request,
+    context,
+  }: WillSendRequestParams): Promise<void> {
     if (context && context.req && context.req.cookies) {
       // Perform authentication here
-      // console.log(context.req.cookies);
-      request.http.headers.set('x-forwarded-from-gateway', 'true');
+      if (context.req.cookies.SessionID) {
+        const session = await getSession('fru_qQXKfUoY7v3KChy', redisClient);
+
+        if (
+          session &&
+          session.csrfToken === context.req.headers['csrf-token']
+        ) {
+          request.http.headers.set('user-id', session.userId);
+        }
+      }
+
+      request.http.headers.set('forwarded-from-gateway', 'true');
       request.http.headers.set('Cookie', JSON.stringify(context.req.cookies));
     }
   }

@@ -23,12 +23,25 @@ export default async function initApolloFederatedService(
         resolvers: resolvers as any,
       },
     ]),
-    context: ({ req, res }: ApolloContext): ApolloContext => ({
-      req,
-      res,
-      user: null,
-      prisma: prismaClient,
-    }),
+    context: ({ req, res }: ApolloContext): ApolloContext => {
+      let isAuthenticated = false;
+      let userId = '';
+
+      if (req.headers['user-id']) {
+        isAuthenticated = true;
+        userId = req.headers['user-id'] as string;
+      }
+
+      return {
+        req,
+        res,
+        prisma: prismaClient,
+        auth: {
+          isAuthenticated,
+          userId,
+        },
+      };
+    },
     engine: false,
   });
 
