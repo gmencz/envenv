@@ -1,4 +1,4 @@
-import { ApolloContext } from '../../typings';
+import { ApolloContext } from '../typings';
 import { GraphQLResolveInfo } from 'graphql';
 export type Maybe<T> = T | null;
 export type RequireFields<T, K extends keyof T> = {
@@ -44,12 +44,8 @@ export type Mutation = {
   __typename?: 'Mutation';
   /** Signs user up. */
   signup: SignupResult;
-  /** Signs user up. Use this after going through Github's OAuth flow. */
-  signupWithGithub: SignupWithExternalProviderResult;
   /** Logs user in. */
   login: LoginResult;
-  /** Logs user in. Use this after going through the OAuth flow. */
-  loginWithExternalProvider: LoginWithExternalProviderResult;
   /** Resets an account's password. */
   resetPassword: ResetPasswordResult;
   /** Deletes every user. This is only available in a testing environment. */
@@ -88,25 +84,11 @@ export type ResetPasswordResult =
   | WantsSamePassword
   | InvalidDataFormat;
 
-/** Represents the result of an operation which logs in with an external provider like Google. */
-export type LoginWithExternalProviderResult =
-  | SuccessfulLogin
-  | InvalidOrMissingUserIdentifier
-  | SkippedOAuthFlow;
-
 /** Represents the result of an operation which signs a user up. */
 export type SignupResult =
   | SuccessfulSignup
   | InvalidDataFormat
   | TakenUsernameOrEmail;
-
-/** Represents the result of an operation which signs a user up via an external provider like Google. */
-export type SignupWithExternalProviderResult =
-  | SuccessfulSignup
-  | InvalidDataFormat
-  | TakenUsernameOrEmail
-  | SkippedOAuthFlow
-  | InvalidOrExpiredToken;
 
 /** Represents the result of an operation which logs a user in. */
 export type LoginResult =
@@ -152,13 +134,6 @@ export type InvalidCredentials = {
   message: Scalars['String'];
 };
 
-/** Represents the result of an operation in which the user identifer was invalid or missing. */
-export type InvalidOrMissingUserIdentifier = {
-  __typename?: 'InvalidOrMissingUserIdentifier';
-  /** A detailed explanation of why the user identifier was invalid or missing. */
-  message: Scalars['String'];
-};
-
 /** Represents the result of an operation in which the provided token was invalid or expired. */
 export type InvalidOrExpiredToken = {
   __typename?: 'InvalidOrExpiredToken';
@@ -184,13 +159,6 @@ export type UserNotFound = {
 export type EmailMayHaveBeenSent = {
   __typename?: 'EmailMayHaveBeenSent';
   /** A detailed explanation of why the email may or may not have been sent. */
-  message: Scalars['String'];
-};
-
-/** Represents the result of an operation in which the OAuth flow was skipped. */
-export type SkippedOAuthFlow = {
-  __typename?: 'SkippedOAuthFlow';
-  /** A detailed explanation of what happened. */
   message: Scalars['String'];
 };
 
@@ -418,20 +386,10 @@ export type ResolversTypes = {
     | ResolversTypes['PasswordsDontMatch']
     | ResolversTypes['WantsSamePassword']
     | ResolversTypes['InvalidDataFormat'];
-  LoginWithExternalProviderResult:
-    | ResolversTypes['SuccessfulLogin']
-    | ResolversTypes['InvalidOrMissingUserIdentifier']
-    | ResolversTypes['SkippedOAuthFlow'];
   SignupResult:
     | ResolversTypes['SuccessfulSignup']
     | ResolversTypes['InvalidDataFormat']
     | ResolversTypes['TakenUsernameOrEmail'];
-  SignupWithExternalProviderResult:
-    | ResolversTypes['SuccessfulSignup']
-    | ResolversTypes['InvalidDataFormat']
-    | ResolversTypes['TakenUsernameOrEmail']
-    | ResolversTypes['SkippedOAuthFlow']
-    | ResolversTypes['InvalidOrExpiredToken'];
   LoginResult:
     | ResolversTypes['SuccessfulLogin']
     | ResolversTypes['InvalidDataFormat']
@@ -441,14 +399,10 @@ export type ResolversTypes = {
   SuccessfulSignup: ResolverTypeWrapper<SuccessfulSignup>;
   SuccessfulLogin: ResolverTypeWrapper<SuccessfulLogin>;
   InvalidCredentials: ResolverTypeWrapper<InvalidCredentials>;
-  InvalidOrMissingUserIdentifier: ResolverTypeWrapper<
-    InvalidOrMissingUserIdentifier
-  >;
   InvalidOrExpiredToken: ResolverTypeWrapper<InvalidOrExpiredToken>;
   PasswordsDontMatch: ResolverTypeWrapper<PasswordsDontMatch>;
   UserNotFound: ResolverTypeWrapper<UserNotFound>;
   EmailMayHaveBeenSent: ResolverTypeWrapper<EmailMayHaveBeenSent>;
-  SkippedOAuthFlow: ResolverTypeWrapper<SkippedOAuthFlow>;
   NotInTestingEnvironment: ResolverTypeWrapper<NotInTestingEnvironment>;
   SuccessfulRemoval: ResolverTypeWrapper<SuccessfulRemoval>;
   Int: ResolverTypeWrapper<Scalars['Int']>;
@@ -483,20 +437,10 @@ export type ResolversParentTypes = {
     | ResolversParentTypes['PasswordsDontMatch']
     | ResolversParentTypes['WantsSamePassword']
     | ResolversParentTypes['InvalidDataFormat'];
-  LoginWithExternalProviderResult:
-    | ResolversParentTypes['SuccessfulLogin']
-    | ResolversParentTypes['InvalidOrMissingUserIdentifier']
-    | ResolversParentTypes['SkippedOAuthFlow'];
   SignupResult:
     | ResolversParentTypes['SuccessfulSignup']
     | ResolversParentTypes['InvalidDataFormat']
     | ResolversParentTypes['TakenUsernameOrEmail'];
-  SignupWithExternalProviderResult:
-    | ResolversParentTypes['SuccessfulSignup']
-    | ResolversParentTypes['InvalidDataFormat']
-    | ResolversParentTypes['TakenUsernameOrEmail']
-    | ResolversParentTypes['SkippedOAuthFlow']
-    | ResolversParentTypes['InvalidOrExpiredToken'];
   LoginResult:
     | ResolversParentTypes['SuccessfulLogin']
     | ResolversParentTypes['InvalidDataFormat']
@@ -506,12 +450,10 @@ export type ResolversParentTypes = {
   SuccessfulSignup: SuccessfulSignup;
   SuccessfulLogin: SuccessfulLogin;
   InvalidCredentials: InvalidCredentials;
-  InvalidOrMissingUserIdentifier: InvalidOrMissingUserIdentifier;
   InvalidOrExpiredToken: InvalidOrExpiredToken;
   PasswordsDontMatch: PasswordsDontMatch;
   UserNotFound: UserNotFound;
   EmailMayHaveBeenSent: EmailMayHaveBeenSent;
-  SkippedOAuthFlow: SkippedOAuthFlow;
   NotInTestingEnvironment: NotInTestingEnvironment;
   SuccessfulRemoval: SuccessfulRemoval;
   Int: Scalars['Int'];
@@ -533,21 +475,11 @@ export type MutationResolvers<
     ContextType,
     RequireFields<MutationSignupArgs, 'data'>
   >;
-  signupWithGithub?: Resolver<
-    ResolversTypes['SignupWithExternalProviderResult'],
-    ParentType,
-    ContextType
-  >;
   login?: Resolver<
     ResolversTypes['LoginResult'],
     ParentType,
     ContextType,
     RequireFields<MutationLoginArgs, 'username' | 'password'>
-  >;
-  loginWithExternalProvider?: Resolver<
-    ResolversTypes['LoginWithExternalProviderResult'],
-    ParentType,
-    ContextType
   >;
   resetPassword?: Resolver<
     ResolversTypes['ResetPasswordResult'],
@@ -610,38 +542,12 @@ export type ResetPasswordResultResolvers<
   >;
 };
 
-export type LoginWithExternalProviderResultResolvers<
-  ContextType = ApolloContext,
-  ParentType extends ResolversParentTypes['LoginWithExternalProviderResult'] = ResolversParentTypes['LoginWithExternalProviderResult']
-> = {
-  __resolveType: TypeResolveFn<
-    'SuccessfulLogin' | 'InvalidOrMissingUserIdentifier' | 'SkippedOAuthFlow',
-    ParentType,
-    ContextType
-  >;
-};
-
 export type SignupResultResolvers<
   ContextType = ApolloContext,
   ParentType extends ResolversParentTypes['SignupResult'] = ResolversParentTypes['SignupResult']
 > = {
   __resolveType: TypeResolveFn<
     'SuccessfulSignup' | 'InvalidDataFormat' | 'TakenUsernameOrEmail',
-    ParentType,
-    ContextType
-  >;
-};
-
-export type SignupWithExternalProviderResultResolvers<
-  ContextType = ApolloContext,
-  ParentType extends ResolversParentTypes['SignupWithExternalProviderResult'] = ResolversParentTypes['SignupWithExternalProviderResult']
-> = {
-  __resolveType: TypeResolveFn<
-    | 'SuccessfulSignup'
-    | 'InvalidDataFormat'
-    | 'TakenUsernameOrEmail'
-    | 'SkippedOAuthFlow'
-    | 'InvalidOrExpiredToken',
     ParentType,
     ContextType
   >;
@@ -700,14 +606,6 @@ export type InvalidCredentialsResolvers<
   __isTypeOf?: isTypeOfResolverFn<ParentType>;
 };
 
-export type InvalidOrMissingUserIdentifierResolvers<
-  ContextType = ApolloContext,
-  ParentType extends ResolversParentTypes['InvalidOrMissingUserIdentifier'] = ResolversParentTypes['InvalidOrMissingUserIdentifier']
-> = {
-  message?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  __isTypeOf?: isTypeOfResolverFn<ParentType>;
-};
-
 export type InvalidOrExpiredTokenResolvers<
   ContextType = ApolloContext,
   ParentType extends ResolversParentTypes['InvalidOrExpiredToken'] = ResolversParentTypes['InvalidOrExpiredToken']
@@ -735,14 +633,6 @@ export type UserNotFoundResolvers<
 export type EmailMayHaveBeenSentResolvers<
   ContextType = ApolloContext,
   ParentType extends ResolversParentTypes['EmailMayHaveBeenSent'] = ResolversParentTypes['EmailMayHaveBeenSent']
-> = {
-  message?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  __isTypeOf?: isTypeOfResolverFn<ParentType>;
-};
-
-export type SkippedOAuthFlowResolvers<
-  ContextType = ApolloContext,
-  ParentType extends ResolversParentTypes['SkippedOAuthFlow'] = ResolversParentTypes['SkippedOAuthFlow']
 > = {
   message?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: isTypeOfResolverFn<ParentType>;
@@ -825,23 +715,17 @@ export type Resolvers<ContextType = ApolloContext> = {
   UserResult?: UserResultResolvers;
   RequestPasswordResetEmailResult?: RequestPasswordResetEmailResultResolvers;
   ResetPasswordResult?: ResetPasswordResultResolvers;
-  LoginWithExternalProviderResult?: LoginWithExternalProviderResultResolvers;
   SignupResult?: SignupResultResolvers;
-  SignupWithExternalProviderResult?: SignupWithExternalProviderResultResolvers;
   LoginResult?: LoginResultResolvers;
   TakenUsernameOrEmail?: TakenUsernameOrEmailResolvers<ContextType>;
   InvalidDataFormat?: InvalidDataFormatResolvers<ContextType>;
   SuccessfulSignup?: SuccessfulSignupResolvers<ContextType>;
   SuccessfulLogin?: SuccessfulLoginResolvers<ContextType>;
   InvalidCredentials?: InvalidCredentialsResolvers<ContextType>;
-  InvalidOrMissingUserIdentifier?: InvalidOrMissingUserIdentifierResolvers<
-    ContextType
-  >;
   InvalidOrExpiredToken?: InvalidOrExpiredTokenResolvers<ContextType>;
   PasswordsDontMatch?: PasswordsDontMatchResolvers<ContextType>;
   UserNotFound?: UserNotFoundResolvers<ContextType>;
   EmailMayHaveBeenSent?: EmailMayHaveBeenSentResolvers<ContextType>;
-  SkippedOAuthFlow?: SkippedOAuthFlowResolvers<ContextType>;
   NotInTestingEnvironment?: NotInTestingEnvironmentResolvers<ContextType>;
   SuccessfulRemoval?: SuccessfulRemovalResolvers<ContextType>;
   WantsSamePassword?: WantsSamePasswordResolvers<ContextType>;
