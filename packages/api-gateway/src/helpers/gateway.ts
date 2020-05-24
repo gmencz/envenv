@@ -16,7 +16,7 @@ export default function initGateway(app: Express): ApolloServer {
     subscriptions: false,
     engine: {
       apiKey: process.env.APOLLO_KEY,
-      schemaTag: process.env.APOLLO_GRAPH_VARIANT,
+      graphVariant: process.env.APOLLO_GRAPH_VARIANT,
     },
     context: ({ req, res }: GatewayContext): GatewayContext => ({ req, res }),
   });
