@@ -58,8 +58,6 @@ const signup: MutationResolvers['signup'] = async (
       maxAge: Number(process.env.SESSION_REDIS_EXPIRY!),
     });
 
-    await cacheUser(newUser);
-
     return {
       __typename: 'SuccessfulSignup',
       user: {

@@ -3,7 +3,7 @@ import { PrismaClient } from '@prisma/client';
 
 interface Auth {
   isAuthenticated: boolean;
-  userId: string | null;
+  userId: string;
 }
 
 export interface ApolloContext {

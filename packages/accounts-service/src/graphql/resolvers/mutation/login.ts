@@ -10,12 +10,12 @@ import {
 } from '../../generated';
 import createSession from '../../../helpers/createSession';
 import redisClient from '../../../helpers/redisClient';
-import { cacheUser } from '../../../helpers/cache/user';
+import getSession from '../../../helpers/getSession';
 
 const login: MutationResolvers['login'] = async (
   _,
   { username, password },
-  { prisma, res }
+  { prisma, res, req }
 ): Promise<LoginResult> => {
   try {
     await reach(createUserSchema, 'username').validate(username);
@@ -44,13 +44,30 @@ const login: MutationResolvers['login'] = async (
 
     const newSession = await createSession(user.id, redisClient);
 
+    if (req.cookies.SessionID) {
+      const pastSession = await getSession(req.cookies.SessionID, redisClient);
+
+      if (pastSession) {
+        await new Promise((res, rej) => {
+          redisClient.del(
+            `session_${pastSession.sessionId}`,
+            (err, response) => {
+              if (err) {
+                rej(err);
+              }
+
+              res(response);
+            }
+          );
+        });
+      }
+    }
+
     res.cookie('SessionID', newSession.sessionId, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       maxAge: Number(process.env.SESSION_REDIS_EXPIRY!),
     });
-
-    await cacheUser(user);
 
     return {
       __typename: 'SuccessfulLogin',
