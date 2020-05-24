@@ -1,9 +1,6 @@
 import { ApolloError } from 'apollo-server-express';
 import {
   QueryResolvers,
-  UserNotFound,
-  InvalidDataFormat,
-  User,
   UserResult,
   AccountProvider,
   UserRole,
@@ -52,7 +49,7 @@ const user: QueryResolvers['user'] = async (
       provider: user.provider as AccountProvider,
       password: user.password,
       role: user.role as UserRole,
-      lastPasswordChange: (user.lastPasswordChange as unknown) as string,
+      lastPasswordChange: user.lastPasswordChange,
       picture: user.picture,
     };
   } catch (error) {

@@ -1,5 +1,9 @@
 import { ApolloContext } from '../typings';
-import { GraphQLResolveInfo } from 'graphql';
+import {
+  GraphQLResolveInfo,
+  GraphQLScalarType,
+  GraphQLScalarTypeConfig,
+} from 'graphql';
 export type Maybe<T> = T | null;
 export type RequireFields<T, K extends keyof T> = {
   [X in Exclude<keyof T, K>]?: T[X];
@@ -13,6 +17,8 @@ export type Scalars = {
   Boolean: boolean;
   Int: number;
   Float: number;
+  Date: any;
+  DateTime: any;
   _FieldSet: any;
 };
 
@@ -221,7 +227,7 @@ export type User = {
   /** The role of the user. */
   role: UserRole;
   /** The date on which the user last changed their password. */
-  lastPasswordChange?: Maybe<Scalars['String']>;
+  lastPasswordChange?: Maybe<Scalars['Date']>;
 };
 
 /** The possible roles a user can have, represents what rights a user has. */
@@ -367,6 +373,8 @@ export type DirectiveResolverFn<
 export type ResolversTypes = {
   String: ResolverTypeWrapper<Scalars['String']>;
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
+  Date: ResolverTypeWrapper<Scalars['Date']>;
+  DateTime: ResolverTypeWrapper<Scalars['DateTime']>;
   ResetPasswordInput: ResetPasswordInput;
   CreateUserInput: CreateUserInput;
   Mutation: ResolverTypeWrapper<{}>;
@@ -418,6 +426,8 @@ export type ResolversTypes = {
 export type ResolversParentTypes = {
   String: Scalars['String'];
   Boolean: Scalars['Boolean'];
+  Date: Scalars['Date'];
+  DateTime: Scalars['DateTime'];
   ResetPasswordInput: ResetPasswordInput;
   CreateUserInput: CreateUserInput;
   Mutation: {};
@@ -464,6 +474,16 @@ export type ResolversParentTypes = {
   UserRole: UserRole;
   AccountProvider: AccountProvider;
 };
+
+export interface DateScalarConfig
+  extends GraphQLScalarTypeConfig<ResolversTypes['Date'], any> {
+  name: 'Date';
+}
+
+export interface DateTimeScalarConfig
+  extends GraphQLScalarTypeConfig<ResolversTypes['DateTime'], any> {
+  name: 'DateTime';
+}
 
 export type MutationResolvers<
   ContextType = ApolloContext,
@@ -702,7 +722,7 @@ export type UserResolvers<
   password?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   role?: Resolver<ResolversTypes['UserRole'], ParentType, ContextType>;
   lastPasswordChange?: Resolver<
-    Maybe<ResolversTypes['String']>,
+    Maybe<ResolversTypes['Date']>,
     ParentType,
     ContextType
   >;
@@ -710,6 +730,8 @@ export type UserResolvers<
 };
 
 export type Resolvers<ContextType = ApolloContext> = {
+  Date?: GraphQLScalarType;
+  DateTime?: GraphQLScalarType;
   Mutation?: MutationResolvers<ContextType>;
   DeleteAllUsersResult?: DeleteAllUsersResultResolvers;
   UserResult?: UserResultResolvers;

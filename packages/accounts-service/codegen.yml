@@ -10,3 +10,6 @@ generates:
     config:
       federation: true
       contextType: ApolloContext
+      scalars:
+        Date: Date
+        DateTime: Date

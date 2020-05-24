@@ -5,8 +5,6 @@ import { sign } from 'jsonwebtoken';
 import { createTransport } from 'nodemailer';
 import {
   QueryResolvers,
-  EmailMayHaveBeenSent,
-  InvalidDataFormat,
   RequestPasswordResetEmailResult,
 } from '../../generated';
 

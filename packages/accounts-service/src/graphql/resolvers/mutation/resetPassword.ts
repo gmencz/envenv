@@ -4,13 +4,7 @@ import { reach } from 'yup';
 import { createUserSchema } from '../../../validation/createUser';
 import { compare, hash } from 'bcryptjs';
 import { PrismaClient } from '@prisma/client';
-import {
-  ResetPasswordResult,
-  MutationResolvers,
-  InvalidOrExpiredToken,
-  WantsSamePassword,
-  InvalidDataFormat,
-} from '../../generated';
+import { ResetPasswordResult, MutationResolvers } from '../../generated';
 
 const updateUserPassword = async (
   prisma: PrismaClient,
@@ -50,7 +44,7 @@ const updateUserPassword = async (
     role: updatedUser.role as any,
     username: updatedUser.username,
     picture: updatedUser.picture,
-    lastPasswordChange: updatedUser.lastPasswordChange?.getTime().toString(),
+    lastPasswordChange: updatedUser.lastPasswordChange,
   };
 };
 
