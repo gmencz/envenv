@@ -1,9 +1,14 @@
 import { Request, Response } from 'express';
-import { PrismaClient, User } from '@prisma/client';
+import { PrismaClient } from '@prisma/client';
+
+interface Auth {
+  isAuthenticated: boolean;
+  userId: string | null;
+}
 
 export interface ApolloContext {
   req: Request;
   res: Response;
-  user: User | null;
   prisma: PrismaClient;
+  auth: Auth;
 }

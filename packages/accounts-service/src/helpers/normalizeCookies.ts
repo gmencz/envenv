@@ -10,7 +10,7 @@ export default function normalizeCookies(
   next: NextFunction
 ): void {
   try {
-    if (request.headers['x-forwarded-from-gateway']) {
+    if (request.headers['forwarded-from-gateway']) {
       if (!request.headers.cookie) return;
 
       request.cookies = JSON.parse(request.headers.cookie);

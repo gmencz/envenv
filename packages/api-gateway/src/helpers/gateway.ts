@@ -1,13 +1,13 @@
 import { Express } from 'express';
 import { ApolloGateway } from '@apollo/gateway';
-import GatewayDataSource from '../datasources/GatewayDataSource';
+import AuthenticatedDataSource from '../datasources/AuthenticatedDataSource';
 import { ApolloServer } from 'apollo-server-express';
 import { GatewayContext } from '../typings';
 
 export default function initGateway(app: Express): ApolloServer {
   const gateway = new ApolloGateway({
-    buildService({ url }): GatewayDataSource {
-      return new GatewayDataSource({ url });
+    buildService({ url }): AuthenticatedDataSource {
+      return new AuthenticatedDataSource({ url });
     },
   });
 
