@@ -1,15 +1,13 @@
 import { ApolloError } from 'apollo-server-express';
 import {
   QueryResolvers,
-  UserNotFound,
-  InvalidDataFormat,
-  User,
   UserResult,
   AccountProvider,
   UserRole,
 } from '../../generated';
 import { createUserSchema } from '../../../validation/createUser';
 import { reach } from 'yup';
+import { getCachedUser, cacheUser } from '../../../helpers/cache/user';
 
 const user: QueryResolvers['user'] = async (
   _,
@@ -23,6 +21,25 @@ const user: QueryResolvers['user'] = async (
 
     if (args.email) {
       await reach(createUserSchema, 'email').validate(args.email);
+    }
+
+    if (args.id) {
+      const cachedUser = await getCachedUser(args.id);
+
+      if (cachedUser) {
+        return {
+          __typename: 'User',
+          email: cachedUser.email,
+          id: cachedUser.id,
+          name: cachedUser.name,
+          username: cachedUser.username,
+          provider: cachedUser.provider as AccountProvider,
+          password: cachedUser.password,
+          role: cachedUser.role as UserRole,
+          lastPasswordChange: cachedUser.lastPasswordChange,
+          picture: cachedUser.picture,
+        };
+      }
     }
 
     const user = await prisma.user.findOne({
@@ -43,6 +60,8 @@ const user: QueryResolvers['user'] = async (
       };
     }
 
+    await cacheUser(user);
+
     return {
       __typename: 'User',
       email: user.email,
@@ -52,10 +71,11 @@ const user: QueryResolvers['user'] = async (
       provider: user.provider as AccountProvider,
       password: user.password,
       role: user.role as UserRole,
-      lastPasswordChange: (user.lastPasswordChange as unknown) as string,
+      lastPasswordChange: user.lastPasswordChange,
       picture: user.picture,
     };
   } catch (error) {
+    console.log(error);
     if (error.name === 'ValidationError') {
       return {
         __typename: 'InvalidDataFormat',

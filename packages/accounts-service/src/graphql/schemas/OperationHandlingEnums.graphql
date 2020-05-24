@@ -19,22 +19,8 @@ union ResetPasswordResult =
   | WantsSamePassword
   | InvalidDataFormat
 
-"Represents the result of an operation which logs in with an external provider like Google."
-union LoginWithExternalProviderResult =
-    SuccessfulLogin
-  | InvalidOrMissingUserIdentifier
-  | SkippedOAuthFlow
-
 "Represents the result of an operation which signs a user up."
 union SignupResult = SuccessfulSignup | InvalidDataFormat | TakenUsernameOrEmail
-
-"Represents the result of an operation which signs a user up via an external provider like Google."
-union SignupWithExternalProviderResult =
-    SuccessfulSignup
-  | InvalidDataFormat
-  | TakenUsernameOrEmail
-  | SkippedOAuthFlow
-  | InvalidOrExpiredToken
 
 "Represents the result of an operation which logs a user in."
 union LoginResult = SuccessfulLogin | InvalidDataFormat | InvalidCredentials

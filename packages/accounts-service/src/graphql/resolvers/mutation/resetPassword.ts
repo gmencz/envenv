@@ -4,13 +4,12 @@ import { reach } from 'yup';
 import { createUserSchema } from '../../../validation/createUser';
 import { compare, hash } from 'bcryptjs';
 import { PrismaClient } from '@prisma/client';
+import { ResetPasswordResult, MutationResolvers } from '../../generated';
 import {
-  ResetPasswordResult,
-  MutationResolvers,
-  InvalidOrExpiredToken,
-  WantsSamePassword,
-  InvalidDataFormat,
-} from '../../generated';
+  getCachedUser,
+  invalidateUser,
+  cacheUser,
+} from '../../../helpers/cache/user';
 
 const updateUserPassword = async (
   prisma: PrismaClient,
@@ -32,6 +31,8 @@ const updateUserPassword = async (
     };
   }
 
+  await invalidateUser(userId);
+
   const updatedUser = await prisma.user.update({
     where: { id: userId },
     data: {
@@ -39,6 +40,8 @@ const updateUserPassword = async (
       lastPasswordChange: new Date(),
     },
   });
+
+  await cacheUser(updatedUser);
 
   return {
     __typename: 'User',
@@ -50,7 +53,7 @@ const updateUserPassword = async (
     role: updatedUser.role as any,
     username: updatedUser.username,
     picture: updatedUser.picture,
-    lastPasswordChange: updatedUser.lastPasswordChange?.getTime().toString(),
+    lastPasswordChange: updatedUser.lastPasswordChange,
   };
 };
 
@@ -65,9 +68,13 @@ const resetPassword: MutationResolvers['resetPassword'] = async (
       process.env.PASSWORD_RESET_SECRET!
     ) as { userId: string; lastPasswordChange: Date | null };
 
-    const user = await prisma.user.findOne({
-      where: { id: decodedToken.userId },
-    });
+    let user = await getCachedUser(decodedToken.userId);
+
+    if (!user) {
+      user = await prisma.user.findOne({
+        where: { id: decodedToken.userId },
+      });
+    }
 
     if (!user) {
       return {

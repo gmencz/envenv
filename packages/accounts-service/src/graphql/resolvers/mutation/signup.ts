@@ -5,6 +5,7 @@ import redisClient from '../../../helpers/redisClient';
 import { hash } from 'bcryptjs';
 import addAtToUsername from '../../../helpers/addAtToUsername';
 import { MutationResolvers, SignupResult } from '../../generated';
+import { cacheUser } from '../../../helpers/cache/user';
 
 const signup: MutationResolvers['signup'] = async (
   _,
@@ -56,6 +57,8 @@ const signup: MutationResolvers['signup'] = async (
       secure: process.env.NODE_ENV === 'production',
       maxAge: Number(process.env.SESSION_REDIS_EXPIRY!),
     });
+
+    await cacheUser(newUser);
 
     return {
       __typename: 'SuccessfulSignup',

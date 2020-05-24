@@ -33,12 +33,6 @@ type InvalidCredentials {
   message: String!
 }
 
-"Represents the result of an operation in which the user identifer was invalid or missing."
-type InvalidOrMissingUserIdentifier {
-  "A detailed explanation of why the user identifier was invalid or missing."
-  message: String!
-}
-
 "Represents the result of an operation in which the provided token was invalid or expired."
 type InvalidOrExpiredToken {
   "A detailed explanation of why the token was invalid or expired."
@@ -60,12 +54,6 @@ type UserNotFound {
 "Represents the result of an operation in which the email may have been sent or not depending on the email's validity."
 type EmailMayHaveBeenSent {
   "A detailed explanation of why the email may or may not have been sent."
-  message: String!
-}
-
-"Represents the result of an operation in which the OAuth flow was skipped."
-type SkippedOAuthFlow {
-  "A detailed explanation of what happened."
   message: String!
 }
 

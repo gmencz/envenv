@@ -25,7 +25,7 @@ type User @key(fields: "id") {
   role: UserRole!
 
   "The date on which the user last changed their password."
-  lastPasswordChange: String
+  lastPasswordChange: DateTime
 }
 
 "The possible roles a user can have, represents what rights a user has."

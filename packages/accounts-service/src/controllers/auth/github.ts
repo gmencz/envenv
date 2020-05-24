@@ -2,9 +2,13 @@ import { Strategy as GithubStrategy, Profile } from 'passport-github2';
 import { Request, Response } from 'express';
 import getSession from '../../helpers/getSession';
 import redisClient from '../../helpers/redisClient';
-import request from 'graphql-request';
-import { UserResult } from '../../graphql/generated';
-import { sign } from 'jsonwebtoken';
+import { AccountProvider } from '../../graphql/generated';
+import { PrismaClient } from '@prisma/client';
+import createSession from '../../helpers/createSession';
+import { generate } from 'generate-password';
+import { hash } from 'bcryptjs';
+import addAtToUsername from '../../helpers/addAtToUsername';
+import { getCachedUser, cacheUser } from '../../helpers/cache/user';
 
 export const githubStrategy = new GithubStrategy(
   {
@@ -33,6 +37,7 @@ export const githubStrategy = new GithubStrategy(
   }
 );
 
+const prisma = new PrismaClient();
 export const callbackGithubAuth = async (
   req: Request,
   res: Response
@@ -42,14 +47,6 @@ export const callbackGithubAuth = async (
 
     if (!state) {
       // User is trying to find a vulnerability or something similar so stop the oauth flow.
-      if (req.cookies.TemporaryUserID) {
-        res.clearCookie('TemporaryUserID');
-      }
-
-      if (req.cookies.NewUserData) {
-        res.clearCookie('NewUserData');
-      }
-
       return res.redirect(
         process.env.NODE_ENV === 'production'
           ? 'https://envenv.com/auth/flow/error?reason=unknown'
@@ -64,14 +61,6 @@ export const callbackGithubAuth = async (
 
     if (!possibleOperations.some(op => op === operation)) {
       // User is trying to find a vulnerability or something similar so stop the oauth flow.
-      if (req.cookies.TemporaryUserID) {
-        res.clearCookie('TemporaryUserID');
-      }
-
-      if (req.cookies.NewUserData) {
-        res.clearCookie('NewUserData');
-      }
-
       return res.redirect(
         process.env.NODE_ENV === 'production'
           ? 'https://envenv.com/auth/flow/error?reason=unknown'
@@ -86,14 +75,6 @@ export const callbackGithubAuth = async (
       const session = await getSession(req.cookies.SessionID, redisClient);
 
       if (session) {
-        if (req.cookies.TemporaryUserID) {
-          res.clearCookie('TemporaryUserID');
-        }
-
-        if (req.cookies.NewUserData) {
-          res.clearCookie('NewUserData');
-        }
-
         return res.redirect(
           process.env.NODE_ENV === 'production'
             ? 'https://envenv.com/'
@@ -102,76 +83,54 @@ export const callbackGithubAuth = async (
       }
     }
 
-    const { id } = req.user as {
+    const { id, name, provider, picture, email, username } = req.user as {
       id: string;
+      name: string;
+      provider: string;
+      picture: string | null;
+      email: string | null;
+      username: string;
     };
 
-    const data = await request(
-      process.env.GRAPHQL_ENDPOINT!,
-      `
-      query GetUserById($id: String!) {
-        user(id: $id) {
-          __typename
-        }
-      } 
-    `,
-      {
-        id,
-      }
-    );
-
-    const { user: userResult } = data as {
-      user: Pick<UserResult, '__typename'>;
-    };
+    let user = await getCachedUser(id);
+    let comesFromCache = true;
+    if (!user) {
+      comesFromCache = false;
+      user = await prisma.user.findOne({ where: { id } });
+    }
 
     if (operation === 'login') {
       // Check if the user has an account or not
       // Yes? redirect to route where the login will be automated
       // No? redirect to route where the client will display an error of no acc with that github acc.
+      if (user) {
+        const newSession = await createSession(user.id, redisClient);
 
-      if (userResult.__typename === 'User') {
-        const encodedId = Buffer.from(id).toString('base64');
-
-        if (req.cookies.NewUserData) {
-          res.clearCookie('NewUserData');
-        }
-
-        res.cookie('TemporaryUserID', encodedId, {
+        res.cookie('SessionID', newSession.sessionId, {
           httpOnly: true,
           secure: process.env.NODE_ENV === 'production',
+          maxAge: Number(process.env.SESSION_REDIS_EXPIRY!),
         });
+
+        if (!comesFromCache) {
+          await cacheUser(user);
+        }
 
         // redirect to route on the client which will make a graphql
         // request to a mutation which will automate the login
         return res.redirect(
           process.env.NODE_ENV === 'production'
-            ? `https://envenv.com/auth/flow/lastStep?operation=login`
-            : `http://localhost:8080/auth/flow/lastStep?operation=login`
+            ? `https://envenv.com/auth/flow/success?csrfToken=${newSession.csrfToken}`
+            : `http://localhost:8080/auth/flow/success?csrfToken=${newSession.csrfToken}`
         );
       }
 
-      if (userResult.__typename === 'UserNotFound') {
-        if (req.cookies.TemporaryUserID) {
-          res.clearCookie('TemporaryUserID');
-        }
-
-        if (req.cookies.NewUserData) {
-          res.clearCookie('NewUserData');
-        }
-
+      if (!user) {
         return res.redirect(
           process.env.NODE_ENV === 'production'
             ? `https://envenv.com/auth/flow/error?reason=notRegistered`
             : `http://localhost:8080/auth/flow/error?reason=notRegistered`
         );
-      }
-
-      if (req.cookies.TemporaryUserID) {
-        res.clearCookie('TemporaryUserID');
-      }
-
-      if (req.cookies.NewUserData) {
-        res.clearCookie('NewUserData');
       }
 
       return res.redirect(
@@ -185,73 +144,61 @@ export const callbackGithubAuth = async (
       // Check if the user has an account or not
       // Yes? redirect to route where the login will be automated
       // No? redirect to route where the client will provide the username and finish signing up
-      if (userResult.__typename === 'User') {
-        const encodedId = Buffer.from(id).toString('base64');
+      if (user) {
+        const newSession = await createSession(user.id, redisClient);
 
-        if (req.cookies.NewUserData) {
-          res.clearCookie('NewUserData');
-        }
-
-        res.cookie('TemporaryUserID', encodedId, {
+        res.cookie('SessionID', newSession.sessionId, {
           httpOnly: true,
           secure: process.env.NODE_ENV === 'production',
+          maxAge: Number(process.env.SESSION_REDIS_EXPIRY!),
         });
 
+        if (!comesFromCache) {
+          await cacheUser(user);
+        }
         // redirect to route on the client which will make a graphql
         // request to a mutation which will automate the login
         return res.redirect(
           process.env.NODE_ENV === 'production'
-            ? `https://envenv.com/auth/flow/lastStep?operation=login`
-            : `http://localhost:8080/auth/flow/lastStep?operation=login`
+            ? `https://envenv.com/auth/flow/success?csrfToken=${newSession.csrfToken}`
+            : `http://localhost:8080/auth/flow/success?csrfToken=${newSession.csrfToken}`
         );
       }
 
-      if (userResult.__typename === 'UserNotFound') {
-        const signedNewUserData = await new Promise((resolve, reject) => {
-          sign(
-            { ...req.user },
-            process.env.SESSION_INFO_SECRET!,
-            {
-              expiresIn: '1y',
-            },
-            (error, data) => {
-              if (error) {
-                reject(error);
-              }
+      if (!user) {
+        const password = await hash(
+          generate({ length: 19, symbols: true, numbers: true }),
+          12
+        );
 
-              resolve(data);
-            }
-          );
+        const newUser = await prisma.user.create({
+          data: {
+            id,
+            name,
+            username: addAtToUsername(username),
+            email,
+            picture,
+            provider: provider as AccountProvider,
+            password,
+          },
         });
 
-        if (req.cookies.TemporaryUserID) {
-          res.clearCookie('TemporaryUserID');
-        }
+        const newSession = await createSession(newUser.id, redisClient);
 
-        res.cookie('NewUserData', signedNewUserData, {
+        res.cookie('SessionID', newSession.sessionId, {
           httpOnly: true,
           secure: process.env.NODE_ENV === 'production',
-          maxAge: 31557600000,
+          maxAge: Number(process.env.SESSION_REDIS_EXPIRY!),
         });
 
-        const { provider } = req.user as {
-          provider: string;
-        };
+        await cacheUser(newUser);
 
         return res.redirect(
           process.env.NODE_ENV === 'production'
-            ? `https://envenv.com/auth/flow/lastStep?operation=signup&provider=${provider?.toLowerCase()}`
-            : `http://localhost:8080/auth/flow/lastStep?operation=signup&provider=${provider?.toLowerCase()}`
+            ? `https://envenv.com/auth/flow/success?csrfToken=${newSession.csrfToken}`
+            : `http://localhost:8080/auth/flow/success?csrfToken=${newSession.csrfToken}`
         );
       }
-    }
-
-    if (req.cookies.TemporaryUserID) {
-      res.clearCookie('TemporaryUserID');
-    }
-
-    if (req.cookies.NewUserData) {
-      res.clearCookie('NewUserData');
     }
 
     return res.redirect(
@@ -260,18 +207,12 @@ export const callbackGithubAuth = async (
         : 'http://localhost:8080/auth/flow/error?reason=unknown'
     );
   } catch (error) {
-    if (req.cookies.TemporaryUserID) {
-      res.clearCookie('TemporaryUserID');
-    }
-
-    if (req.cookies.NewUserData) {
-      res.clearCookie('NewUserData');
-    }
-
     return res.redirect(
       process.env.NODE_ENV === 'production'
         ? 'https://envenv.com/auth/flow/error?reason=unknown'
         : 'http://localhost:8080/auth/flow/error?reason=unknown'
     );
+  } finally {
+    await prisma.disconnect();
   }
 };

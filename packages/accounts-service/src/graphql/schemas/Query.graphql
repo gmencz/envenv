@@ -7,13 +7,27 @@ extend type Query {
 
   "Look up an user by id, username or email."
   user(
-    "The id of the user."
+    """
+    The id of the user, this is the most effective query
+    because lazy-loading caching will be applied.
+    """
     id: String
 
-    "The username of the user."
+    """
+    The username of the user, only use this when querying
+    by id is not possible since lazy-loading cache only works when
+    using id query for now.
+    """
     username: String
 
-    "The email of the user."
+    """
+    The email of the user, only use this when querying
+    by id is not possible since lazy-loading cache only works when
+    using id query for now.
+    """
     email: String
   ): UserResult!
+
+  "Look up the currently logged in user."
+  me: User!
 }

@@ -6,12 +6,11 @@ import { compare } from 'bcryptjs';
 import {
   InvalidCredentials,
   MutationResolvers,
-  SuccessfulLogin,
-  InvalidDataFormat,
   LoginResult,
 } from '../../generated';
 import createSession from '../../../helpers/createSession';
 import redisClient from '../../../helpers/redisClient';
+import { cacheUser } from '../../../helpers/cache/user';
 
 const login: MutationResolvers['login'] = async (
   _,
@@ -51,6 +50,8 @@ const login: MutationResolvers['login'] = async (
       maxAge: Number(process.env.SESSION_REDIS_EXPIRY!),
     });
 
+    await cacheUser(user);
+
     return {
       __typename: 'SuccessfulLogin',
       user: {
@@ -61,6 +62,7 @@ const login: MutationResolvers['login'] = async (
         provider: user.provider as any,
         role: user.role as any,
         username: user.username,
+        lastPasswordChange: user.lastPasswordChange,
       },
       csrfToken: newSession.csrfToken,
     };
