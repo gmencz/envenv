@@ -5,11 +5,6 @@ import { verify } from 'jsonwebtoken';
 import {
   User,
   MutationResolvers,
-  SkippedOAuthFlow,
-  TakenUsernameOrEmail,
-  SuccessfulSignup,
-  InvalidDataFormat,
-  InvalidOrExpiredToken,
   SignupWithExternalProviderResult,
 } from '../../generated';
 import { generate } from 'generate-password';
@@ -19,14 +14,12 @@ import createSession from '../../../helpers/createSession';
 import redisClient from '../../../helpers/redisClient';
 import { AccountProvider } from '@prisma/client';
 
-const signupWithExternalProvider: MutationResolvers['signupWithExternalProvider'] = async (
+const signupWithGithub: MutationResolvers['signupWithGithub'] = async (
   _,
-  { username },
+  __,
   { prisma, req, res }
 ): Promise<SignupWithExternalProviderResult> => {
   try {
-    await reach(createUserSchema, 'username').validate(username);
-
     if (!req.cookies.NewUserData) {
       return {
         __typename: 'SkippedOAuthFlow',
@@ -51,9 +44,16 @@ const signupWithExternalProvider: MutationResolvers['signupWithExternalProvider'
       );
     });
 
-    const { picture, provider, name, id, email } = decodedUserData as Pick<
+    const {
+      picture,
+      provider,
+      name,
+      id,
+      email,
+      username,
+    } = decodedUserData as Pick<
       User,
-      'picture' | 'provider' | 'name' | 'id' | 'email'
+      'picture' | 'provider' | 'name' | 'id' | 'email' | 'username'
     >;
 
     const isUsernameTaken = await prisma.user.findOne({
@@ -102,8 +102,8 @@ const signupWithExternalProvider: MutationResolvers['signupWithExternalProvider'
         id: newUser.id,
         name: newUser.name,
         password: newUser.password,
-        provider: newUser.provider as any,
-        role: newUser.role as any,
+        provider: newUser.provider,
+        role: newUser.role,
         username: newUser.username,
       },
       csrfToken: newSession.csrfToken,
@@ -115,7 +115,7 @@ const signupWithExternalProvider: MutationResolvers['signupWithExternalProvider'
         message: error.message,
       };
     }
-
+    console.log(error);
     if (
       error.name === 'TokenExpiredError' ||
       error.name === 'JsonWebTokenError' ||
@@ -137,4 +137,4 @@ const signupWithExternalProvider: MutationResolvers['signupWithExternalProvider'
   }
 };
 
-export default signupWithExternalProvider;
+export default signupWithGithub;

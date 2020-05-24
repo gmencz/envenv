@@ -44,8 +44,8 @@ export type Mutation = {
   __typename?: 'Mutation';
   /** Signs user up. */
   signup: SignupResult;
-  /** Signs user up. Use this after going through the OAuth flow. */
-  signupWithExternalProvider: SignupWithExternalProviderResult;
+  /** Signs user up. Use this after going through Github's OAuth flow. */
+  signupWithGithub: SignupWithExternalProviderResult;
   /** Logs user in. */
   login: LoginResult;
   /** Logs user in. Use this after going through the OAuth flow. */
@@ -58,10 +58,6 @@ export type Mutation = {
 
 export type MutationSignupArgs = {
   data: CreateUserInput;
-};
-
-export type MutationSignupWithExternalProviderArgs = {
-  username: Scalars['String'];
 };
 
 export type MutationLoginArgs = {
@@ -249,7 +245,7 @@ export type User = {
   /** The username of the user. */
   username: Scalars['String'];
   /** The email of the user. */
-  email: Scalars['String'];
+  email?: Maybe<Scalars['String']>;
   /** The name of the user. */
   name: Scalars['String'];
   /** The encrypted password of the user. */
@@ -281,8 +277,8 @@ export enum UserRole {
 
 /** The possible providers of a user's account. */
 export enum AccountProvider {
-  /** The user provided their account details via google. */
-  Google = 'GOOGLE',
+  /** The user provided their account details via github. */
+  Github = 'GITHUB',
   /** The user provided their own account details to use exclusively on Envenv. */
   None = 'NONE',
 }
@@ -537,11 +533,10 @@ export type MutationResolvers<
     ContextType,
     RequireFields<MutationSignupArgs, 'data'>
   >;
-  signupWithExternalProvider?: Resolver<
+  signupWithGithub?: Resolver<
     ResolversTypes['SignupWithExternalProviderResult'],
     ParentType,
-    ContextType,
-    RequireFields<MutationSignupWithExternalProviderArgs, 'username'>
+    ContextType
   >;
   login?: Resolver<
     ResolversTypes['LoginResult'],
@@ -812,7 +807,7 @@ export type UserResolvers<
     ContextType
   >;
   username?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  email?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  email?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   password?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   role?: Resolver<ResolversTypes['UserRole'], ParentType, ContextType>;
