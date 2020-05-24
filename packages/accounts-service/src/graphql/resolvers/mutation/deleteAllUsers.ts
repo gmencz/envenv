@@ -1,5 +1,8 @@
 import { ApolloError } from 'apollo-server-express';
 import { MutationResolvers, DeleteAllUsersResult } from '../../generated';
+import redisClient from '../../../helpers/redisClient';
+import { promisify } from 'util';
+import { invalidateUser } from '../../../helpers/cachedUserOperations';
 
 const deleteAllUsers: MutationResolvers['deleteAllUsers'] = async (
   _,
@@ -13,6 +16,14 @@ const deleteAllUsers: MutationResolvers['deleteAllUsers'] = async (
         message:
           "Can't execute this operation, this is only available for testing purposes like cleaning up before tests.",
       };
+    }
+
+    // eslint-disable-next-line @typescript-eslint/unbound-method
+    const findAllCachedUsers = promisify(redisClient.keys).bind(redisClient);
+    const cachedUsers = await findAllCachedUsers('user_*');
+
+    for await (const key of cachedUsers) {
+      await invalidateUser(key.split('_')[1]);
     }
 
     const deleteOperation = await prisma.user.deleteMany({});

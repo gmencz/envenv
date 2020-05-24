@@ -5,6 +5,11 @@ import { createUserSchema } from '../../../validation/createUser';
 import { compare, hash } from 'bcryptjs';
 import { PrismaClient } from '@prisma/client';
 import { ResetPasswordResult, MutationResolvers } from '../../generated';
+import {
+  getCachedUser,
+  invalidateUser,
+  cacheUser,
+} from '../../../helpers/cachedUserOperations';
 
 const updateUserPassword = async (
   prisma: PrismaClient,
@@ -26,6 +31,8 @@ const updateUserPassword = async (
     };
   }
 
+  await invalidateUser(userId);
+
   const updatedUser = await prisma.user.update({
     where: { id: userId },
     data: {
@@ -33,6 +40,8 @@ const updateUserPassword = async (
       lastPasswordChange: new Date(),
     },
   });
+
+  await cacheUser(updatedUser);
 
   return {
     __typename: 'User',
@@ -59,9 +68,13 @@ const resetPassword: MutationResolvers['resetPassword'] = async (
       process.env.PASSWORD_RESET_SECRET!
     ) as { userId: string; lastPasswordChange: Date | null };
 
-    const user = await prisma.user.findOne({
-      where: { id: decodedToken.userId },
-    });
+    let user = await getCachedUser(decodedToken.userId);
+
+    if (!user) {
+      user = await prisma.user.findOne({
+        where: { id: decodedToken.userId },
+      });
+    }
 
     if (!user) {
       return {

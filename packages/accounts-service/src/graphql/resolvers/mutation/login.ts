@@ -10,6 +10,7 @@ import {
 } from '../../generated';
 import createSession from '../../../helpers/createSession';
 import redisClient from '../../../helpers/redisClient';
+import { cacheUser } from '../../../helpers/cachedUserOperations';
 
 const login: MutationResolvers['login'] = async (
   _,
@@ -48,6 +49,8 @@ const login: MutationResolvers['login'] = async (
       secure: process.env.NODE_ENV === 'production',
       maxAge: Number(process.env.SESSION_REDIS_EXPIRY!),
     });
+
+    await cacheUser(user);
 
     return {
       __typename: 'SuccessfulLogin',
