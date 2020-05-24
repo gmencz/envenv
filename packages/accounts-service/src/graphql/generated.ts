@@ -17,8 +17,8 @@ export type Scalars = {
   Boolean: boolean;
   Int: number;
   Float: number;
-  Date: any;
-  DateTime: any;
+  Date: Date;
+  DateTime: Date;
   _FieldSet: any;
 };
 

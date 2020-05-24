@@ -1,5 +1,4 @@
 import { generate as generateUniqueId } from 'shortid';
-import { sign } from 'jsonwebtoken';
 import { ApolloError } from 'apollo-server-express';
 import { RedisClient } from 'redis';
 
@@ -11,7 +10,6 @@ interface CreateSessionReturnType {
 export default async function createSession(
   userId: string | number,
   preferedRedisClient: RedisClient,
-  sessionSecret: string = process.env.SESSION_INFO_SECRET!,
   sessionExpiryTime: string | number = process.env.SESSION_REDIS_EXPIRY!
 ): Promise<CreateSessionReturnType> {
   try {
@@ -21,29 +19,25 @@ export default async function createSession(
       userId,
     };
 
-    const signedSessionInfo = await new Promise((resolve, reject) => {
-      sign(
-        { ...sessionInfo },
-        sessionSecret,
-        {
-          expiresIn: Number(sessionExpiryTime),
-        },
-        (error, jwt) => {
-          if (error) {
-            reject(error);
+    const signedSessionInfo = Buffer.from(
+      JSON.stringify({ ...sessionInfo })
+    ).toString('base64');
+
+    await new Promise((res, rej) => {
+      preferedRedisClient.set(
+        `session_${sessionInfo.sessionId}`,
+        signedSessionInfo,
+        'EX',
+        Number(sessionExpiryTime),
+        (err, response) => {
+          if (err) {
+            rej(err);
           }
 
-          resolve(jwt);
+          res(response);
         }
       );
     });
-
-    preferedRedisClient.set(
-      `session_${sessionInfo.sessionId}`,
-      signedSessionInfo as string,
-      'EX',
-      Number(sessionExpiryTime)
-    );
 
     return {
       csrfToken: sessionInfo.csrfToken,

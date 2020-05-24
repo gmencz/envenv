@@ -1,4 +1,3 @@
-import { verify } from 'jsonwebtoken';
 import { RedisClient } from 'redis';
 
 export interface RedisSession {
@@ -9,8 +8,7 @@ export interface RedisSession {
 
 export default async function getSession(
   sessionId: string,
-  preferedRedisClient: RedisClient,
-  sessionSecret: string = process.env.SESSION_INFO_SECRET as string
+  preferedRedisClient: RedisClient
 ): Promise<RedisSession | null> {
   try {
     const redisResponse = await new Promise((resolve, reject) => {
@@ -29,15 +27,9 @@ export default async function getSession(
 
     const sessionEncoded = redisResponse as string;
 
-    const sessionInfo = await new Promise((resolve, reject) => {
-      verify(sessionEncoded, sessionSecret, (error, sessionInfo) => {
-        if (error) {
-          reject(error);
-        }
-
-        resolve(sessionInfo);
-      });
-    });
+    const sessionInfo = JSON.parse(
+      Buffer.from(sessionEncoded, 'base64').toString()
+    );
 
     return sessionInfo as RedisSession;
   } catch (error) {

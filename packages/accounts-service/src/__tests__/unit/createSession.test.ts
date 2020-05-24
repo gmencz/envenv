@@ -20,23 +20,13 @@ describe('createSession', () => {
 
   it('creates a valid and secure session', async () => {
     const mockUserId = generate();
-    const mockSessionSecret = generate();
-    const session = await createSession(
-      mockUserId,
-      mockRedisClient,
-      mockSessionSecret,
-      259200
-    );
+    const session = await createSession(mockUserId, mockRedisClient, 259200);
 
     expect(isValid(session.csrfToken)).toBeTruthy();
     expect(isValid(session.sessionId)).toBeTruthy();
     sessionIds.push(session.sessionId);
 
-    const prevSession = await getSession(
-      session.sessionId,
-      mockRedisClient,
-      mockSessionSecret
-    );
+    const prevSession = await getSession(session.sessionId, mockRedisClient);
 
     expect(isValid(prevSession?.csrfToken)).toBeTruthy();
     expect(isValid(prevSession?.sessionId)).toBeTruthy();
@@ -45,20 +35,10 @@ describe('createSession', () => {
 
   it('expires session after specified time', async () => {
     const mockUserId = generate();
-    const mockSessionSecret = generate();
 
-    const session = await createSession(
-      mockUserId,
-      mockRedisClient,
-      mockSessionSecret,
-      -1
-    );
+    const session = await createSession(mockUserId, mockRedisClient, -1);
 
-    const prevSession = await getSession(
-      session.sessionId,
-      mockRedisClient,
-      mockSessionSecret
-    );
+    const prevSession = await getSession(session.sessionId, mockRedisClient);
 
     expect(prevSession).toBeNull();
   });

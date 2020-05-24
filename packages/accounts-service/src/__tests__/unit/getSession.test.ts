@@ -20,20 +20,13 @@ describe('getSession', () => {
 
   it('returns a session if valid', async () => {
     const mockUserId = generate();
-    const mockSessionSecret = generate();
-    const newSession = await createSession(
-      mockUserId,
-      mockRedisClient,
-      mockSessionSecret,
-      1000
-    );
+    const newSession = await createSession(mockUserId, mockRedisClient, 1000);
 
     sessionIds.push(newSession.sessionId);
 
     const retrievedSession = await getSession(
       newSession.sessionId,
-      mockRedisClient,
-      mockSessionSecret
+      mockRedisClient
     );
 
     expect(retrievedSession).toBeTruthy();
@@ -41,18 +34,11 @@ describe('getSession', () => {
 
   it(`returns null if session doesn't exist or has expired`, async () => {
     const mockUserId = generate();
-    const mockSessionSecret = generate();
-    const newSession = await createSession(
-      mockUserId,
-      mockRedisClient,
-      mockSessionSecret,
-      -1
-    );
+    const newSession = await createSession(mockUserId, mockRedisClient, -1);
 
     const retrievedSession = await getSession(
       newSession.sessionId,
-      mockRedisClient,
-      mockSessionSecret
+      mockRedisClient
     );
 
     expect(retrievedSession).toBeNull();
