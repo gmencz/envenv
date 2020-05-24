@@ -6,8 +6,6 @@ import { compare } from 'bcryptjs';
 import {
   InvalidCredentials,
   MutationResolvers,
-  SuccessfulLogin,
-  InvalidDataFormat,
   LoginResult,
 } from '../../generated';
 import createSession from '../../../helpers/createSession';
@@ -61,6 +59,7 @@ const login: MutationResolvers['login'] = async (
         provider: user.provider as any,
         role: user.role as any,
         username: user.username,
+        lastPasswordChange: user.lastPasswordChange,
       },
       csrfToken: newSession.csrfToken,
     };

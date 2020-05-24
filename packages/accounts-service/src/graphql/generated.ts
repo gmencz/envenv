@@ -227,7 +227,7 @@ export type User = {
   /** The role of the user. */
   role: UserRole;
   /** The date on which the user last changed their password. */
-  lastPasswordChange?: Maybe<Scalars['Date']>;
+  lastPasswordChange?: Maybe<Scalars['DateTime']>;
 };
 
 /** The possible roles a user can have, represents what rights a user has. */
@@ -722,7 +722,7 @@ export type UserResolvers<
   password?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   role?: Resolver<ResolversTypes['UserRole'], ParentType, ContextType>;
   lastPasswordChange?: Resolver<
-    Maybe<ResolversTypes['Date']>,
+    Maybe<ResolversTypes['DateTime']>,
     ParentType,
     ContextType
   >;
