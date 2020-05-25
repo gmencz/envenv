@@ -1,4 +1,4 @@
-import { RedisClient } from 'redis';
+import { Redis } from 'ioredis';
 
 export interface RedisSession {
   sessionId: string;
@@ -9,27 +9,17 @@ export interface RedisSession {
 
 export default async function getSession(
   sessionId: string,
-  preferedRedisClient: RedisClient
+  preferedRedisClient: Redis
 ): Promise<RedisSession | null> {
   try {
-    const redisResponse = await new Promise((resolve, reject) => {
-      preferedRedisClient.get(`session_${sessionId}`, (error, data) => {
-        if (error) {
-          reject(error);
-        }
-
-        resolve(data);
-      });
-    });
+    const redisResponse = await preferedRedisClient.get(`session_${sessionId}`);
 
     if (!redisResponse) {
       return null;
     }
 
-    const sessionEncoded = redisResponse as string;
-
     const sessionInfo = JSON.parse(
-      Buffer.from(sessionEncoded, 'base64').toString()
+      Buffer.from(redisResponse, 'base64').toString()
     );
 
     return sessionInfo as RedisSession;

@@ -13,7 +13,7 @@ const isAuthenticated = rule({ cache: 'contextual' })(
   }
 );
 
-const hasRoles = (...roles: string[]): Rule =>
+const hasRole = (...roles: string[]): Rule =>
   rule({ cache: 'contextual' })((_, __, { auth }: ApolloContext) => {
     if (!roles.includes(auth.user.role)) {
       return new ForbiddenError(`You don't have access to this resource!`);
@@ -25,7 +25,7 @@ const hasRoles = (...roles: string[]): Rule =>
 const permissions = shield({
   Query: {
     me: isAuthenticated,
-    user: and(isAuthenticated, hasRoles('ADMIN')),
+    user: and(isAuthenticated, hasRole('USER')),
   },
 });
 

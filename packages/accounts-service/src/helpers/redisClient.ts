@@ -1,6 +1,6 @@
-import { createClient } from 'redis';
+import Redis from 'ioredis';
 
-const redisClient = createClient({
+const redisClient = new Redis({
   host: process.env.REDIS_HOST,
 });
 
