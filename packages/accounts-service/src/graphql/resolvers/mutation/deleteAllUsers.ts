@@ -1,8 +1,7 @@
 import { ApolloError } from 'apollo-server-express';
 import { MutationResolvers, DeleteAllUsersResult } from '../../generated';
 import redisClient from '../../../helpers/redisClient';
-import { promisify } from 'util';
-import { invalidateUser } from '../../../helpers/cache/user';
+import { evictCachedUser } from '../../../helpers/cache/user';
 
 const deleteAllUsers: MutationResolvers['deleteAllUsers'] = async (
   _,
@@ -18,12 +17,10 @@ const deleteAllUsers: MutationResolvers['deleteAllUsers'] = async (
       };
     }
 
-    // eslint-disable-next-line @typescript-eslint/unbound-method
-    const findAllCachedUsers = promisify(redisClient.keys).bind(redisClient);
-    const cachedUsers = await findAllCachedUsers('user_*');
+    const cachedUsers = await redisClient.keys('user_*');
 
     for await (const key of cachedUsers) {
-      await invalidateUser(key.split('_')[1]);
+      await evictCachedUser(key.split('_')[1]);
     }
 
     const deleteOperation = await prisma.user.deleteMany({});

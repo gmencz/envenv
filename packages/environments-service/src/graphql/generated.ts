@@ -88,12 +88,6 @@ export type MutationCreateEnvironmentArgs = {
   data: CreateEnvironmentInput;
 };
 
-export type Query = {
-  __typename?: 'Query';
-  /** Looks up all environments. */
-  getEnvironments?: Maybe<Array<Maybe<Environment>>>;
-};
-
 export type ResolverTypeWrapper<T> = Promise<T> | T;
 
 export type ReferenceResolver<TResult, TReference, TContext> = (
@@ -217,7 +211,6 @@ export type ResolversTypes = {
   User: ResolverTypeWrapper<User>;
   CreateEnvironmentInput: CreateEnvironmentInput;
   Mutation: ResolverTypeWrapper<{}>;
-  Query: ResolverTypeWrapper<{}>;
 };
 
 /** Mapping between all available schema types and the resolvers parents */
@@ -231,7 +224,6 @@ export type ResolversParentTypes = {
   User: User;
   CreateEnvironmentInput: CreateEnvironmentInput;
   Mutation: {};
-  Query: {};
 };
 
 export type EnvironmentResolvers<
@@ -303,23 +295,11 @@ export type MutationResolvers<
   >;
 };
 
-export type QueryResolvers<
-  ContextType = ApolloContext,
-  ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']
-> = {
-  getEnvironments?: Resolver<
-    Maybe<Array<Maybe<ResolversTypes['Environment']>>>,
-    ParentType,
-    ContextType
-  >;
-};
-
 export type Resolvers<ContextType = ApolloContext> = {
   Environment?: EnvironmentResolvers<ContextType>;
   EnvironmentMember?: EnvironmentMemberResolvers<ContextType>;
   User?: UserResolvers<ContextType>;
   Mutation?: MutationResolvers<ContextType>;
-  Query?: QueryResolvers<ContextType>;
 };
 
 /**

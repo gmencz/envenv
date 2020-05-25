@@ -12,10 +12,9 @@ import { getCachedUser, cacheUser } from '../../../helpers/cache/user';
 const user: QueryResolvers['user'] = async (
   _,
   args,
-  { prisma, auth }
+  { prisma }
 ): Promise<UserResult> => {
   try {
-    console.log(auth);
     if (args.username) {
       await reach(createUserSchema, 'username').validate(args.username);
     }
@@ -42,7 +41,7 @@ const user: QueryResolvers['user'] = async (
         };
       }
     }
-
+    console.log('hey');
     const user = await prisma.user.findOne({
       where: {
         ...args,

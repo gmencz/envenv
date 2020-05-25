@@ -1,6 +1,6 @@
 import { QueryResolvers, User } from '../../generated';
 import { ApolloError } from 'apollo-server-express';
-import { getCachedUser } from '../../../helpers/cache/user';
+import { getCachedUser, cacheUser } from '../../../helpers/cache/user';
 
 const me: QueryResolvers['me'] = async (_, __, { auth, prisma }) => {
   try {
@@ -22,6 +22,7 @@ const me: QueryResolvers['me'] = async (_, __, { auth, prisma }) => {
     }
 
     user = await prisma.user.findOne({ where: { id: auth.user.id } });
+    if (user) cacheUser(user);
 
     return {
       __typename: 'User',

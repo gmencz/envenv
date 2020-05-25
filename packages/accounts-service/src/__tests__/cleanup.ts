@@ -1,5 +1,5 @@
 import redisClient from '../helpers/redisClient';
 
-afterAll(() => {
-  redisClient.quit();
+afterAll(async () => {
+  await redisClient.quit();
 });

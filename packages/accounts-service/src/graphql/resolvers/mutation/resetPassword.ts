@@ -7,8 +7,8 @@ import { PrismaClient } from '@prisma/client';
 import { ResetPasswordResult, MutationResolvers } from '../../generated';
 import {
   getCachedUser,
-  invalidateUser,
   cacheUser,
+  evictCachedUser,
 } from '../../../helpers/cache/user';
 
 const updateUserPassword = async (
@@ -31,7 +31,7 @@ const updateUserPassword = async (
     };
   }
 
-  await invalidateUser(userId);
+  await evictCachedUser(userId);
 
   const updatedUser = await prisma.user.update({
     where: { id: userId },

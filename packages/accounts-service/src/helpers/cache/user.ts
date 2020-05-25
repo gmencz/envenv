@@ -1,11 +1,9 @@
-import { promisify } from 'util';
 import { User } from '@prisma/client';
 import redisClient from '../redisClient';
+import generateRandomJitter from './generateRandomJitter';
 
 export const getCachedUser = async (userId: string): Promise<User | null> => {
-  // eslint-disable-next-line @typescript-eslint/unbound-method
-  const getKey = promisify(redisClient.get).bind(redisClient);
-  const cachedEncodedUser = await getKey(`user_${userId}`);
+  const cachedEncodedUser = await redisClient.get(`user_${userId}`);
 
   if (!cachedEncodedUser) {
     return null;
@@ -21,31 +19,15 @@ export const getCachedUser = async (userId: string): Promise<User | null> => {
 export const cacheUser = async (user: User): Promise<void> => {
   const encodedUser = Buffer.from(JSON.stringify(user)).toString('base64');
 
-  await new Promise((resolve, reject) => {
-    redisClient.set(
-      `user_${user.id}`,
-      encodedUser,
-      'EX',
-      3600000,
-      (error, response) => {
-        if (error) {
-          reject(error);
-        }
-
-        resolve(response);
-      }
-    );
-  });
+  // Keep in mind EXPIRE key is seconds and not ms.
+  await redisClient.set(
+    `user_${user.id}`,
+    encodedUser,
+    'EX',
+    604800 + generateRandomJitter(300, 900)
+  );
 };
 
-export const invalidateUser = async (userId: string): Promise<void> => {
-  await new Promise((resolve, reject) => {
-    redisClient.del(`user_${userId}`, (error, response) => {
-      if (error) {
-        reject(error);
-      }
-
-      resolve(response);
-    });
-  });
+export const evictCachedUser = async (userId: string): Promise<void> => {
+  await redisClient.del(`${userId}`);
 };

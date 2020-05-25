@@ -1,6 +1,6 @@
 import { generate as generateUniqueId } from 'shortid';
 import { ApolloError } from 'apollo-server-express';
-import { RedisClient } from 'redis';
+import { Redis } from 'ioredis';
 import { PrismaClient } from '@prisma/client';
 
 interface CreateSessionReturnType {
@@ -10,7 +10,7 @@ interface CreateSessionReturnType {
 
 export default async function createSession(
   userId: string | number,
-  preferedRedisClient: RedisClient,
+  preferedRedisClient: Redis,
   sessionExpiryTime: string | number = process.env.SESSION_REDIS_EXPIRY!
 ): Promise<CreateSessionReturnType> {
   try {
@@ -31,21 +31,12 @@ export default async function createSession(
       JSON.stringify({ ...sessionInfo })
     ).toString('base64');
 
-    await new Promise((res, rej) => {
-      preferedRedisClient.set(
-        `session_${sessionInfo.sessionId}`,
-        signedSessionInfo,
-        'EX',
-        Number(sessionExpiryTime),
-        (err, response) => {
-          if (err) {
-            rej(err);
-          }
-
-          res(response);
-        }
-      );
-    });
+    await preferedRedisClient.set(
+      `session_${sessionInfo.sessionId}`,
+      signedSessionInfo,
+      'EX',
+      Number(sessionExpiryTime)
+    );
 
     return {
       csrfToken: sessionInfo.csrfToken,
