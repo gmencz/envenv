@@ -13,10 +13,10 @@ export default function initExpress(): Express {
   // so we need to lock it down if the client
   // is not authenticated
   app.use((req, res, next) => {
-    const isAuthenticated = req.headers['user-id'];
+    const isAuthenticated = !!req.headers['user'];
 
     if (!isAuthenticated) {
-      return res.status(401).json({ error: 'UNAUTHENTICATED' });
+      return res.status(401).json({ error: 'Unauthorized' });
     }
 
     return next();

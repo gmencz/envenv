@@ -12,9 +12,10 @@ import { getCachedUser, cacheUser } from '../../../helpers/cache/user';
 const user: QueryResolvers['user'] = async (
   _,
   args,
-  { prisma }
+  { prisma, auth }
 ): Promise<UserResult> => {
   try {
+    console.log(auth);
     if (args.username) {
       await reach(createUserSchema, 'username').validate(args.username);
     }

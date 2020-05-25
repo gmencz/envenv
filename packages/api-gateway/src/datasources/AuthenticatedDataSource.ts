@@ -17,19 +17,26 @@ export default class AuthenticatedDataSource extends RemoteGraphQLDataSource {
     if (context && context.req && context.req.cookies) {
       // Perform authentication here
       if (context.req.cookies.SessionID) {
-        const session = await getSession('fru_qQXKfUoY7v3KChy', redisClient);
+        const session = await getSession(
+          context.req.cookies.SessionID,
+          redisClient
+        );
 
         if (
           session &&
           session.csrfToken === context.req.headers['csrf-token']
         ) {
-          request.http.headers.set('user-id', session.userId);
+          request.http.headers.set(
+            'user',
+            JSON.stringify({ id: session.userId, role: session.userRole })
+          );
         }
       }
 
-      request.http.headers.set('forwarded-from-gateway', 'true');
       request.http.headers.set('Cookie', JSON.stringify(context.req.cookies));
     }
+
+    request.http.headers.set('forwarded-from-gateway', 'true');
   }
 
   // The context here is also the gateway's
