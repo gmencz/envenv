@@ -8,6 +8,7 @@ const isAuthenticated = rule()((_, __, { auth }: ApolloContext) => {
 const permissions = shield({
   Query: {
     me: isAuthenticated,
+    user: isAuthenticated,
   },
 });
 

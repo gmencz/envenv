@@ -12,6 +12,4 @@ const resolvers: Resolvers = {
   User: UserResolvers,
 };
 
-export const;
-
 export default resolvers;

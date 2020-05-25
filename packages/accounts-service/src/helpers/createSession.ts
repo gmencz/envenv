@@ -1,6 +1,7 @@
 import { generate as generateUniqueId } from 'shortid';
 import { ApolloError } from 'apollo-server-express';
 import { RedisClient } from 'redis';
+import { PrismaClient } from '@prisma/client';
 
 interface CreateSessionReturnType {
   csrfToken: string;
@@ -13,10 +14,17 @@ export default async function createSession(
   sessionExpiryTime: string | number = process.env.SESSION_REDIS_EXPIRY!
 ): Promise<CreateSessionReturnType> {
   try {
+    const prisma = new PrismaClient();
+    const user = await prisma.user.findOne({
+      where: { id: userId.toString() },
+      select: { role: true, id: true },
+    });
+
     const sessionInfo = {
       sessionId: `${generateUniqueId()}${generateUniqueId()}`,
       csrfToken: `${generateUniqueId()}${generateUniqueId()}`,
-      userId,
+      userId: user?.id,
+      userRole: user?.role,
     };
 
     const signedSessionInfo = Buffer.from(

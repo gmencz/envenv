@@ -4,6 +4,7 @@ export interface RedisSession {
   sessionId: string;
   csrfToken: string;
   userId: string;
+  userRole: string;
 }
 
 export default async function getSession(
