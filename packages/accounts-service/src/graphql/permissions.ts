@@ -1,10 +1,14 @@
 import { rule, shield, and } from 'graphql-shield';
 import { ApolloContext } from '../typings';
 import { Rule } from 'graphql-shield/dist/rules';
-import { ForbiddenError } from 'apollo-server-express';
+import { ForbiddenError, AuthenticationError } from 'apollo-server-express';
 
 const isAuthenticated = rule({ cache: 'contextual' })(
   (_, __, { auth }: ApolloContext) => {
+    if (!auth.isAuthenticated || !auth.user) {
+      return new AuthenticationError('Unauthorized');
+    }
+
     return auth.isAuthenticated;
   }
 );

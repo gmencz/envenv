@@ -33,9 +33,10 @@ export default class AuthenticatedDataSource extends RemoteGraphQLDataSource {
         }
       }
 
-      request.http.headers.set('forwarded-from-gateway', 'true');
       request.http.headers.set('Cookie', JSON.stringify(context.req.cookies));
     }
+
+    request.http.headers.set('forwarded-from-gateway', 'true');
   }
 
   // The context here is also the gateway's

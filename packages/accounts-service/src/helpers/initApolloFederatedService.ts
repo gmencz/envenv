@@ -18,16 +18,14 @@ export default async function initApolloFederatedService(
   );
   const mergedSchemaTypeDefs = mergeTypeDefs(spreadServiceSchemas);
 
+  const schema = buildFederatedSchema([
+    {
+      typeDefs: mergedSchemaTypeDefs,
+      resolvers: resolvers as any,
+    },
+  ]);
   const server = new ApolloServer({
-    schema: applyMiddleware(
-      buildFederatedSchema([
-        {
-          typeDefs: mergedSchemaTypeDefs,
-          resolvers: resolvers as any,
-        },
-      ]),
-      permissions
-    ),
+    schema: applyMiddleware(schema, permissions),
     context: ({ req, res }: ApolloContext): ApolloContext => {
       const isAuthenticated = !!req.headers['user'];
       const user = req.headers['user']

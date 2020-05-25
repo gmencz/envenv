@@ -4,7 +4,7 @@ import { getCachedUser } from '../../../helpers/cache/user';
 
 const me: QueryResolvers['me'] = async (_, __, { auth, prisma }) => {
   try {
-    let user = await getCachedUser(auth.userId);
+    let user = await getCachedUser(auth.user.id);
 
     if (user) {
       return {
@@ -21,7 +21,7 @@ const me: QueryResolvers['me'] = async (_, __, { auth, prisma }) => {
       } as User;
     }
 
-    user = await prisma.user.findOne({ where: { id: auth.userId } });
+    user = await prisma.user.findOne({ where: { id: auth.user.id } });
 
     return {
       __typename: 'User',
