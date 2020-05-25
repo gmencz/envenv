@@ -24,13 +24,8 @@ export default async function initApolloFederatedService(
       },
     ]),
     context: ({ req, res }: ApolloContext): ApolloContext => {
-      let isAuthenticated = false;
-      let userId = null;
-
-      if (req.headers['user-id']) {
-        isAuthenticated = true;
-        userId = req.headers['user-id'] as string;
-      }
+      const isAuthenticated = !!req.headers['user-id'];
+      const userId = (req.headers['user-id'] as string | undefined) || '';
 
       return {
         req,
