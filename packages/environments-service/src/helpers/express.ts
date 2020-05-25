@@ -9,19 +9,6 @@ export default function initExpress(): Express {
   app.use(bodyParser());
   app.use(cookieNormalizer);
 
-  // This is a completely private service
-  // so we need to lock it down if the client
-  // is not authenticated
-  app.use((req, res, next) => {
-    const isAuthenticated = req.headers['user-id'];
-
-    if (!isAuthenticated) {
-      return res.status(401).json({ error: 'UNAUTHENTICATED' });
-    }
-
-    return next();
-  });
-
   return app;
 }
 

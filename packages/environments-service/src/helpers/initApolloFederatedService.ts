@@ -1,4 +1,4 @@
-import { ApolloServer } from 'apollo-server-express';
+import { ApolloServer, AuthenticationError } from 'apollo-server-express';
 import { loadFiles, mergeTypeDefs } from 'graphql-tools';
 import { join } from 'path';
 import { buildFederatedSchema } from '@apollo/federation';
@@ -26,6 +26,10 @@ export default async function initApolloFederatedService(
     context: ({ req, res }: ApolloContext): ApolloContext => {
       const isAuthenticated = !!req.headers['user-id'];
       const userId = (req.headers['user-id'] as string | undefined) || '';
+
+      if (!isAuthenticated || !userId) {
+        throw new AuthenticationError('Not logged in!');
+      }
 
       return {
         req,
