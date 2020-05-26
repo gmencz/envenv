@@ -6,7 +6,6 @@ const FullpageLoader: React.FC = () => {
   return (
     <StyledFullpageLoaderWrapper>
       <Logo size='200px' />
-      <h1>Processing zeroes and ones...</h1>
     </StyledFullpageLoaderWrapper>
   );
 };
