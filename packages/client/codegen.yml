@@ -1,0 +1,14 @@
+ovewrite: true
+schema: 'http://localhost:7000/graphql'
+documents: './src/graphql/**/*.{ts,tsx}'
+generates:
+  src/generated/graphql.tsx:
+    plugins:
+      - 'typescript'
+      - 'typescript-operations'
+      - 'typescript-react-apollo'
+    config:
+      withHooks: true
+      withComponent: false
+      withHOC: false
+      reactApolloVersion: 3
