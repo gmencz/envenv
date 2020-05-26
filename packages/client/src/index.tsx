@@ -1,13 +1,17 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import * as serviceWorker from './serviceWorker';
-import { App } from './app';
 import { GlobalStyle } from './utils/global-styles';
+import { App } from './app';
+import { ApolloProvider } from '@apollo/client';
+import { client } from './utils/apollo-client';
 
 ReactDOM.render(
   <React.StrictMode>
     <GlobalStyle />
-    <App />
+    <ApolloProvider client={client}>
+      <App />
+    </ApolloProvider>
   </React.StrictMode>,
   document.getElementById('envenv-root')
 );
