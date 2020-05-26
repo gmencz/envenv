@@ -1,11 +1,12 @@
 import React from 'react';
-import { StyledFullpageLoaderWrapper } from './styles';
-import { Logo } from '../logo';
+import { StyledFullpageLoaderWrapper, StyledFullpageLoader } from './styles';
 
 const FullpageLoader: React.FC = () => {
   return (
     <StyledFullpageLoaderWrapper>
-      <Logo size='200px' />
+      <StyledFullpageLoader>
+        <div></div>
+      </StyledFullpageLoader>
     </StyledFullpageLoaderWrapper>
   );
 };

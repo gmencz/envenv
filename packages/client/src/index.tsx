@@ -5,13 +5,16 @@ import { GlobalStyle } from './utils/global-styles';
 import { App } from './App';
 import { ApolloProvider } from '@apollo/client';
 import { client } from './utils/apollo-client';
+import { BrowserRouter as Router } from 'react-router-dom';
 
 ReactDOM.render(
   <React.StrictMode>
     <GlobalStyle />
-    <ApolloProvider client={client}>
-      <App />
-    </ApolloProvider>
+    <Router>
+      <ApolloProvider client={client}>
+        <App />
+      </ApolloProvider>
+    </Router>
   </React.StrictMode>,
   document.getElementById('envenv-root')
 );

@@ -55,7 +55,7 @@ const signup: MutationResolvers['signup'] = async (
     res.cookie('SessionID', newSession.sessionId, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
-      maxAge: Number(process.env.SESSION_REDIS_EXPIRY!),
+      maxAge: 31556952000,
     });
 
     return {

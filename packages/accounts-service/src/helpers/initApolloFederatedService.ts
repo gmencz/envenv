@@ -55,7 +55,7 @@ export default async function initApolloFederatedService(
         };
       }
     },
-    engine: false,
+    engine: true,
   });
 
   server.applyMiddleware({ app });

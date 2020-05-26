@@ -109,7 +109,7 @@ export const callbackGithubAuth = async (
         res.cookie('SessionID', newSession.sessionId, {
           httpOnly: true,
           secure: process.env.NODE_ENV === 'production',
-          maxAge: Number(process.env.SESSION_REDIS_EXPIRY!),
+          maxAge: 31556952000,
         });
 
         if (!comesFromCache) {
@@ -150,7 +150,7 @@ export const callbackGithubAuth = async (
         res.cookie('SessionID', newSession.sessionId, {
           httpOnly: true,
           secure: process.env.NODE_ENV === 'production',
-          maxAge: Number(process.env.SESSION_REDIS_EXPIRY!),
+          maxAge: 31556952000,
         });
 
         if (!comesFromCache) {
@@ -188,7 +188,7 @@ export const callbackGithubAuth = async (
         res.cookie('SessionID', newSession.sessionId, {
           httpOnly: true,
           secure: process.env.NODE_ENV === 'production',
-          maxAge: Number(process.env.SESSION_REDIS_EXPIRY!),
+          maxAge: 31556952000,
         });
 
         await cacheUser(newUser);

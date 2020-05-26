@@ -48,25 +48,14 @@ const login: MutationResolvers['login'] = async (
       const pastSession = await getSession(req.cookies.SessionID, redisClient);
 
       if (pastSession) {
-        await new Promise((res, rej) => {
-          redisClient.del(
-            `session_${pastSession.sessionId}`,
-            (err, response) => {
-              if (err) {
-                rej(err);
-              }
-
-              res(response);
-            }
-          );
-        });
+        await redisClient.del(`session_${pastSession.sessionId}`);
       }
     }
 
     res.cookie('SessionID', newSession.sessionId, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
-      maxAge: Number(process.env.SESSION_REDIS_EXPIRY!),
+      maxAge: 31556952000,
     });
 
     return {
