@@ -143,6 +143,19 @@ export type LoginResult =
   | InvalidDataFormat
   | InvalidCredentials;
 
+export type LogoutResult = NoCurrentSession | SuccessfulLogout;
+
+/**
+ * Represents the result of an operation in which the session
+ * was attempted to terminate but there was no session to
+ * terminate or it had already expired.
+ */
+export type NoCurrentSession = {
+  __typename?: 'NoCurrentSession';
+  /** A detailed explanation of what happened. */
+  message: Scalars['String'];
+};
+
 /** Represents the result of a testing-only operation which was attempted to be executed on a non-testing environment. */
 export type NotInTestingEnvironment = {
   __typename?: 'NotInTestingEnvironment';
@@ -193,6 +206,13 @@ export type SuccessfulLogin = {
   user: User;
   /** The CSRF token for the started session. */
   csrfToken: Scalars['String'];
+};
+
+/** Represents the result of a successful logout. */
+export type SuccessfulLogout = {
+  __typename?: 'SuccessfulLogout';
+  /** The time at which the logout was performed. */
+  performedAt: Scalars['DateTime'];
 };
 
 /** Represents the successful removal of a resource. */
@@ -312,6 +332,8 @@ export type Mutation = {
   login: LoginResult;
   /** Login user on the client, saves the csrf-token received from the server to localStorage. */
   loginClient: Scalars['Boolean'];
+  /** Logs user out. */
+  logout: LogoutResult;
   /** Logout user on the client, clears csrf-token from localStorage. */
   logoutClient: Scalars['Boolean'];
   /** Resets an account's password. */

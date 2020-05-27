@@ -1,6 +1,6 @@
 ovewrite: true
 schema:
-  - 'http://localhost:7000/graphql'
+  - 'http://dev-api-gateway:7000/graphql'
   - './src/utils/apollo-client/typeDefs.ts':
       noRequire: true
 documents: './src/graphql/**/*.{ts,tsx}'

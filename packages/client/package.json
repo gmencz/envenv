@@ -23,11 +23,12 @@
     "typescript": "^3.9.3"
   },
   "scripts": {
-    "start": "react-scripts start",
+    "start": "concurrently \"react-scripts start\" \"npm run gen-graphql-watch\"",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "gen-graphql": "graphql-codegen --config codegen.yml"
+    "gen-graphql": "graphql-codegen --config codegen.yml",
+    "gen-graphql-watch": "graphql-codegen --config codegen.yml --watch src/graphql/**/*.ts"
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -51,6 +52,7 @@
     "@graphql-codegen/typescript-react-apollo": "^1.14.0",
     "@types/react-router-dom": "^5.1.5",
     "@types/shortid": "^0.0.29",
-    "@types/styled-components": "^5.1.0"
+    "@types/styled-components": "^5.1.0",
+    "concurrently": "^5.2.0"
   }
 }
