@@ -5,7 +5,7 @@
 4. Open the cloned repo on your computer.
 5. Install lerna with `npm install -g lerna` **or** you can use `npx` to run the commands as an alternative.
 6. Run `lerna bootstrap` **in the project root** to install the monorepo's dependencies.
-7. Download the environment files and secrets from here: https://gofile.io/d/OqALAB
+7. Download the environment files and secrets from here: https://gofile.io/d/nwU122
 8. Once downloaded, place them in the cloned repo following the zip's folder structure.
 9. Now you can start up the application (dev environment) with `docker-compose up`
 10. Nginx reverse proxy listening on `http://localhost:8080/` 🚀
