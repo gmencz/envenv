@@ -26,8 +26,8 @@ export const SignupScreen: React.FC = () => {
           email: '',
           name: '',
         }}
-        onSubmit={async values => {
-          await signup({
+        onSubmit={values => {
+          signup({
             variables: {
               data: {
                 email: values.email,
