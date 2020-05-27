@@ -1,13 +1,14 @@
 import React from 'react';
 import { useFormik } from 'formik';
-import { useSignUpMutation } from '../../../generated/graphql';
+import {
+  useSignUpMutation,
+  useLoginOnClientMutation,
+} from '../../../generated/graphql';
 import { Redirect } from 'react-router-dom';
-import { useApolloClient, gql } from '@apollo/client';
-import { CHECK_AUTH } from '../../../App';
 
-const SignupScreen: React.FC = () => {
+export const SignupScreen: React.FC = () => {
   const [signup, { loading, data }] = useSignUpMutation();
-  const client = useApolloClient();
+  const [loginOnClient] = useLoginOnClientMutation();
   const { values, handleChange, handleSubmit } = useFormik({
     initialValues: {
       username: '',
@@ -31,15 +32,13 @@ const SignupScreen: React.FC = () => {
 
   if (data?.signup.__typename === 'SuccessfulSignup') {
     localStorage.setItem('csrf-token', data.signup.csrfToken);
-    client.writeQuery({
-      query: CHECK_AUTH,
-      data: { isLoggedIn: true },
-    });
+    loginOnClient({ variables: { csrfToken: data.signup.csrfToken } });
     return <Redirect to='/' />;
   }
 
   return (
     <>
+      {loading && <p>loading...</p>}
       <form onSubmit={handleSubmit}>
         <input
           type='text'
@@ -74,5 +73,3 @@ const SignupScreen: React.FC = () => {
     </>
   );
 };
-
-export { SignupScreen };

@@ -1,6 +1,6 @@
 import { gql } from '@apollo/client';
 
-const ME = gql`
+export const ME = gql`
   query WhoAmI {
     me {
       name
@@ -14,5 +14,3 @@ const ME = gql`
     }
   }
 `;
-
-export { ME };

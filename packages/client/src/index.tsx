@@ -4,8 +4,8 @@ import * as serviceWorker from './serviceWorker';
 import { GlobalStyle } from './utils/global-styles';
 import { App } from './App';
 import { ApolloProvider } from '@apollo/client';
-import { client } from './utils/apollo-client';
 import { BrowserRouter as Router } from 'react-router-dom';
+import { client } from './utils/apollo-client';
 
 ReactDOM.render(
   <React.StrictMode>

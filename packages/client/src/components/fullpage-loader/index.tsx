@@ -1,14 +1,12 @@
 import React from 'react';
 import { StyledFullpageLoaderWrapper, StyledFullpageLoader } from './styles';
 
-const FullpageLoader: React.FC = () => {
+export const FullpageLoader: React.FC = () => {
   return (
     <StyledFullpageLoaderWrapper>
-      <StyledFullpageLoader>
+      <StyledFullpageLoader aria-label='Loading...'>
         <div></div>
       </StyledFullpageLoader>
     </StyledFullpageLoaderWrapper>
   );
 };
-
-export { FullpageLoader };

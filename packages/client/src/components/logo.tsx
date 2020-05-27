@@ -4,7 +4,7 @@ type LogoProps = {
   size: string;
 };
 
-const Logo: React.FC<LogoProps> = ({ size }) => {
+export const Logo: React.FC<LogoProps> = ({ size }) => {
   return (
     <svg
       xmlns='http://www.w3.org/2000/svg'
@@ -21,5 +21,3 @@ const Logo: React.FC<LogoProps> = ({ size }) => {
     </svg>
   );
 };
-
-export { Logo };

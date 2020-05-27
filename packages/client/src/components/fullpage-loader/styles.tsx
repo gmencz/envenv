@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-const StyledFullpageLoaderWrapper = styled.div`
+export const StyledFullpageLoaderWrapper = styled.div`
   min-height: 100vh;
   display: flex;
   flex-direction: column;
@@ -13,21 +13,22 @@ const StyledFullpageLoaderWrapper = styled.div`
   }
 `;
 
-const StyledFullpageLoader = styled.div`
-  border: 8px solid rgba(0, 0, 0, 0.05);
+export const StyledFullpageLoader = styled.div`
+  border: 5px solid rgba(0, 0, 0, 0.05);
   border-radius: 50%;
-  width: 5em;
-  height: 5em;
-  animation: spinRight 1s linear infinite;
+  width: 50px;
+  margin-top: 32px;
+  height: 50px;
+  animation: spinRight 0.75s linear infinite;
 
-  & > div {
-    width: 1.4em;
-    height: 1.4em;
+  & > div:first-of-type {
+    width: 12px;
+    height: 12px;
     background-color: #1890ff;
     border-radius: 50%;
     position: relative;
     left: 50%;
-    top: -0.75rem;
+    top: -8px;
   }
 
   @keyframes spinRight {
@@ -36,5 +37,3 @@ const StyledFullpageLoader = styled.div`
     }
   }
 `;
-
-export { StyledFullpageLoaderWrapper, StyledFullpageLoader };

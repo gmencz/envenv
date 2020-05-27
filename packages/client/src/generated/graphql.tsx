@@ -14,13 +14,13 @@ export type Scalars = {
    * outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for
    * representation of dates and times using the Gregorian calendar.
    */
-  Date: any;
+  Date: Date;
   /**
    * A date-time string at UTC, such as 2007-12-03T10:15:30Z, compliant with the
    * `date-time` format outlined in section 5.6 of the RFC 3339 profile of the ISO
    * 8601 standard for representation of dates and times using the Gregorian calendar.
    */
-  DateTime: any;
+  DateTime: Date;
 };
 
 /** The data required to create an environment. */
@@ -282,12 +282,14 @@ export type Query = {
   __typename?: 'Query';
   /** Looks up all environments. */
   getEnvironments?: Maybe<Array<Maybe<Environment>>>;
+  /** Find out if the user is logged in or not. */
+  isLoggedIn: Scalars['Boolean'];
+  /** Look up the currently logged in user. */
+  me: User;
   /** Request an email with the instructions to reset an account's password. */
   requestPasswordResetEmail: RequestPasswordResetEmailResult;
   /** Look up an user by id, username or email. */
   user: UserResult;
-  /** Look up the currently logged in user. */
-  me: User;
 };
 
 export type QueryRequestPasswordResetEmailArgs = {
@@ -304,22 +306,22 @@ export type Mutation = {
   __typename?: 'Mutation';
   /** Creates a new environment. */
   createEnvironment?: Maybe<Environment>;
-  /** Signs user up. */
-  signup: SignupResult;
-  /** Logs user in. */
-  login: LoginResult;
-  /** Resets an account's password. */
-  resetPassword: ResetPasswordResult;
   /** Deletes every user. This is only available in a testing environment. */
   deleteAllUsers: DeleteAllUsersResult;
+  /** Logs user in. */
+  login: LoginResult;
+  /** Login user on the client, saves the csrf-token received from the server to localStorage. */
+  loginClient: Scalars['Boolean'];
+  /** Logout user on the client, clears csrf-token from localStorage. */
+  logoutClient: Scalars['Boolean'];
+  /** Resets an account's password. */
+  resetPassword: ResetPasswordResult;
+  /** Signs user up. */
+  signup: SignupResult;
 };
 
 export type MutationCreateEnvironmentArgs = {
   data: CreateEnvironmentInput;
-};
-
-export type MutationSignupArgs = {
-  data: CreateUserInput;
 };
 
 export type MutationLoginArgs = {
@@ -327,9 +329,40 @@ export type MutationLoginArgs = {
   password: Scalars['String'];
 };
 
+export type MutationLoginClientArgs = {
+  csrfToken: Scalars['String'];
+};
+
 export type MutationResetPasswordArgs = {
   data: ResetPasswordInput;
 };
+
+export type MutationSignupArgs = {
+  data: CreateUserInput;
+};
+
+export type LoginOnClientMutationVariables = {
+  csrfToken: Scalars['String'];
+};
+
+export type LoginOnClientMutation = { __typename?: 'Mutation' } & Pick<
+  Mutation,
+  'loginClient'
+>;
+
+export type LogoutOnClientMutationVariables = {};
+
+export type LogoutOnClientMutation = { __typename?: 'Mutation' } & Pick<
+  Mutation,
+  'logoutClient'
+>;
+
+export type IsUserLoggedInQueryVariables = {};
+
+export type IsUserLoggedInQuery = { __typename?: 'Query' } & Pick<
+  Query,
+  'isLoggedIn'
+>;
 
 export type LoginMutationVariables = {
   username: Scalars['String'];
@@ -377,6 +410,154 @@ export type SignUpMutation = { __typename?: 'Mutation' } & {
       >);
 };
 
+export const LoginOnClientDocument = gql`
+  mutation LoginOnClient($csrfToken: String!) {
+    loginClient(csrfToken: $csrfToken) @client
+  }
+`;
+export type LoginOnClientMutationFn = ApolloReactCommon.MutationFunction<
+  LoginOnClientMutation,
+  LoginOnClientMutationVariables
+>;
+
+/**
+ * __useLoginOnClientMutation__
+ *
+ * To run a mutation, you first call `useLoginOnClientMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useLoginOnClientMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [loginOnClientMutation, { data, loading, error }] = useLoginOnClientMutation({
+ *   variables: {
+ *      csrfToken: // value for 'csrfToken'
+ *   },
+ * });
+ */
+export function useLoginOnClientMutation(
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
+    LoginOnClientMutation,
+    LoginOnClientMutationVariables
+  >
+) {
+  return ApolloReactHooks.useMutation<
+    LoginOnClientMutation,
+    LoginOnClientMutationVariables
+  >(LoginOnClientDocument, baseOptions);
+}
+export type LoginOnClientMutationHookResult = ReturnType<
+  typeof useLoginOnClientMutation
+>;
+export type LoginOnClientMutationResult = ApolloReactCommon.MutationResult<
+  LoginOnClientMutation
+>;
+export type LoginOnClientMutationOptions = ApolloReactCommon.BaseMutationOptions<
+  LoginOnClientMutation,
+  LoginOnClientMutationVariables
+>;
+export const LogoutOnClientDocument = gql`
+  mutation LogoutOnClient {
+    logoutClient @client
+  }
+`;
+export type LogoutOnClientMutationFn = ApolloReactCommon.MutationFunction<
+  LogoutOnClientMutation,
+  LogoutOnClientMutationVariables
+>;
+
+/**
+ * __useLogoutOnClientMutation__
+ *
+ * To run a mutation, you first call `useLogoutOnClientMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useLogoutOnClientMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [logoutOnClientMutation, { data, loading, error }] = useLogoutOnClientMutation({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useLogoutOnClientMutation(
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
+    LogoutOnClientMutation,
+    LogoutOnClientMutationVariables
+  >
+) {
+  return ApolloReactHooks.useMutation<
+    LogoutOnClientMutation,
+    LogoutOnClientMutationVariables
+  >(LogoutOnClientDocument, baseOptions);
+}
+export type LogoutOnClientMutationHookResult = ReturnType<
+  typeof useLogoutOnClientMutation
+>;
+export type LogoutOnClientMutationResult = ApolloReactCommon.MutationResult<
+  LogoutOnClientMutation
+>;
+export type LogoutOnClientMutationOptions = ApolloReactCommon.BaseMutationOptions<
+  LogoutOnClientMutation,
+  LogoutOnClientMutationVariables
+>;
+export const IsUserLoggedInDocument = gql`
+  query IsUserLoggedIn {
+    isLoggedIn @client
+  }
+`;
+
+/**
+ * __useIsUserLoggedInQuery__
+ *
+ * To run a query within a React component, call `useIsUserLoggedInQuery` and pass it any options that fit your needs.
+ * When your component renders, `useIsUserLoggedInQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useIsUserLoggedInQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useIsUserLoggedInQuery(
+  baseOptions?: ApolloReactHooks.QueryHookOptions<
+    IsUserLoggedInQuery,
+    IsUserLoggedInQueryVariables
+  >
+) {
+  return ApolloReactHooks.useQuery<
+    IsUserLoggedInQuery,
+    IsUserLoggedInQueryVariables
+  >(IsUserLoggedInDocument, baseOptions);
+}
+export function useIsUserLoggedInLazyQuery(
+  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<
+    IsUserLoggedInQuery,
+    IsUserLoggedInQueryVariables
+  >
+) {
+  return ApolloReactHooks.useLazyQuery<
+    IsUserLoggedInQuery,
+    IsUserLoggedInQueryVariables
+  >(IsUserLoggedInDocument, baseOptions);
+}
+export type IsUserLoggedInQueryHookResult = ReturnType<
+  typeof useIsUserLoggedInQuery
+>;
+export type IsUserLoggedInLazyQueryHookResult = ReturnType<
+  typeof useIsUserLoggedInLazyQuery
+>;
+export type IsUserLoggedInQueryResult = ApolloReactCommon.QueryResult<
+  IsUserLoggedInQuery,
+  IsUserLoggedInQueryVariables
+>;
 export const LoginDocument = gql`
   mutation Login($username: String!, $password: String!) {
     login(username: $username, password: $password) {

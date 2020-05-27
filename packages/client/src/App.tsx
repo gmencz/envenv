@@ -1,18 +1,12 @@
 import React from 'react';
 import { FullpageLoader } from './components/fullpage-loader';
-import { gql, useQuery } from '@apollo/client';
+import { useIsUserLoggedInQuery } from './generated/graphql';
 
 const AuthenticatedApp = React.lazy(() => import('./authenticated-app'));
 const UnauthenticatedApp = React.lazy(() => import('./unauthenticated-app'));
 
-export const CHECK_AUTH = gql`
-  query CheckAuth {
-    isLoggedIn @client
-  }
-`;
-
-const App: React.FC = () => {
-  const { data: auth } = useQuery(CHECK_AUTH);
+export const App: React.FC = () => {
+  const { data: auth } = useIsUserLoggedInQuery();
 
   return (
     <React.Suspense fallback={<FullpageLoader />}>
@@ -20,5 +14,3 @@ const App: React.FC = () => {
     </React.Suspense>
   );
 };
-
-export { App };

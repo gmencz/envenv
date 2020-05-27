@@ -1,7 +1,5 @@
 import React from 'react';
 
-const LoginScreen: React.FC = () => {
+export const LoginScreen: React.FC = () => {
   return <p>Login</p>;
 };
-
-export { LoginScreen };
