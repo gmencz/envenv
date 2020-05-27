@@ -14,13 +14,10 @@ export default async function getSession(
 ): Promise<RedisSession | null> {
   try {
     const decryptedSessionId = encryptor.decrypt(sessionId);
-    console.log(decryptedSessionId);
 
     const redisResponse = await preferedRedisClient.get(
       `session_${decryptedSessionId}`
     );
-
-    console.log('ses ' + redisResponse);
 
     if (!redisResponse) {
       return null;
