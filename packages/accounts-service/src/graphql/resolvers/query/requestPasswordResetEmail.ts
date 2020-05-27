@@ -11,7 +11,7 @@ import {
 const requestPasswordResetEmail: QueryResolvers['requestPasswordResetEmail'] = async (
   _,
   { email },
-  { prisma }
+  { prisma, req }
 ): Promise<RequestPasswordResetEmailResult> => {
   try {
     await reach(createUserSchema, 'email').validate(email);

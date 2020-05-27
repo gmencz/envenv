@@ -54,6 +54,8 @@ export type Mutation = {
   login: LoginResult;
   /** Resets an account's password. */
   resetPassword: ResetPasswordResult;
+  /** Logs user out. */
+  logout: LogoutResult;
   /** Deletes every user. This is only available in a testing environment. */
   deleteAllUsers: DeleteAllUsersResult;
 };
@@ -101,6 +103,8 @@ export type LoginResult =
   | SuccessfulLogin
   | InvalidDataFormat
   | InvalidCredentials;
+
+export type LogoutResult = NoCurrentSession | SuccessfulLogout;
 
 /** Represents the result of an operation in which the provided username or email are taken. */
 export type TakenUsernameOrEmail = {
@@ -187,6 +191,24 @@ export type WantsSamePassword = {
   __typename?: 'WantsSamePassword';
   /** A detailed explanation of what happened. */
   message: Scalars['String'];
+};
+
+/**
+ * Represents the result of an operation in which the session
+ * was attempted to terminate but there was no session to
+ * terminate or it had already expired.
+ */
+export type NoCurrentSession = {
+  __typename?: 'NoCurrentSession';
+  /** A detailed explanation of what happened. */
+  message: Scalars['String'];
+};
+
+/** Represents the result of a successful logout. */
+export type SuccessfulLogout = {
+  __typename?: 'SuccessfulLogout';
+  /** The time at which the logout was performed. */
+  performedAt: Scalars['DateTime'];
 };
 
 export type Query = {
@@ -404,6 +426,9 @@ export type ResolversTypes = {
     | ResolversTypes['SuccessfulLogin']
     | ResolversTypes['InvalidDataFormat']
     | ResolversTypes['InvalidCredentials'];
+  LogoutResult:
+    | ResolversTypes['NoCurrentSession']
+    | ResolversTypes['SuccessfulLogout'];
   TakenUsernameOrEmail: ResolverTypeWrapper<TakenUsernameOrEmail>;
   InvalidDataFormat: ResolverTypeWrapper<InvalidDataFormat>;
   SuccessfulSignup: ResolverTypeWrapper<SuccessfulSignup>;
@@ -417,6 +442,8 @@ export type ResolversTypes = {
   SuccessfulRemoval: ResolverTypeWrapper<SuccessfulRemoval>;
   Int: ResolverTypeWrapper<Scalars['Int']>;
   WantsSamePassword: ResolverTypeWrapper<WantsSamePassword>;
+  NoCurrentSession: ResolverTypeWrapper<NoCurrentSession>;
+  SuccessfulLogout: ResolverTypeWrapper<SuccessfulLogout>;
   Query: ResolverTypeWrapper<{}>;
   User: ResolverTypeWrapper<User>;
   ID: ResolverTypeWrapper<Scalars['ID']>;
@@ -457,6 +484,9 @@ export type ResolversParentTypes = {
     | ResolversParentTypes['SuccessfulLogin']
     | ResolversParentTypes['InvalidDataFormat']
     | ResolversParentTypes['InvalidCredentials'];
+  LogoutResult:
+    | ResolversParentTypes['NoCurrentSession']
+    | ResolversParentTypes['SuccessfulLogout'];
   TakenUsernameOrEmail: TakenUsernameOrEmail;
   InvalidDataFormat: InvalidDataFormat;
   SuccessfulSignup: SuccessfulSignup;
@@ -470,6 +500,8 @@ export type ResolversParentTypes = {
   SuccessfulRemoval: SuccessfulRemoval;
   Int: Scalars['Int'];
   WantsSamePassword: WantsSamePassword;
+  NoCurrentSession: NoCurrentSession;
+  SuccessfulLogout: SuccessfulLogout;
   Query: {};
   User: User;
   ID: Scalars['ID'];
@@ -509,6 +541,7 @@ export type MutationResolvers<
     ContextType,
     RequireFields<MutationResetPasswordArgs, 'data'>
   >;
+  logout?: Resolver<ResolversTypes['LogoutResult'], ParentType, ContextType>;
   deleteAllUsers?: Resolver<
     ResolversTypes['DeleteAllUsersResult'],
     ParentType,
@@ -581,6 +614,17 @@ export type LoginResultResolvers<
 > = {
   __resolveType: TypeResolveFn<
     'SuccessfulLogin' | 'InvalidDataFormat' | 'InvalidCredentials',
+    ParentType,
+    ContextType
+  >;
+};
+
+export type LogoutResultResolvers<
+  ContextType = ApolloContext,
+  ParentType extends ResolversParentTypes['LogoutResult'] = ResolversParentTypes['LogoutResult']
+> = {
+  __resolveType: TypeResolveFn<
+    'NoCurrentSession' | 'SuccessfulLogout',
     ParentType,
     ContextType
   >;
@@ -684,6 +728,22 @@ export type WantsSamePasswordResolvers<
   __isTypeOf?: isTypeOfResolverFn<ParentType>;
 };
 
+export type NoCurrentSessionResolvers<
+  ContextType = ApolloContext,
+  ParentType extends ResolversParentTypes['NoCurrentSession'] = ResolversParentTypes['NoCurrentSession']
+> = {
+  message?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  __isTypeOf?: isTypeOfResolverFn<ParentType>;
+};
+
+export type SuccessfulLogoutResolvers<
+  ContextType = ApolloContext,
+  ParentType extends ResolversParentTypes['SuccessfulLogout'] = ResolversParentTypes['SuccessfulLogout']
+> = {
+  performedAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
+  __isTypeOf?: isTypeOfResolverFn<ParentType>;
+};
+
 export type QueryResolvers<
   ContextType = ApolloContext,
   ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']
@@ -742,6 +802,7 @@ export type Resolvers<ContextType = ApolloContext> = {
   ResetPasswordResult?: ResetPasswordResultResolvers;
   SignupResult?: SignupResultResolvers;
   LoginResult?: LoginResultResolvers;
+  LogoutResult?: LogoutResultResolvers;
   TakenUsernameOrEmail?: TakenUsernameOrEmailResolvers<ContextType>;
   InvalidDataFormat?: InvalidDataFormatResolvers<ContextType>;
   SuccessfulSignup?: SuccessfulSignupResolvers<ContextType>;
@@ -754,6 +815,8 @@ export type Resolvers<ContextType = ApolloContext> = {
   NotInTestingEnvironment?: NotInTestingEnvironmentResolvers<ContextType>;
   SuccessfulRemoval?: SuccessfulRemovalResolvers<ContextType>;
   WantsSamePassword?: WantsSamePasswordResolvers<ContextType>;
+  NoCurrentSession?: NoCurrentSessionResolvers<ContextType>;
+  SuccessfulLogout?: SuccessfulLogoutResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
   User?: UserResolvers<ContextType>;
 };
