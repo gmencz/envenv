@@ -56,6 +56,7 @@ const login: MutationResolvers['login'] = async (
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       maxAge: 31556952000,
+      sameSite: 'strict',
     });
 
     return {

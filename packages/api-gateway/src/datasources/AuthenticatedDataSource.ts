@@ -42,12 +42,17 @@ export default class AuthenticatedDataSource extends RemoteGraphQLDataSource {
   // The context here is also the gateway's
   didReceiveResponse({ response, context }: any): typeof response {
     const rawCookies = response.http.headers.get('set-cookie') as string | null;
+    console.log(rawCookies);
 
     if (rawCookies) {
       const cookies = parseCookies(rawCookies);
       cookies.forEach(({ cookieName, cookieValue, options }) => {
         if (context && context.res) {
-          context.res.cookie(cookieName, cookieValue, options);
+          const validCookieOptions = { ...options };
+          delete validCookieOptions.maxAge;
+          context.res.cookie(cookieName, cookieValue, {
+            ...validCookieOptions,
+          });
         }
       });
     }

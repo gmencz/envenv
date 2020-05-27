@@ -110,6 +110,7 @@ export const callbackGithubAuth = async (
           httpOnly: true,
           secure: process.env.NODE_ENV === 'production',
           maxAge: 31556952000,
+          sameSite: 'strict',
         });
 
         if (!comesFromCache) {
@@ -151,6 +152,7 @@ export const callbackGithubAuth = async (
           httpOnly: true,
           secure: process.env.NODE_ENV === 'production',
           maxAge: 31556952000,
+          sameSite: 'strict',
         });
 
         if (!comesFromCache) {
@@ -189,6 +191,7 @@ export const callbackGithubAuth = async (
           httpOnly: true,
           secure: process.env.NODE_ENV === 'production',
           maxAge: 31556952000,
+          sameSite: 'strict',
         });
 
         await cacheUser(newUser);

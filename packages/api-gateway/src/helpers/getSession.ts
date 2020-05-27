@@ -1,4 +1,5 @@
 import { Redis } from 'ioredis';
+import { encryptor } from './cryptr';
 
 export interface RedisSession {
   sessionId: string;
@@ -12,16 +13,20 @@ export default async function getSession(
   preferedRedisClient: Redis
 ): Promise<RedisSession | null> {
   try {
-    const redisResponse = await preferedRedisClient.get(`session_${sessionId}`);
+    const decryptedSessionId = encryptor.decrypt(sessionId);
+    console.log(decryptedSessionId);
+
+    const redisResponse = await preferedRedisClient.get(
+      `session_${decryptedSessionId}`
+    );
+
+    console.log('ses ' + redisResponse);
 
     if (!redisResponse) {
       return null;
     }
 
-    const sessionInfo = JSON.parse(
-      Buffer.from(redisResponse, 'base64').toString()
-    );
-
+    const sessionInfo = JSON.parse(redisResponse);
     return sessionInfo as RedisSession;
   } catch (error) {
     return null;

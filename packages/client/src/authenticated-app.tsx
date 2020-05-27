@@ -30,8 +30,9 @@ const AuthenticatedApp: React.FC = () => {
   }
 
   if (error) {
-    localStorage.removeItem('csrf-token');
-    logoutOnClient();
+    console.log(error);
+    // localStorage.removeItem('csrf-token');
+    // logoutOnClient();
     return <Redirect to='/auth/login' />;
   }
 
