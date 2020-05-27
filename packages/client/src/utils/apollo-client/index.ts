@@ -2,7 +2,7 @@ import { InMemoryCache, ApolloClient } from '@apollo/client';
 import { authLink, httpLink } from './links';
 import { resolvers } from './resolvers';
 import { isValid } from 'shortid';
-import { IS_LOGGED_IN } from '../../graphql/user/isLoggedIn';
+import { IS_LOGGED_IN } from '../../graphql/client/queries/isUserLoggedIn';
 import typeDefs from './typeDefs';
 
 const cache = new InMemoryCache();
