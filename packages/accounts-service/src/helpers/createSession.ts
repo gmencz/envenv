@@ -2,6 +2,7 @@ import { generate as generateUniqueId } from 'shortid';
 import { ApolloError } from 'apollo-server-express';
 import { Redis } from 'ioredis';
 import { PrismaClient } from '@prisma/client';
+import { encryptor } from './cryptr';
 
 interface CreateSessionReturnType {
   csrfToken: string;
@@ -13,8 +14,8 @@ export default async function createSession(
   preferedRedisClient: Redis,
   sessionExpiryTime: string | number = process.env.SESSION_REDIS_EXPIRY!
 ): Promise<CreateSessionReturnType> {
+  const prisma = new PrismaClient();
   try {
-    const prisma = new PrismaClient();
     const user = await prisma.user.findOne({
       where: { id: userId.toString() },
       select: { role: true, id: true },
@@ -27,24 +28,25 @@ export default async function createSession(
       userRole: user?.role,
     };
 
-    const signedSessionInfo = Buffer.from(
-      JSON.stringify({ ...sessionInfo })
-    ).toString('base64');
+    const encryptedSessionId = encryptor.encrypt(sessionInfo.sessionId);
 
     await preferedRedisClient.set(
       `session_${sessionInfo.sessionId}`,
-      signedSessionInfo,
+      JSON.stringify({ ...sessionInfo }),
       'EX',
       Number(sessionExpiryTime)
     );
 
     return {
       csrfToken: sessionInfo.csrfToken,
-      sessionId: sessionInfo.sessionId,
+      sessionId: encryptedSessionId,
     };
   } catch (error) {
+    console.log(error);
     throw new ApolloError('Could not create session', '500', {
       errorCode: 'server_error',
     });
+  } finally {
+    await prisma.disconnect();
   }
 }

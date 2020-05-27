@@ -56,6 +56,7 @@ const signup: MutationResolvers['signup'] = async (
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       maxAge: 31556952000,
+      sameSite: 'strict',
     });
 
     return {
