@@ -6,21 +6,23 @@ import {
   useLogoutMutation,
   useSignUpMutation,
   SignUpMutationFn,
+  useLoginOnClientMutation,
+  SignUpMutation,
 } from '../generated/graphql';
 import { QueryLazyOptions, ApolloError } from '@apollo/client';
 
 interface UseAuthHook {
-  whoAmIQuery: {
+  whoAmI: {
     execute: (
       options?: QueryLazyOptions<WhoAmIQueryVariables> | undefined
     ) => void;
-    result: WhoAmIQuery | undefined;
-    onFlight: boolean;
+    data: WhoAmIQuery | undefined;
+    inFlight: boolean;
     error: ApolloError | undefined;
   };
   logout: {
     execute: () => void;
-    onFlight: boolean;
+    inFlight: boolean;
     error: {
       onClient: ApolloError | undefined;
       onAPI: ApolloError | undefined;
@@ -28,8 +30,9 @@ interface UseAuthHook {
   };
   signup: {
     execute: SignUpMutationFn;
-    onFlight: boolean;
+    inFlight: boolean;
     error: ApolloError | undefined;
+    data: SignUpMutation | null | undefined;
   };
 }
 
@@ -38,6 +41,8 @@ export function useAuth(): UseAuthHook {
     whoAmI,
     { data: whoAmIResult, loading: whoAmILoadingStatus, error: whoAmIError },
   ] = useWhoAmILazyQuery();
+
+  const [updateClientCacheForAuthentication] = useLoginOnClientMutation();
 
   const [
     logoutOnAPI,
@@ -51,8 +56,16 @@ export function useAuth(): UseAuthHook {
 
   const [
     signup,
-    { loading: signupLoadingStatus, error: signupError },
-  ] = useSignUpMutation();
+    { loading: signupLoadingStatus, error: signupError, data: signupData },
+  ] = useSignUpMutation({
+    onCompleted: data => {
+      if (data.signup.__typename === 'SuccessfulSignup') {
+        updateClientCacheForAuthentication({
+          variables: { csrfToken: data.signup.csrfToken },
+        });
+      }
+    },
+  });
 
   const logout = () => {
     logoutOnAPI();
@@ -60,15 +73,15 @@ export function useAuth(): UseAuthHook {
   };
 
   return {
-    whoAmIQuery: {
+    whoAmI: {
       execute: whoAmI,
-      result: whoAmIResult,
-      onFlight: whoAmILoadingStatus,
+      data: whoAmIResult,
+      inFlight: whoAmILoadingStatus,
       error: whoAmIError,
     },
     logout: {
       execute: logout,
-      onFlight: logoutOnAPILoadingStatus || logoutOnClientLoadingStatus,
+      inFlight: logoutOnAPILoadingStatus || logoutOnClientLoadingStatus,
       error: {
         onAPI: logoutOnAPIError,
         onClient: logoutOnClientError,
@@ -76,8 +89,9 @@ export function useAuth(): UseAuthHook {
     },
     signup: {
       execute: signup,
-      onFlight: signupLoadingStatus,
+      inFlight: signupLoadingStatus,
       error: signupError,
+      data: signupData,
     },
   };
 }

@@ -1,24 +1,21 @@
 import React from 'react';
 import { Formik } from 'formik';
-import {
-  useSignUpMutation,
-  useLoginOnClientMutation,
-} from '../../../generated/graphql';
 import { Redirect } from 'react-router-dom';
+import { useAuth } from '../../../hooks/use-auth';
 
 export const SignupScreen: React.FC = () => {
-  const [signup, { loading, data }] = useSignUpMutation();
-  const [loginOnClient] = useLoginOnClientMutation();
+  const {
+    signup,
+    signup: { data },
+  } = useAuth();
 
   if (data?.signup.__typename === 'SuccessfulSignup') {
-    localStorage.setItem('csrf-token', data.signup.csrfToken);
-    loginOnClient({ variables: { csrfToken: data.signup.csrfToken } });
     return <Redirect to='/' />;
   }
 
   return (
     <>
-      {loading && <p>loading...</p>}
+      {signup.inFlight && <p>loading...</p>}
       <Formik
         initialValues={{
           username: '',
@@ -27,7 +24,7 @@ export const SignupScreen: React.FC = () => {
           name: '',
         }}
         onSubmit={values => {
-          signup({
+          signup.execute({
             variables: {
               data: {
                 email: values.email,
