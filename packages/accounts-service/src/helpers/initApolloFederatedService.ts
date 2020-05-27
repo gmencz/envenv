@@ -55,7 +55,9 @@ export default async function initApolloFederatedService(
         };
       }
     },
-    engine: false,
+    engine: {
+      apiKey: process.env.AGM_USER_KEY,
+    },
   });
 
   server.applyMiddleware({ app });

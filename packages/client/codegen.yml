@@ -1,0 +1,20 @@
+ovewrite: true
+schema:
+  - 'http://localhost:7000/graphql'
+  - './src/utils/apollo-client/typeDefs.ts':
+      noRequire: true
+documents: './src/graphql/**/*.{ts,tsx}'
+generates:
+  src/generated/graphql.tsx:
+    plugins:
+      - 'typescript'
+      - 'typescript-operations'
+      - 'typescript-react-apollo'
+    config:
+      withHooks: true
+      withComponent: false
+      withHOC: false
+      reactApolloVersion: 3
+      scalars:
+        Date: Date
+        DateTime: Date
