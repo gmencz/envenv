@@ -43,7 +43,7 @@ export default async function createSession(
     };
   } catch (error) {
     console.log(error);
-    throw new ApolloError('Could not create session', '500', {
+    return new ApolloError('Could not create session', '500', {
       errorCode: 'server_error',
     });
   } finally {

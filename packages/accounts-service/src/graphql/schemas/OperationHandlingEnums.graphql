@@ -24,3 +24,5 @@ union SignupResult = SuccessfulSignup | InvalidDataFormat | TakenUsernameOrEmail
 
 "Represents the result of an operation which logs a user in."
 union LoginResult = SuccessfulLogin | InvalidDataFormat | InvalidCredentials
+
+union LogoutResult = NoCurrentSession | SuccessfulLogout

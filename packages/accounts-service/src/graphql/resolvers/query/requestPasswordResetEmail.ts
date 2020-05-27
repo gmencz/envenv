@@ -11,7 +11,7 @@ import {
 const requestPasswordResetEmail: QueryResolvers['requestPasswordResetEmail'] = async (
   _,
   { email },
-  { prisma }
+  { prisma, req }
 ): Promise<RequestPasswordResetEmailResult> => {
   try {
     await reach(createUserSchema, 'email').validate(email);
@@ -93,7 +93,7 @@ const requestPasswordResetEmail: QueryResolvers['requestPasswordResetEmail'] = a
       throw error;
     }
 
-    throw new ApolloError(
+    return new ApolloError(
       `Something went wrong on our side, we're working on it!`,
       '500',
       {

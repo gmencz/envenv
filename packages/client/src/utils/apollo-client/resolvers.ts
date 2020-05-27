@@ -1,5 +1,5 @@
 import { ApolloCache, Resolvers } from '@apollo/client';
-import { IS_LOGGED_IN } from '../../graphql/user/isLoggedIn';
+import { IS_LOGGED_IN } from '../../graphql/client/queries/isUserLoggedIn';
 
 type ResolverFn = (
   parent: any,

@@ -31,7 +31,7 @@ const deleteAllUsers: MutationResolvers['deleteAllUsers'] = async (
     };
   } catch (error) {
     console.log(error);
-    throw new ApolloError(
+    return new ApolloError(
       `Something went wrong on our side, we're working on it!`,
       '500',
       {

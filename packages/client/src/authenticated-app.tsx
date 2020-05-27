@@ -2,6 +2,7 @@ import React, { useEffect, useRef } from 'react';
 import {
   useWhoAmILazyQuery,
   useLogoutOnClientMutation,
+  useLogoutMutation,
 } from './generated/graphql';
 import { FullpageLoader } from './components/fullpage-loader';
 import { Redirect } from 'react-router-dom';
@@ -13,6 +14,7 @@ const AuthenticatedApp: React.FC = () => {
   // Once that^ is solved we can useQuery instead.
   const [whoAmI, { data, loading, error }] = useWhoAmILazyQuery();
   const [logoutOnClient] = useLogoutOnClientMutation();
+  const [logoutOnAPI] = useLogoutMutation();
 
   // Hacky fix for explained bug above.
   const mounted = useRef(true);
@@ -32,10 +34,11 @@ const AuthenticatedApp: React.FC = () => {
   if (error) {
     localStorage.removeItem('csrf-token');
     logoutOnClient();
-    return <Redirect to='/auth/login' />;
+    logoutOnAPI();
+    return <Redirect to='/' />;
   }
 
-  return <h1>Hey, {data?.me.name}! 🚀</h1>;
+  return <>{data && <h1>Hey, {data?.me.name}! 🚀</h1>}</>;
 };
 
 export default AuthenticatedApp;

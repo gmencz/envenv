@@ -74,3 +74,19 @@ type WantsSamePassword {
   "A detailed explanation of what happened."
   message: String!
 }
+
+"""
+Represents the result of an operation in which the session
+was attempted to terminate but there was no session to
+terminate or it had already expired.
+"""
+type NoCurrentSession {
+  "A detailed explanation of what happened."
+  message: String!
+}
+
+"Represents the result of a successful logout."
+type SuccessfulLogout {
+  "The time at which the logout was performed."
+  performedAt: DateTime!
+}
