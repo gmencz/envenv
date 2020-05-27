@@ -37,7 +37,7 @@ const me: QueryResolvers['me'] = async (_, __, { auth, prisma }) => {
       picture: user?.picture,
     } as User;
   } catch (error) {
-    throw new ApolloError(
+    return new ApolloError(
       `Something went wrong on our side, we're working on it!`,
       '500',
       {

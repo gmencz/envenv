@@ -2,6 +2,7 @@ import { MutationResolvers, LogoutResult } from '../../generated';
 import { ApolloError } from 'apollo-server-express';
 import { encryptor } from '../../../helpers/cryptr';
 import redisClient from '../../../helpers/redisClient';
+import { Auth } from '../../../typings';
 
 const logout: MutationResolvers['logout'] = async (
   _parent,
@@ -30,13 +31,23 @@ const logout: MutationResolvers['logout'] = async (
     }
 
     res.clearCookie('SessionID');
+    auth.isAuthenticated = false;
+    auth.user = (null as unknown) as Auth['user'];
     return {
       __typename: 'SuccessfulLogout',
       performedAt: new Date(),
     };
   } catch (error) {
-    console.log(error);
-    throw new ApolloError(
+    if (error.message.toLowerCase().startsWith('unsupported state')) {
+      res.clearCookie('SessionID');
+
+      return {
+        __typename: 'NoCurrentSession',
+        message: 'The current session is invalid.',
+      };
+    }
+
+    return new ApolloError(
       `Something went wrong on our side, we're working on it!`,
       '500',
       {

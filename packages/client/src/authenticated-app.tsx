@@ -35,10 +35,10 @@ const AuthenticatedApp: React.FC = () => {
     localStorage.removeItem('csrf-token');
     logoutOnClient();
     logoutOnAPI();
-    return <Redirect to='/auth/login' />;
+    return <Redirect to='/' />;
   }
 
-  return <h1>Hey, {data?.me.name}! 🚀</h1>;
+  return <>{data && <h1>Hey, {data?.me.name}! 🚀</h1>}</>;
 };
 
 export default AuthenticatedApp;

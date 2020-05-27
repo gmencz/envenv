@@ -16,7 +16,7 @@ const getEnvironments: QueryResolvers['getEnvironments'] = async (
       throw error;
     }
 
-    throw new ApolloError(
+    return new ApolloError(
       `Something went wrong on our side, we're working on it!`,
       '500',
       {
