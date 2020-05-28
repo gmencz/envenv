@@ -15,7 +15,7 @@ export const SignupScreen: React.FC = () => {
 
   return (
     <>
-      {signup.inFlight && <p>loading...</p>}
+      {signup.error && <p>loading...</p>}
       <Formik
         initialValues={{
           username: '',

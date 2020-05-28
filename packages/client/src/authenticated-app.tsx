@@ -21,7 +21,7 @@ const AuthenticatedApp: React.FC = () => {
     };
   }, [whoAmI]);
 
-  if (whoAmI.inFlight) {
+  if (whoAmI.loading) {
     return <FullpageLoader />;
   }
 

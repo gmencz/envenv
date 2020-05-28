@@ -17,12 +17,12 @@ interface UseAuthHook {
       options?: QueryLazyOptions<WhoAmIQueryVariables> | undefined
     ) => void;
     data: WhoAmIQuery | undefined;
-    inFlight: boolean;
+    loading: boolean;
     error: ApolloError | undefined;
   };
   logout: {
     execute: () => void;
-    inFlight: boolean;
+    loading: boolean;
     error: {
       onClient: ApolloError | undefined;
       onAPI: ApolloError | undefined;
@@ -30,7 +30,7 @@ interface UseAuthHook {
   };
   signup: {
     execute: SignUpMutationFn;
-    inFlight: boolean;
+    loading: boolean;
     error: ApolloError | undefined;
     data: SignUpMutation | null | undefined;
   };
@@ -76,12 +76,12 @@ export function useAuth(): UseAuthHook {
     whoAmI: {
       execute: whoAmI,
       data: whoAmIResult,
-      inFlight: whoAmILoadingStatus,
+      loading: whoAmILoadingStatus,
       error: whoAmIError,
     },
     logout: {
       execute: logout,
-      inFlight: logoutOnAPILoadingStatus || logoutOnClientLoadingStatus,
+      loading: logoutOnAPILoadingStatus || logoutOnClientLoadingStatus,
       error: {
         onAPI: logoutOnAPIError,
         onClient: logoutOnClientError,
@@ -89,7 +89,7 @@ export function useAuth(): UseAuthHook {
     },
     signup: {
       execute: signup,
-      inFlight: signupLoadingStatus,
+      loading: signupLoadingStatus,
       error: signupError,
       data: signupData,
     },
