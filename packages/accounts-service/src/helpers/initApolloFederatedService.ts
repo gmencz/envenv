@@ -8,6 +8,41 @@ import { PrismaClient } from '@prisma/client';
 import { Express } from 'express';
 import { applyMiddleware } from 'graphql-middleware';
 import permissions from '../graphql/permissions';
+import { Request, Response } from 'express';
+
+const buildContext = (
+  req: Request,
+  res: Response,
+  prismaClient: PrismaClient
+): ApolloContext => {
+  try {
+    const isAuthenticated = !!req.headers['user'];
+    const user = req.headers['user']
+      ? JSON.parse(req.headers['user'] as string)
+      : null;
+
+    return {
+      req,
+      res,
+      prisma: prismaClient,
+      auth: {
+        isAuthenticated,
+        user,
+      },
+    };
+  } catch (error) {
+    console.error(error);
+    return {
+      req,
+      res,
+      prisma: prismaClient,
+      auth: {
+        isAuthenticated: false,
+        user: (null as unknown) as Auth['user'],
+      },
+    };
+  }
+};
 
 export default async function initApolloFederatedService(
   app: Express,
@@ -27,36 +62,7 @@ export default async function initApolloFederatedService(
   const server = new ApolloServer({
     schema: applyMiddleware(schema, permissions),
     context: ({ req, res }: ApolloContext): ApolloContext => {
-      try {
-        const isAuthenticated = !!req.headers['user'];
-        const user = req.headers['user']
-          ? JSON.parse(req.headers['user'] as string)
-          : null;
-
-        return {
-          req,
-          res,
-          prisma: prismaClient,
-          auth: {
-            isAuthenticated,
-            user,
-          },
-        };
-      } catch (error) {
-        console.error(error);
-        return {
-          req,
-          res,
-          prisma: prismaClient,
-          auth: {
-            isAuthenticated: false,
-            user: (null as unknown) as Auth['user'],
-          },
-        };
-      }
-    },
-    engine: {
-      apiKey: process.env.AGM_USER_KEY,
+      return buildContext(req, res, prismaClient);
     },
   });
 
