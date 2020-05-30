@@ -45,13 +45,12 @@ export const SignupScreen: React.FC = () => {
             synchronize and share critical information, environment secrets and
             more without having to worry about security.
           </Paragraph>
-          <FlexContainer>
+          <FlexContainer className='responsive'>
             <Button
               component='a'
               href='http://localhost:8080/oauth/auth/github?operation=signup'
               className='black'
               iconStart={{ src: GithubIcon, alt: 'Github', size: '20px' }}
-              margin='0 1rem 0 0'
             >
               Continue with Github
             </Button>

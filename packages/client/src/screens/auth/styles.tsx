@@ -27,6 +27,10 @@ export const AuthScreenInfoOuterContainer = styled.section`
   display: flex;
   justify-content: center;
   padding: 6rem 1.75rem 0;
+
+  @media screen and (max-width: 470px) {
+    flex-basis: 75%;
+  }
 `;
 
 export const AuthScreenInfoContainer = styled.div`

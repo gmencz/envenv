@@ -1,27 +1,20 @@
 import React, { CSSProperties } from 'react';
+import { StyledFlexContainer } from './styles';
 
 interface FlexContainerProps extends CSSProperties {
-  component?:
-    | 'div'
-    | 'section'
-    | 'main'
-    | 'article'
-    | 'aside'
-    | 'header'
-    | 'footer'
-    | 'nav';
+  wrapOnSmallerDevices?: boolean;
+  className?: string;
 }
 
 export const FlexContainer: React.FC<FlexContainerProps> = ({
-  component = 'div',
   children,
+  className,
+  wrapOnSmallerDevices,
   ...styles
 }) => {
-  return React.createElement(
-    component,
-    {
-      style: { display: 'flex', ...styles },
-    },
-    children
+  return (
+    <StyledFlexContainer className={className} style={{ ...styles }}>
+      {children}
+    </StyledFlexContainer>
   );
 };

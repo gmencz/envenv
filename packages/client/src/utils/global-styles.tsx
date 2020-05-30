@@ -14,4 +14,16 @@ export const GlobalStyle = createGlobalStyle`
     text-rendering: optimizeLegibility;
     font-family: 'Source Sans Pro', sans-serif, -apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif,Apple Color Emoji,Segoe UI Emoji;
   }
+
+  @media screen and (max-width: 768px) {
+    html {
+      font-size: 95%;
+    }
+  }
+
+  @media screen and (max-width: 550px) {
+    html {
+      font-size: 90%;
+    }
+  }
 `;
