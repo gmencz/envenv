@@ -12,6 +12,9 @@ import { Title } from '../../../components/title';
 import { FlexContainer } from '../../../components/flex-container';
 import { Paragraph } from '../../../components/paragraph';
 import { Button } from '../../../components/button';
+import GithubIcon from '../../../assets/github-icon.svg';
+import EmailIcon from '../../../assets/email-icon.svg';
+import { AppLink } from '../../../components/link';
 
 export const SignupScreen: React.FC = () => {
   const {
@@ -28,7 +31,7 @@ export const SignupScreen: React.FC = () => {
       <AuthScreenInfoOuterContainer>
         <AuthScreenInfoContainer>
           {signup.error && <p>loading...</p>}
-          <FlexContainer margin='0 0 3rem 0' alignItems='center'>
+          <FlexContainer margin='0 0 4rem 0' alignItems='center'>
             <Logo margin='0 .75rem 0 0' size='30px' />
             <Title fontSize='1.15rem' component='h1'>
               Envenv
@@ -43,9 +46,27 @@ export const SignupScreen: React.FC = () => {
             more without having to worry about security.
           </Paragraph>
           <FlexContainer>
-            <Button margin='0 1rem 0 0'>Continue with Github</Button>
-            <Button>Continue with Email</Button>
+            <Button
+              component='a'
+              href='http://localhost:8080/oauth/auth/github?operation=signup'
+              className='black'
+              iconStart={{ src: GithubIcon, alt: 'Github', size: '20px' }}
+              margin='0 1rem 0 0'
+            >
+              Continue with Github
+            </Button>
+            <Button
+              to='/auth/signup/lastStep'
+              component='internalLink'
+              className='white'
+              iconStart={{ src: EmailIcon, alt: 'Github', size: '20px' }}
+            >
+              Continue with Email
+            </Button>
           </FlexContainer>
+          <Paragraph marginTop='2.5rem' fontSize='1rem'>
+            Already have an account? <AppLink to='/auth/login'>Log in</AppLink>.
+          </Paragraph>
         </AuthScreenInfoContainer>
       </AuthScreenInfoOuterContainer>
       <AuthScreenHero />

@@ -26,7 +26,7 @@ export const AuthScreenInfoOuterContainer = styled.section`
   box-sizing: border-box;
   display: flex;
   justify-content: center;
-  padding: 6.75rem 1.75rem 0;
+  padding: 6rem 1.75rem 0;
 `;
 
 export const AuthScreenInfoContainer = styled.div`
