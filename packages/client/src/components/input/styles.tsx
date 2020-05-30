@@ -28,8 +28,8 @@ export const DefaultStyledInput = styled.input<
 `;
 
 export const DefaultStyledLabel = styled.label`
-  margin-bottom: 0.65rem;
+  margin-bottom: 0.5rem;
   color: #333;
   font-weight: 600;
-  font-family: 'Source Pro Sans', sans-serif;
+  font-size: 1.075rem;
 `;

@@ -6,7 +6,11 @@ const spreadStyles = (props: FlexContainerProps) => ({ ...props });
 export const StyledFlexContainer = styled.div<FlexContainerProps>`
   display: flex;
 
-  & > :first-of-type {
+  & > a:not(:last-of-type) {
+    margin-right: 1rem;
+  }
+
+  & > button:not(:last-of-type) {
     margin-right: 1rem;
   }
 
