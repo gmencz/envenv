@@ -11,7 +11,7 @@ export const StyledFlexContainer = styled.div<FlexContainerProps>`
   }
 
   &.responsive {
-    @media screen and (max-width: 730px) {
+    @media screen and (max-width: 45em) {
       flex-direction: column;
 
       & > :first-of-type {

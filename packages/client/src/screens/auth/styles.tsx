@@ -28,7 +28,7 @@ export const AuthScreenInfoOuterContainer = styled.section`
   justify-content: center;
   padding: 6rem 1.75rem 0;
 
-  @media screen and (max-width: 470px) {
+  @media screen and (max-width: 30em) {
     flex-basis: 75%;
     align-items: center;
     padding: 1.75rem;
