@@ -18,11 +18,11 @@ interface AppResolvers extends Resolvers {
 export const resolvers: AppResolvers = {
   Mutation: {
     logoutClient: (_parent, _args, { cache }) => {
+      localStorage.removeItem('csrf-token');
       cache.writeQuery({
         query: IS_LOGGED_IN,
         data: { isLoggedIn: false },
       });
-      localStorage.removeItem('csrf-token');
 
       return true;
     },

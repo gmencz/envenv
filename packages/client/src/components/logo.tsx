@@ -1,16 +1,17 @@
-import React from 'react';
+import React, { CSSProperties } from 'react';
 
-type LogoProps = {
-  size: string;
-};
+interface LogoProps extends CSSProperties {
+  size?: string;
+}
 
-export const Logo: React.FC<LogoProps> = ({ size }) => {
+export const Logo: React.FC<LogoProps> = ({ size = '30px', margin }) => {
   return (
     <svg
       xmlns='http://www.w3.org/2000/svg'
       height={size}
       viewBox='-41 0 374 374.10622'
       width={size}
+      style={{ margin }}
     >
       <g>
         <path
