@@ -1,6 +1,9 @@
 import styled from 'styled-components';
+import { FlexContainerProps } from '.';
 
-export const StyledFlexContainer = styled.div`
+const spreadStyles = (props: FlexContainerProps) => ({ ...props });
+
+export const StyledFlexContainer = styled.div<FlexContainerProps>`
   display: flex;
 
   & > :first-of-type {
@@ -17,4 +20,6 @@ export const StyledFlexContainer = styled.div`
       }
     }
   }
+
+  ${props => spreadStyles(props)}
 `;

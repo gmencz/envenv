@@ -1,10 +1,8 @@
 import React, { CSSProperties } from 'react';
+import { DefaultStyledParagraph } from './styles';
 
-interface ParagraphProps extends CSSProperties {}
+export interface ParagraphProps extends Omit<CSSProperties, 'translate'> {}
 
-export const Paragraph: React.FC<ParagraphProps> = ({
-  children,
-  ...styles
-}) => {
-  return <p style={{ color: '#333', ...styles }}>{children}</p>;
+export const Paragraph: React.FC<ParagraphProps> = ({ children, ...other }) => {
+  return <DefaultStyledParagraph {...other}>{children}</DefaultStyledParagraph>;
 };

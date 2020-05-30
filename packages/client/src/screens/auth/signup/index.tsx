@@ -15,6 +15,7 @@ import { Button } from '../../../components/button';
 import GithubIcon from '../../../assets/github-icon.svg';
 import EmailIcon from '../../../assets/email-icon.svg';
 import { AppLink } from '../../../components/link';
+import { Input } from '../../../components/input';
 
 export const SignupScreen: React.FC = () => {
   const {
@@ -31,7 +32,7 @@ export const SignupScreen: React.FC = () => {
       <AuthScreenInfoOuterContainer>
         <AuthScreenInfoContainer>
           {signup.error && <p>loading...</p>}
-          <FlexContainer margin='0 0 4rem 0' alignItems='center'>
+          <FlexContainer margin='0 0 3rem 0' alignItems='center'>
             <Logo margin='0 .75rem 0 0' size='30px' />
             <Title fontSize='1.15rem' component='h1'>
               Envenv

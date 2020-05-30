@@ -1,19 +1,17 @@
 import React, { CSSProperties } from 'react';
 import { StyledFlexContainer } from './styles';
 
-interface FlexContainerProps extends CSSProperties {
-  wrapOnSmallerDevices?: boolean;
+export interface FlexContainerProps extends Omit<CSSProperties, 'translate'> {
   className?: string;
 }
 
 export const FlexContainer: React.FC<FlexContainerProps> = ({
   children,
   className,
-  wrapOnSmallerDevices,
-  ...styles
+  ...other
 }) => {
   return (
-    <StyledFlexContainer className={className} style={{ ...styles }}>
+    <StyledFlexContainer className={className} {...other}>
       {children}
     </StyledFlexContainer>
   );

@@ -30,6 +30,8 @@ export const AuthScreenInfoOuterContainer = styled.section`
 
   @media screen and (max-width: 470px) {
     flex-basis: 75%;
+    align-items: center;
+    padding: 1.75rem;
   }
 `;
 

@@ -1,8 +1,12 @@
 import styled from 'styled-components';
 import { InputProps } from '.';
 
+const spreadStyles = (props: Omit<InputProps, 'label' | 'autoFocus'>) => ({
+  ...props,
+});
+
 export const DefaultStyledInput = styled.input<
-  Pick<InputProps, 'padding' | 'margin'>
+  Omit<InputProps, 'label' | 'autoFocus'>
 >`
   padding: ${({ padding }) => padding ?? '.7rem .65rem'};
   margin: ${({ margin }) => margin};
@@ -19,6 +23,8 @@ export const DefaultStyledInput = styled.input<
     border: 1px solid var(--primary-color);
     box-shadow: 0px 0px 2px 0px rgba(24, 144, 255, 1);
   }
+
+  ${(props: any) => spreadStyles(props) as any}
 `;
 
 export const DefaultStyledLabel = styled.label`

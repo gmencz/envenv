@@ -1,10 +1,13 @@
 import React from 'react';
 import { StyledAppLink } from './styles';
+import { CSSProperties } from 'styled-components';
 
-interface AppLinkProps {
+export interface AppLinkProps extends Omit<CSSProperties, 'translate'> {
   to: string;
 }
 
-export const AppLink: React.FC<AppLinkProps> = ({ to, children }) => (
-  <StyledAppLink to={to}>{children}</StyledAppLink>
+export const AppLink: React.FC<AppLinkProps> = ({ to, children, ...other }) => (
+  <StyledAppLink to={to} {...other}>
+    {children}
+  </StyledAppLink>
 );
