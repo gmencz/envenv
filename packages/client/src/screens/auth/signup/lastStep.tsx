@@ -9,11 +9,12 @@ import { Redirect } from 'react-router-dom';
 import { useAuth } from '../../../hooks/use-auth';
 import { Input } from '../../../components/input';
 import { Button } from '../../../components/button';
+import { Loader } from '../../../components/loader';
 
 export const SignupLastStepScreen: React.FC = () => {
   const {
     signup,
-    signup: { data, loading },
+    signup: { data, loading: signingUp },
   } = useAuth();
 
   if (data?.signup.__typename === 'SuccessfulSignup') {
@@ -32,8 +33,8 @@ export const SignupLastStepScreen: React.FC = () => {
         Set up your account.
       </Title>
       <Paragraph fontSize='1.2rem' lineHeight='1.5' marginBottom='2rem'>
-        Fill in some of your details so we can get your account set up and
-        others can know who you are.
+        Fill in your details so we can set up your account and others can know
+        who you are.
       </Paragraph>
       <FlexContainer flexDirection='column'>
         <Formik
@@ -94,8 +95,8 @@ export const SignupLastStepScreen: React.FC = () => {
                 label='Password'
                 margin='0 0 1.5rem'
               />
-              <Button disabled={loading} type='submit' primary>
-                Next
+              <Button disabled={signingUp} type='submit' primary>
+                {signingUp ? <Loader size='12px' /> : 'Next'}
               </Button>
             </form>
           )}

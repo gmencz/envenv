@@ -1,12 +1,11 @@
 import React from 'react';
-import { StyledFullpageLoaderWrapper, StyledFullpageLoader } from './styles';
+import { StyledFullpageLoaderWrapper } from './styles';
+import { Loader } from '../loader';
 
 export const FullpageLoader: React.FC = () => {
   return (
     <StyledFullpageLoaderWrapper>
-      <StyledFullpageLoader aria-label='Loading...'>
-        <div></div>
-      </StyledFullpageLoader>
+      <Loader />
     </StyledFullpageLoaderWrapper>
   );
 };
