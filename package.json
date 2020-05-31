@@ -40,7 +40,7 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": "lint-staged"
+      "pre-commit": "lint-staged && docker-compose exec -T dev-accounts-service npm run apollo-push:dev"
     }
   },
   "lint-staged": {
