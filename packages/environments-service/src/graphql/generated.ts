@@ -81,7 +81,7 @@ export type CreateEnvironmentInput = {
 export type Mutation = {
   __typename?: 'Mutation';
   /** Creates a new environment. */
-  createEnvironment?: Maybe<Environment>;
+  createEnvironment: Environment;
 };
 
 export type MutationCreateEnvironmentArgs = {
@@ -288,7 +288,7 @@ export type MutationResolvers<
   ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']
 > = {
   createEnvironment?: Resolver<
-    Maybe<ResolversTypes['Environment']>,
+    ResolversTypes['Environment'],
     ParentType,
     ContextType,
     RequireFields<MutationCreateEnvironmentArgs, 'data'>

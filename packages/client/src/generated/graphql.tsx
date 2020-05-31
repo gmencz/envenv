@@ -171,7 +171,7 @@ export type PasswordsDontMatch = {
 };
 
 /** Represents the result of an operation which requests an email with the instructions to reset an account's password. */
-export type RequestPasswordResetEmailResult =
+export type RequestPasswordResetEmailPayload =
   | EmailMayHaveBeenSent
   | InvalidDataFormat;
 
@@ -307,7 +307,7 @@ export type Query = {
   /** Look up the currently logged in user. */
   me: User;
   /** Request an email with the instructions to reset an account's password. */
-  requestPasswordResetEmail: RequestPasswordResetEmailResult;
+  requestPasswordResetEmail: RequestPasswordResetEmailPayload;
   /** Look up an user by id, username or email. */
   user: UserResult;
 };

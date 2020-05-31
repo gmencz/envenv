@@ -1,4 +1,4 @@
 extend type Mutation {
   "Creates a new environment."
-  createEnvironment(data: CreateEnvironmentInput!): Environment
+  createEnvironment(data: CreateEnvironmentInput!): Environment!
 }

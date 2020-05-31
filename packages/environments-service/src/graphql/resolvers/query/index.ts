@@ -1,8 +1,3 @@
-import getEnvironments from './getEnvironments';
-import { QueryResolvers } from '../../generated';
-
-const QueryResolvers: QueryResolvers = {
-  getEnvironments,
-};
+const QueryResolvers = {};
 
 export default QueryResolvers;
