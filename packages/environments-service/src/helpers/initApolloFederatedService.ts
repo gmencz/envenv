@@ -1,9 +1,13 @@
-import { ApolloServer, ApolloError } from 'apollo-server-express';
+import {
+  ApolloServer,
+  ApolloError,
+  AuthenticationError,
+} from 'apollo-server-express';
 import { loadFiles, mergeTypeDefs } from 'graphql-tools';
 import { join } from 'path';
 import { buildFederatedSchema } from '@apollo/federation';
 import resolvers from '../graphql/resolvers';
-import { ApolloContext, Auth } from '../typings';
+import { ApolloContext } from '../typings';
 import { PrismaClient } from '@prisma/client';
 import { Express, Request, Response } from 'express';
 
@@ -11,15 +15,16 @@ const buildContext = (
   req: Request,
   res: Response,
   prismaClient: PrismaClient
-): ApolloContext | ApolloError => {
+): ApolloContext => {
   try {
+    console.log(req.headers['user']);
     const isAuthenticated = !!req.headers['user'];
     const user = req.headers['user']
       ? JSON.parse(req.headers['user'] as string)
       : null;
 
     if (!user || !isAuthenticated) {
-      return new ApolloError('Unauthorized', '401');
+      throw new AuthenticationError('Unauthorized');
     }
 
     return {
@@ -33,15 +38,7 @@ const buildContext = (
     };
   } catch (error) {
     console.error(error);
-    return {
-      req,
-      res,
-      prisma: prismaClient,
-      auth: {
-        isAuthenticated: false,
-        user: (null as unknown) as Auth['user'],
-      },
-    };
+    throw new AuthenticationError('Unauthorized');
   }
 };
 
