@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React from 'react';
 import { FullpageLoader } from './components/fullpage-loader';
 import { Redirect } from 'react-router-dom';
 import { useAuth } from './hooks/use-auth';
@@ -11,8 +11,8 @@ const AuthenticatedApp: React.FC = () => {
   const { logout, whoAmI } = useAuth();
 
   // Hacky fix for explained bug above.
-  const mounted = useRef(true);
-  useEffect(() => {
+  const mounted = React.useRef(true);
+  React.useEffect(() => {
     if (mounted.current) {
       whoAmI.execute();
     }

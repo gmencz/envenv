@@ -1,8 +1,9 @@
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import { InputProps } from '.';
 
 const spreadStyles = (props: Omit<InputProps, 'label' | 'autoFocus'>) => ({
   ...props,
+  children: undefined,
 });
 
 export const DefaultStyledInput = styled.input<
@@ -19,6 +20,12 @@ export const DefaultStyledInput = styled.input<
   font-family: 'Source Sans Pro', sans-serif, -apple-system, BlinkMacSystemFont,
     Segoe UI, Helvetica, Arial, sans-serif, Apple Color Emoji, Segoe UI Emoji;
 
+  ${({ error }) =>
+    error &&
+    css`
+      box-shadow: 0px 0px 2.35px 0px red;
+    `}
+
   &:focus {
     border: 1px solid var(--primary-color);
     box-shadow: 0px 0px 2.35px 0px rgba(24, 144, 255, 1);
@@ -28,8 +35,28 @@ export const DefaultStyledInput = styled.input<
 `;
 
 export const DefaultStyledLabel = styled.label`
-  margin-bottom: 0.5rem;
   color: #333;
   font-weight: 600;
+  margin-right: 1rem;
   font-size: 1.075rem;
+`;
+
+export const StyledInputError = styled.div`
+  display: flex;
+  align-items: center;
+  color: red;
+  position: relative;
+
+  strong {
+    margin-left: 26px;
+  }
+
+  svg {
+    fill: red;
+    width: 18px;
+    position: absolute; /* using absolute so the icon doesn't displace the above elements */
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+  }
 `;

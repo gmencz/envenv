@@ -22,7 +22,8 @@ export const AuthScreenHero = styled.div`
 `;
 
 interface AuthScreenInfoOuterContainerProps {
-  isLastStep?: boolean;
+  centerOnSmHeights?: boolean;
+  fullScreenOnSm?: boolean;
 }
 
 export const AuthScreenInfoOuterContainer = styled.section<
@@ -33,17 +34,23 @@ export const AuthScreenInfoOuterContainer = styled.section<
   display: flex;
   padding: 6rem 1.75rem 0;
 
-  ${({ isLastStep }) =>
-    isLastStep &&
+  ${({ centerOnSmHeights }) =>
+    centerOnSmHeights &&
     css`
-      padding: 0 1.75rem;
-      align-items: center;
+      @media screen and (max-height: 56em) {
+        padding: 0.75rem;
+        align-items: center;
+      }
     `}
 
   @media screen and (max-width: 30em) {
-    flex-basis: 75%;
+    flex-basis: ${({ fullScreenOnSm }) => (fullScreenOnSm ? '100%' : '76%')};
     align-items: center;
     padding: 1.75rem;
+  }
+
+  @media screen and (max-width: 23.5em) {
+    padding: 1.25rem;
   }
 `;
 

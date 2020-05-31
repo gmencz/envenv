@@ -1,10 +1,5 @@
 import React from 'react';
-import {
-  AuthScreenContainer,
-  AuthScreenHero,
-  AuthScreenInfoContainer,
-  AuthScreenInfoOuterContainer,
-} from '../styles';
+import { AuthScreenInfoContainer } from '../styles';
 import { Logo } from '../../../components/logo';
 import { Title } from '../../../components/title';
 import { FlexContainer } from '../../../components/flex-container';
@@ -15,15 +10,6 @@ import EmailIcon from '../../../assets/email-icon.svg';
 import { AppLink } from '../../../components/link';
 
 export const SignupScreen: React.FC = () => {
-  // const {
-  //   signup,
-  //   signup: { data },
-  // } = useAuth();
-
-  // if (data?.signup.__typename === 'SuccessfulSignup') {
-  //   return <Redirect to='/' />;
-  // }
-
   return (
     <AuthScreenInfoContainer>
       <FlexContainer margin='0 0 3rem 0' alignItems='center'>
@@ -50,7 +36,7 @@ export const SignupScreen: React.FC = () => {
           Continue with Github
         </Button>
         <Button
-          to='/auth/signup/lastStep'
+          to='/register'
           component='internalLink'
           className='white'
           iconStart={{ src: EmailIcon, alt: 'Github', size: '20px' }}
