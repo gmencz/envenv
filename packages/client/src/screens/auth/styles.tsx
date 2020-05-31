@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import AuthHeroDecoration from '../../assets/auth-hero-decoration1.svg';
 
 export const AuthScreenContainer = styled.main`
@@ -21,20 +21,40 @@ export const AuthScreenHero = styled.div`
   }
 `;
 
-export const AuthScreenInfoOuterContainer = styled.section`
+interface AuthScreenInfoOuterContainerProps {
+  centerOnSmHeights?: boolean;
+  fullScreenOnSm?: boolean;
+}
+
+export const AuthScreenInfoOuterContainer = styled.section<
+  AuthScreenInfoOuterContainerProps
+>`
   flex-basis: 66.666667%;
   box-sizing: border-box;
   display: flex;
-  justify-content: center;
   padding: 6rem 1.75rem 0;
 
+  ${({ centerOnSmHeights }) =>
+    centerOnSmHeights &&
+    css`
+      @media screen and (max-height: 56em) {
+        padding: 0.75rem;
+        align-items: center;
+      }
+    `}
+
   @media screen and (max-width: 30em) {
-    flex-basis: 75%;
+    flex-basis: ${({ fullScreenOnSm }) => (fullScreenOnSm ? '100%' : '76%')};
     align-items: center;
     padding: 1.75rem;
+  }
+
+  @media screen and (max-width: 23.5em) {
+    padding: 1.25rem;
   }
 `;
 
 export const AuthScreenInfoContainer = styled.div`
-  max-width: 650px;
+  max-width: 500px;
+  margin: 0 auto;
 `;

@@ -3,7 +3,7 @@ extend type Query {
   requestPasswordResetEmail(
     "The email address of the account for which we want to reset the password."
     email: String!
-  ): RequestPasswordResetEmailResult!
+  ): RequestPasswordResetEmailPayload!
 
   "Look up an user by id, username or email."
   user(

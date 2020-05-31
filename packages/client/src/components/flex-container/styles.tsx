@@ -1,12 +1,19 @@
 import styled from 'styled-components';
 import { FlexContainerProps } from '.';
 
-const spreadStyles = (props: FlexContainerProps) => ({ ...props });
+const spreadStyles = (props: FlexContainerProps) => ({
+  ...props,
+  children: undefined,
+});
 
 export const StyledFlexContainer = styled.div<FlexContainerProps>`
   display: flex;
 
-  & > :first-of-type {
+  & > a:not(:last-of-type) {
+    margin-right: 1rem;
+  }
+
+  & > button:not(:last-of-type) {
     margin-right: 1rem;
   }
 

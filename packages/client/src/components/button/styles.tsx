@@ -1,7 +1,7 @@
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import { Link } from 'react-router-dom';
 
-export const DefaultStyledButton = styled.button`
+export const DefaultStyledButton = styled.button<{ primary?: boolean }>`
   padding: 0.75rem;
   display: flex;
   border-radius: 4px;
@@ -9,9 +9,33 @@ export const DefaultStyledButton = styled.button`
   border: none;
   align-items: center;
   color: rgb(34, 34, 34);
-  font-size: 1rem;
+  font-size: 1.1rem;
   background-color: #fff;
-  box-shadow: 0px 0px 2px 0px rgba(34, 34, 34, 1);
+  font-family: 'Source Sans Pro', sans-serif, -apple-system, BlinkMacSystemFont,
+    Segoe UI, Helvetica, Arial, sans-serif, Apple Color Emoji, Segoe UI Emoji;
+  transition: background-color 200ms ease-in-out;
+
+  &:hover {
+    background-color: #eee;
+  }
+
+  ${({ primary }) =>
+    primary &&
+    css`
+      background-color: var(--primary-color);
+      color: white;
+      width: 100%;
+      justify-content: center;
+
+      &:hover {
+        background-color: #006dd1;
+      }
+
+      &:disabled {
+        background-color: #d8d8d8;
+        cursor: not-allowed;
+      }
+    `}
 `;
 
 export const DefaultStyledButtonAnchor = styled.a`

@@ -9,7 +9,9 @@ union DeleteAllUsersResult = NotInTestingEnvironment | SuccessfulRemoval
 union UserResult = User | UserNotFound | InvalidDataFormat
 
 "Represents the result of an operation which requests an email with the instructions to reset an account's password."
-union RequestPasswordResetEmailResult = EmailMayHaveBeenSent | InvalidDataFormat
+union RequestPasswordResetEmailPayload =
+    EmailMayHaveBeenSent
+  | InvalidDataFormat
 
 "Represents the result of an operation which resets an account's password."
 union ResetPasswordResult =

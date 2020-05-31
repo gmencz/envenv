@@ -19,7 +19,6 @@
     "apollo-server-express": "^2.13.1",
     "cookie-parser": "^1.4.5",
     "graphql": "^15.0.0",
-    "graphql-import": "^1.0.2",
     "graphql-iso-date": "^3.6.1",
     "graphql-tools": "^6.0.1"
   },

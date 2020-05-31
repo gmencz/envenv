@@ -17,33 +17,25 @@ interface ButtonProps
   margin?: string;
   iconStart?: Icon;
   iconEnd?: Icon;
-  backgroundColor?: string;
   component?: 'a' | 'button' | 'internalLink';
   href?: string;
   to?: string;
+  primary?: boolean;
 }
 
-type OnlyCustomButtonProps = keyof Pick<
-  ButtonProps,
-  'padding' | 'margin' | 'backgroundColor'
->;
+type OnlyCustomButtonProps = keyof Pick<ButtonProps, 'padding' | 'margin'>;
 
 export const Button: React.FC<ButtonProps> = ({
   children,
   iconStart,
   iconEnd,
   to,
-  backgroundColor,
-  component,
+  component = 'button',
   ...props
 }) => {
   // Extract this into its own hook since we reuse it in more components.
   const memoizedCustomStyles = React.useMemo(() => {
-    const allowedProps: OnlyCustomButtonProps[] = [
-      'padding',
-      'margin',
-      'backgroundColor',
-    ];
+    const allowedProps: OnlyCustomButtonProps[] = ['padding', 'margin'];
 
     const filteredProps = Object.keys(props)
       .filter(propName =>
