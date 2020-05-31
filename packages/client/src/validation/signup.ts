@@ -1,4 +1,4 @@
-import { object, string } from 'yup';
+import { object, string, boolean } from 'yup';
 
 export const signupValidationSchema = object().shape({
   username: string()
@@ -16,4 +16,8 @@ export const signupValidationSchema = object().shape({
     .min(8, 'That password is too short!')
     .max(255, 'That password is too long!')
     .required('Please, provide a password!'),
+  agreedToTos: boolean().oneOf(
+    [true],
+    'You must agree to our terms of service and privacy policy.'
+  ),
 });

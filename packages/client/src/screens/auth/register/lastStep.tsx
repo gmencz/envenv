@@ -13,6 +13,12 @@ import { Loader } from '../../../components/loader';
 import { signupValidationSchema } from '../../../validation/signup';
 import { StyledInputError } from '../../../components/input/styles';
 import { useUnexpectedTypename } from '../../../hooks/use-unexpected-typename';
+import { Checkbox } from '../../../components/checkbox';
+import { AppLink } from '../../../components/link';
+// @ts-ignore
+import TermsOfServicePDF from '../../../assets/EnvenvTOS.pdf';
+// @ts-ignore
+import PrivacyPolicyPDF from '../../../assets/EnvenvPrivacyPolicy.pdf';
 
 export const SignupLastStepScreen: React.FC = () => {
   const {
@@ -50,10 +56,12 @@ export const SignupLastStepScreen: React.FC = () => {
             email: '',
             name: '',
             password: '',
+            agreedToTos: false,
           }}
           onSubmit={values => {
+            const { username, email, name, password } = values;
             signup.execute({
-              variables: { data: { ...values } },
+              variables: { data: { username, email, name, password } },
             });
           }}
           validationSchema={signupValidationSchema}
@@ -65,6 +73,7 @@ export const SignupLastStepScreen: React.FC = () => {
             handleChange,
             handleBlur,
             handleSubmit,
+            setFieldValue,
           }) => (
             <form onSubmit={handleSubmit}>
               <Input
@@ -109,6 +118,27 @@ export const SignupLastStepScreen: React.FC = () => {
                 margin='0 0 1.5rem'
                 error={touched.password ? errors.password : undefined}
               />
+              <FlexContainer margin='0 0 1.5rem'>
+                <Checkbox
+                  checked={values.agreedToTos}
+                  margin='0 .5rem 0 0'
+                  error={touched.agreedToTos ? !!errors.agreedToTos : false}
+                  onChange={() => {
+                    setFieldValue('agreedToTos', !values.agreedToTos);
+                  }}
+                />
+                <span>
+                  I have read and agree to the{' '}
+                  <AppLink external to={TermsOfServicePDF}>
+                    Terms of Service
+                  </AppLink>{' '}
+                  and{' '}
+                  <AppLink external to={PrivacyPolicyPDF}>
+                    Privacy Policy
+                  </AppLink>
+                  .
+                </span>
+              </FlexContainer>
               <Button
                 disabled={signingUp}
                 type='submit'
