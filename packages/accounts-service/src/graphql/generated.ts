@@ -80,7 +80,7 @@ export type DeleteAllUsersResult = NotInTestingEnvironment | SuccessfulRemoval;
 export type UserResult = User | UserNotFound | InvalidDataFormat;
 
 /** Represents the result of an operation which requests an email with the instructions to reset an account's password. */
-export type RequestPasswordResetEmailResult =
+export type RequestPasswordResetEmailPayload =
   | EmailMayHaveBeenSent
   | InvalidDataFormat;
 
@@ -214,7 +214,7 @@ export type SuccessfulLogout = {
 export type Query = {
   __typename?: 'Query';
   /** Request an email with the instructions to reset an account's password. */
-  requestPasswordResetEmail: RequestPasswordResetEmailResult;
+  requestPasswordResetEmail: RequestPasswordResetEmailPayload;
   /** Look up an user by id, username or email. */
   user: UserResult;
   /** Look up the currently logged in user. */
@@ -409,7 +409,7 @@ export type ResolversTypes = {
     | ResolversTypes['User']
     | ResolversTypes['UserNotFound']
     | ResolversTypes['InvalidDataFormat'];
-  RequestPasswordResetEmailResult:
+  RequestPasswordResetEmailPayload:
     | ResolversTypes['EmailMayHaveBeenSent']
     | ResolversTypes['InvalidDataFormat'];
   ResetPasswordResult:
@@ -467,7 +467,7 @@ export type ResolversParentTypes = {
     | ResolversParentTypes['User']
     | ResolversParentTypes['UserNotFound']
     | ResolversParentTypes['InvalidDataFormat'];
-  RequestPasswordResetEmailResult:
+  RequestPasswordResetEmailPayload:
     | ResolversParentTypes['EmailMayHaveBeenSent']
     | ResolversParentTypes['InvalidDataFormat'];
   ResetPasswordResult:
@@ -571,9 +571,9 @@ export type UserResultResolvers<
   >;
 };
 
-export type RequestPasswordResetEmailResultResolvers<
+export type RequestPasswordResetEmailPayloadResolvers<
   ContextType = ApolloContext,
-  ParentType extends ResolversParentTypes['RequestPasswordResetEmailResult'] = ResolversParentTypes['RequestPasswordResetEmailResult']
+  ParentType extends ResolversParentTypes['RequestPasswordResetEmailPayload'] = ResolversParentTypes['RequestPasswordResetEmailPayload']
 > = {
   __resolveType: TypeResolveFn<
     'EmailMayHaveBeenSent' | 'InvalidDataFormat',
@@ -749,7 +749,7 @@ export type QueryResolvers<
   ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']
 > = {
   requestPasswordResetEmail?: Resolver<
-    ResolversTypes['RequestPasswordResetEmailResult'],
+    ResolversTypes['RequestPasswordResetEmailPayload'],
     ParentType,
     ContextType,
     RequireFields<QueryRequestPasswordResetEmailArgs, 'email'>
@@ -798,7 +798,7 @@ export type Resolvers<ContextType = ApolloContext> = {
   Mutation?: MutationResolvers<ContextType>;
   DeleteAllUsersResult?: DeleteAllUsersResultResolvers;
   UserResult?: UserResultResolvers;
-  RequestPasswordResetEmailResult?: RequestPasswordResetEmailResultResolvers;
+  RequestPasswordResetEmailPayload?: RequestPasswordResetEmailPayloadResolvers;
   ResetPasswordResult?: ResetPasswordResultResolvers;
   SignupResult?: SignupResultResolvers;
   LoginResult?: LoginResultResolvers;
