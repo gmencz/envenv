@@ -58,7 +58,6 @@ export default async function initApolloFederatedService(
       resolvers: resolvers as any,
     },
   ]);
-
   const server = new ApolloServer({
     schema: applyMiddleware(schema, permissions),
     context: ({ req, res }: ApolloContext): ApolloContext => {
