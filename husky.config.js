@@ -12,7 +12,7 @@ const federatedServices = async path => {
   return dirs;
 };
 
-federatedServices().then(r => console.log(r));
+federatedServices(`${__dirname}/packages/`).then(r => console.log(r));
 
 module.exports = {
   'hooks': {
