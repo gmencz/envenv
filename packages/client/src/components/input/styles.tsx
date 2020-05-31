@@ -23,7 +23,8 @@ export const DefaultStyledInput = styled.input<
   ${({ error }) =>
     error &&
     css`
-      box-shadow: 0px 0px 2.35px 0px red;
+      box-shadow: 0px 0px 2.35px 0px var(--warning-color);
+      border: 1px solid var(--warning-color);
     `}
 
   &:focus {
@@ -44,7 +45,7 @@ export const DefaultStyledLabel = styled.label`
 export const StyledInputError = styled.div`
   display: flex;
   align-items: center;
-  color: red;
+  color: var(--warning-color);
   position: relative;
 
   strong {
@@ -52,7 +53,7 @@ export const StyledInputError = styled.div`
   }
 
   svg {
-    fill: red;
+    fill: var(--warning-color);
     width: 18px;
     position: absolute; /* using absolute so the icon doesn't displace the above elements */
     left: 0;
