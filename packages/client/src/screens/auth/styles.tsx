@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import AuthHeroDecoration from '../../assets/auth-hero-decoration1.svg';
 
 export const AuthScreenContainer = styled.main`
@@ -21,11 +21,24 @@ export const AuthScreenHero = styled.div`
   }
 `;
 
-export const AuthScreenInfoOuterContainer = styled.section`
+interface AuthScreenInfoOuterContainerProps {
+  isLastStep?: boolean;
+}
+
+export const AuthScreenInfoOuterContainer = styled.section<
+  AuthScreenInfoOuterContainerProps
+>`
   flex-basis: 66.666667%;
   box-sizing: border-box;
   display: flex;
   padding: 6rem 1.75rem 0;
+
+  ${({ isLastStep }) =>
+    isLastStep &&
+    css`
+      padding: 0 1.75rem;
+      align-items: center;
+    `}
 
   @media screen and (max-width: 30em) {
     flex-basis: 75%;

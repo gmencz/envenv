@@ -33,8 +33,8 @@ export const SignupLastStepScreen: React.FC = () => {
         Set up your account.
       </Title>
       <Paragraph fontSize='1.2rem' lineHeight='1.5' marginBottom='2rem'>
-        Fill in your details so we can set up your account and others can know
-        who you are.
+        Fill in your details so others can know who you are and we can start
+        improving your workflow.
       </Paragraph>
       <FlexContainer flexDirection='column'>
         <Formik
@@ -44,8 +44,8 @@ export const SignupLastStepScreen: React.FC = () => {
             name: '',
             password: '',
           }}
-          onSubmit={async values => {
-            await signup.execute({
+          onSubmit={values => {
+            signup.execute({
               variables: { data: { ...values } },
             });
           }}
@@ -66,6 +66,7 @@ export const SignupLastStepScreen: React.FC = () => {
                 type='text'
                 value={values.name}
                 margin='0 0 1.5rem'
+                placeholder='John Doe'
                 label='Name'
               />
               <Input
@@ -76,6 +77,7 @@ export const SignupLastStepScreen: React.FC = () => {
                 value={values.email}
                 label='Email'
                 margin='0 0 1.5rem'
+                placeholder='example@domain.com'
               />
               <Input
                 onChange={handleChange}
