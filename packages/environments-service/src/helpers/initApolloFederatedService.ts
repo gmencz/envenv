@@ -6,6 +6,8 @@ import resolvers from '../graphql/resolvers';
 import { ApolloContext, Auth } from '../typings';
 import { PrismaClient } from '@prisma/client';
 import { Express, Request, Response } from 'express';
+import { applyMiddleware } from 'graphql-middleware';
+import permissions from '../graphql/permissions';
 
 const buildContext = (
   req: Request,
@@ -50,13 +52,15 @@ export default async function initApolloFederatedService(
   );
   const mergedSchemaTypeDefs = mergeTypeDefs(spreadServiceSchemas);
 
+  const schema = buildFederatedSchema([
+    {
+      typeDefs: mergedSchemaTypeDefs,
+      resolvers: resolvers as any,
+    },
+  ]);
+
   const server = new ApolloServer({
-    schema: buildFederatedSchema([
-      {
-        typeDefs: mergedSchemaTypeDefs,
-        resolvers: resolvers as any,
-      },
-    ]),
+    schema: applyMiddleware(schema, permissions),
     context: ({ req, res }: ApolloContext): ApolloContext => {
       return buildContext(req, res, prismaClient);
     },
