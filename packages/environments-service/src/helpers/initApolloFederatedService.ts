@@ -1,4 +1,4 @@
-import { ApolloServer } from 'apollo-server-express';
+import { ApolloServer, ApolloError } from 'apollo-server-express';
 import { loadFiles, mergeTypeDefs } from 'graphql-tools';
 import { join } from 'path';
 import { buildFederatedSchema } from '@apollo/federation';
@@ -11,12 +11,16 @@ const buildContext = (
   req: Request,
   res: Response,
   prismaClient: PrismaClient
-): ApolloContext => {
+): ApolloContext | ApolloError => {
   try {
     const isAuthenticated = !!req.headers['user'];
     const user = req.headers['user']
       ? JSON.parse(req.headers['user'] as string)
       : null;
+
+    if (!user || !isAuthenticated) {
+      return new ApolloError('Unauthorized', '401');
+    }
 
     return {
       req,
