@@ -1,6 +1,6 @@
 import { AuthenticationError, ForbiddenError } from 'apollo-server-express';
 import { ApolloContext } from '../typings';
-import { rule, shield } from 'graphql-shield';
+import { rule, shield, allow } from 'graphql-shield';
 import { Rule } from 'graphql-shield/dist/rules';
 
 const isAuthenticated = rule({ cache: 'contextual' })(
@@ -25,6 +25,12 @@ const hasRole = (...roles: string[]): Rule =>
 const permissions = shield({
   Query: {
     '*': isAuthenticated,
+    /*
+      We need to allow the federation spec queries so AGM
+      can fetch the needed info about the service.
+    */
+    _entities: allow,
+    _service: allow,
   },
   Mutation: {
     '*': isAuthenticated,
