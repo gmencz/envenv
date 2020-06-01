@@ -5,11 +5,11 @@ import redisClient from '../../../helpers/redisClient';
 import { hash } from 'bcryptjs';
 import addAtToUsername from '../../../helpers/addAtToUsername';
 import { MutationResolvers, SignupResult } from '../../generated';
-import { cacheUser } from '../../../helpers/cache/user';
+import { addYears } from 'date-fns';
 
 const signup: MutationResolvers['signup'] = async (
   _,
-  { data },
+  { data, provider },
   { prisma, res }
 ): Promise<SignupResult> => {
   try {
@@ -21,7 +21,6 @@ const signup: MutationResolvers['signup'] = async (
           ? data.username
           : `@${data.username}`,
       },
-      select: { id: true },
     });
 
     if (isUsernameTaken) {
@@ -33,7 +32,6 @@ const signup: MutationResolvers['signup'] = async (
 
     const isEmailTaken = await prisma.user.findOne({
       where: { email: data.email },
-      select: { id: true },
     });
 
     if (isEmailTaken) {
@@ -47,7 +45,14 @@ const signup: MutationResolvers['signup'] = async (
     const username = addAtToUsername(data.username);
 
     const newUser = await prisma.user.create({
-      data: { ...data, password, username },
+      data: {
+        ...data,
+        password,
+        username,
+        provider: provider ?? 'NONE',
+        // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
+        id: data.id as string | undefined,
+      },
     });
 
     const newSession = await createSession(newUser.id, redisClient);
@@ -55,7 +60,7 @@ const signup: MutationResolvers['signup'] = async (
     res.cookie('SessionID', newSession.sessionId, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
-      maxAge: 31556952000,
+      expires: addYears(Date.now(), 1),
       sameSite: 'strict',
     });
 

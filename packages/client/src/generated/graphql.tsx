@@ -300,8 +300,6 @@ export type WantsSamePassword = {
 
 export type Query = {
   __typename?: 'Query';
-  /** Looks up all environments. */
-  getEnvironments?: Maybe<Array<Maybe<Environment>>>;
   /** Find out if the user is logged in or not. */
   isLoggedIn: Scalars['Boolean'];
   /** Look up the currently logged in user. */
@@ -325,7 +323,7 @@ export type QueryUserArgs = {
 export type Mutation = {
   __typename?: 'Mutation';
   /** Creates a new environment. */
-  createEnvironment?: Maybe<Environment>;
+  createEnvironment: Environment;
   /** Deletes every user. This is only available in a testing environment. */
   deleteAllUsers: DeleteAllUsersResult;
   /** Logs user in. */
@@ -361,6 +359,7 @@ export type MutationResetPasswordArgs = {
 
 export type MutationSignupArgs = {
   data: CreateUserInput;
+  provider?: Maybe<AccountProvider>;
 };
 
 export type LoginMutationVariables = {
@@ -386,6 +385,20 @@ export type LogoutMutation = { __typename?: 'Mutation' } & {
     | ({ __typename: 'SuccessfulLogout' } & Pick<
         SuccessfulLogout,
         'performedAt'
+      >);
+};
+
+export type SignUpWithGithubMutationVariables = {
+  data: CreateUserInput;
+};
+
+export type SignUpWithGithubMutation = { __typename?: 'Mutation' } & {
+  signup:
+    | ({ __typename: 'SuccessfulSignup' } & Pick<SuccessfulSignup, 'csrfToken'>)
+    | ({ __typename: 'InvalidDataFormat' } & Pick<InvalidDataFormat, 'message'>)
+    | ({ __typename: 'TakenUsernameOrEmail' } & Pick<
+        TakenUsernameOrEmail,
+        'message'
       >);
 };
 
@@ -553,6 +566,65 @@ export type LogoutMutationResult = ApolloReactCommon.MutationResult<
 export type LogoutMutationOptions = ApolloReactCommon.BaseMutationOptions<
   LogoutMutation,
   LogoutMutationVariables
+>;
+export const SignUpWithGithubDocument = gql`
+  mutation SignUpWithGithub($data: CreateUserInput!) {
+    signup(data: $data, provider: GITHUB) {
+      __typename
+      ... on SuccessfulSignup {
+        csrfToken
+      }
+      ... on InvalidDataFormat {
+        message
+      }
+      ... on TakenUsernameOrEmail {
+        message
+      }
+    }
+  }
+`;
+export type SignUpWithGithubMutationFn = ApolloReactCommon.MutationFunction<
+  SignUpWithGithubMutation,
+  SignUpWithGithubMutationVariables
+>;
+
+/**
+ * __useSignUpWithGithubMutation__
+ *
+ * To run a mutation, you first call `useSignUpWithGithubMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useSignUpWithGithubMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [signUpWithGithubMutation, { data, loading, error }] = useSignUpWithGithubMutation({
+ *   variables: {
+ *      data: // value for 'data'
+ *   },
+ * });
+ */
+export function useSignUpWithGithubMutation(
+  baseOptions?: ApolloReactHooks.MutationHookOptions<
+    SignUpWithGithubMutation,
+    SignUpWithGithubMutationVariables
+  >
+) {
+  return ApolloReactHooks.useMutation<
+    SignUpWithGithubMutation,
+    SignUpWithGithubMutationVariables
+  >(SignUpWithGithubDocument, baseOptions);
+}
+export type SignUpWithGithubMutationHookResult = ReturnType<
+  typeof useSignUpWithGithubMutation
+>;
+export type SignUpWithGithubMutationResult = ApolloReactCommon.MutationResult<
+  SignUpWithGithubMutation
+>;
+export type SignUpWithGithubMutationOptions = ApolloReactCommon.BaseMutationOptions<
+  SignUpWithGithubMutation,
+  SignUpWithGithubMutationVariables
 >;
 export const SignUpDocument = gql`
   mutation SignUp($data: CreateUserInput!) {

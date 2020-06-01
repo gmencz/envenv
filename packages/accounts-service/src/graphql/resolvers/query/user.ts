@@ -41,14 +41,19 @@ const user: QueryResolvers['user'] = async (
         };
       }
     }
-    console.log('hey');
+
     const user = await prisma.user.findOne({
       where: {
-        ...args,
         ...(args.username && {
           username: args.username.startsWith('@')
             ? args.username
             : `@${args.username}`,
+          ...(args.id && {
+            id: args.id,
+          }),
+          ...(args.email && {
+            email: args.email,
+          }),
         }),
       },
     });

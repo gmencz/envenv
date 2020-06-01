@@ -1,6 +1,6 @@
 import React from 'react';
 import { FullpageLoader } from './components/fullpage-loader';
-import { Redirect } from 'react-router-dom';
+import { Redirect, Switch, Route } from 'react-router-dom';
 import { useAuth } from './hooks/use-auth';
 
 const AuthenticatedApp: React.FC = () => {
@@ -30,7 +30,20 @@ const AuthenticatedApp: React.FC = () => {
     return <Redirect to='/' />;
   }
 
-  return <>{whoAmI.data && <h1>Hey, {whoAmI.data.me.name}! 🚀</h1>}</>;
+  return (
+    <>
+      {whoAmI.data && <h1>Hey, {whoAmI.data.me.name}! 🚀</h1>}
+      <Routes />
+    </>
+  );
 };
+
+const Routes: React.FC = () => (
+  <Switch>
+    <Route path='/auth/flow/success'>
+      <Redirect to='/' />
+    </Route>
+  </Switch>
+);
 
 export default AuthenticatedApp;

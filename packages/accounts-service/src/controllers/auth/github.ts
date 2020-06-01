@@ -9,6 +9,8 @@ import { generate } from 'generate-password';
 import { hash } from 'bcryptjs';
 import addAtToUsername from '../../helpers/addAtToUsername';
 import { getCachedUser, cacheUser } from '../../helpers/cache/user';
+import Encryptor from 'cryptr';
+import { addYears } from 'date-fns';
 
 export const githubStrategy = new GithubStrategy(
   {
@@ -109,7 +111,7 @@ export const callbackGithubAuth = async (
         res.cookie('SessionID', newSession.sessionId, {
           httpOnly: true,
           secure: process.env.NODE_ENV === 'production',
-          maxAge: 31556952000,
+          expires: addYears(Date.now(), 1),
           sameSite: 'strict',
         });
 
@@ -151,7 +153,7 @@ export const callbackGithubAuth = async (
         res.cookie('SessionID', newSession.sessionId, {
           httpOnly: true,
           secure: process.env.NODE_ENV === 'production',
-          maxAge: 31556952000,
+          expires: addYears(Date.now(), 1),
           sameSite: 'strict',
         });
 
@@ -168,6 +170,48 @@ export const callbackGithubAuth = async (
       }
 
       if (!user) {
+        // Check if username/email are taken
+        const takenUsername = await prisma.user.findOne({
+          where: { username: addAtToUsername(username) },
+        });
+
+        const takenEmail = await prisma.user.findOne({
+          where: { email },
+        });
+
+        const duplicateFields = [];
+        const userData = { id, name, provider, picture, email, username };
+
+        if (takenUsername) {
+          duplicateFields.push('username');
+          delete userData.username;
+        }
+
+        if (takenEmail) {
+          duplicateFields.push('email');
+          delete userData.email;
+        }
+
+        if (duplicateFields.length > 0) {
+          const consumableDuplicateFields = duplicateFields.join(',');
+
+          const consumableNewUserData = Object.entries(userData)
+            .reduce((accumulator, [key, value]) => {
+              return [...accumulator, `${key}=${value}`];
+            }, [] as string[])
+            .join('&');
+
+          return res.redirect(
+            process.env.NODE_ENV === 'production'
+              ? `https://envenv.com/auth/flow/success/lastStep?fill=${consumableDuplicateFields}&newUserData=${encodeURIComponent(
+                  consumableNewUserData
+                )}`
+              : `http://localhost:8080/auth/flow/success/lastStep?fill=${consumableDuplicateFields}&newUserData=${encodeURIComponent(
+                  consumableNewUserData
+                )}`
+          );
+        }
+
         const password = await hash(
           generate({ length: 19, symbols: true, numbers: true }),
           12
@@ -190,7 +234,7 @@ export const callbackGithubAuth = async (
         res.cookie('SessionID', newSession.sessionId, {
           httpOnly: true,
           secure: process.env.NODE_ENV === 'production',
-          maxAge: 31556952000,
+          expires: addYears(Date.now(), 1),
           sameSite: 'strict',
         });
 

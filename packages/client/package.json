@@ -14,6 +14,7 @@
     "@types/react": "^16.9.35",
     "@types/react-dom": "^16.9.8",
     "formik": "^2.1.4",
+    "generate-password": "^1.5.1",
     "graphql": "^15.0.0",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
@@ -22,6 +23,7 @@
     "shortid": "^2.2.15",
     "styled-components": "^5.1.0",
     "typescript": "^3.9.3",
+    "uuid": "^8.1.0",
     "yup": "^0.29.1"
   },
   "scripts": {
@@ -55,6 +57,7 @@
     "@types/react-router-dom": "^5.1.5",
     "@types/shortid": "^0.0.29",
     "@types/styled-components": "^5.1.0",
+    "@types/uuid": "^8.0.0",
     "@types/yup": "^0.29.1",
     "concurrently": "^5.2.0"
   }

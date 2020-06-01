@@ -24,6 +24,7 @@ export const AuthScreenHero = styled.div`
 interface AuthScreenInfoOuterContainerProps {
   centerOnSmHeights?: boolean;
   fullScreenOnSm?: boolean;
+  neverCenterVertically?: boolean;
 }
 
 export const AuthScreenInfoOuterContainer = styled.section<
@@ -33,19 +34,21 @@ export const AuthScreenInfoOuterContainer = styled.section<
   box-sizing: border-box;
   display: flex;
   padding: 6rem 1.75rem 0;
+  flex-direction: column;
 
   ${({ centerOnSmHeights }) =>
     centerOnSmHeights &&
     css`
       @media screen and (max-height: 56em) {
         padding: 0.75rem;
-        align-items: center;
+        justify-content: center;
       }
     `}
 
   @media screen and (max-width: 30em) {
     flex-basis: ${({ fullScreenOnSm }) => (fullScreenOnSm ? '100%' : '76%')};
-    align-items: center;
+    justify-content: ${({ neverCenterVertically }) =>
+      neverCenterVertically ? 'flex-start' : 'center'};
     padding: 1.75rem;
   }
 
