@@ -32,6 +32,6 @@ const apolloPushCmds = () => {
 
 module.exports = {
   'hooks': {
-    'pre-commit': `lint-staged && ${tasks([...apolloPushCmds().dev])}`,
+    'pre-commit': `${tasks([...apolloPushCmds().dev])} && lint-staged`,
   },
 };
