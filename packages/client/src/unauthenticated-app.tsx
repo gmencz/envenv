@@ -17,7 +17,7 @@ const Routes: React.FC = () => (
   <Switch>
     <Route path='/' exact>
       <AuthScreenContainer>
-        <AuthScreenInfoOuterContainer>
+        <AuthScreenInfoOuterContainer fullScreenOnSm>
           <SignupScreen />
         </AuthScreenInfoOuterContainer>
         <AuthScreenHero />
