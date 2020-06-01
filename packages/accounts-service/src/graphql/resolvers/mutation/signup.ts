@@ -14,41 +14,45 @@ const signup: MutationResolvers['signup'] = async (
 ): Promise<SignupResult> => {
   try {
     await createUserSchema.validate({ ...data });
+    const consumableUsername = addAtToUsername(data.username);
 
-    const isUsernameTaken = await prisma.user.findOne({
+    const duplicateUsers = await prisma.user.findMany({
       where: {
-        username: data.username.startsWith('@')
-          ? data.username
-          : `@${data.username}`,
+        OR: [
+          {
+            username: consumableUsername,
+          },
+          {
+            email: data.email,
+          },
+        ],
       },
+      take: 1,
     });
 
-    if (isUsernameTaken) {
-      return {
-        __typename: 'TakenUsernameOrEmail',
-        message: 'That username is taken, please choose a different one',
-      };
-    }
+    if (duplicateUsers.length > 0) {
+      if (duplicateUsers[0].email === data.email) {
+        return {
+          __typename: 'TakenUsernameOrEmail',
+          message: 'That email is taken, please choose a different one',
+        };
+      }
 
-    const isEmailTaken = await prisma.user.findOne({
-      where: { email: data.email },
-    });
-
-    if (isEmailTaken) {
-      return {
-        __typename: 'TakenUsernameOrEmail',
-        message: 'That email is taken, please choose a different one',
-      };
+      if (duplicateUsers[0].username === consumableUsername) {
+        return {
+          __typename: 'TakenUsernameOrEmail',
+          message: 'That username is taken, please choose a different one',
+        };
+      }
     }
 
     const password = await hash(data.password, 12);
-    const username = addAtToUsername(data.username);
 
     const newUser = await prisma.user.create({
       data: {
         ...data,
         password,
-        username,
+        username: consumableUsername,
         provider: provider ?? 'NONE',
         // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
         id: data.id as string | undefined,

@@ -91,6 +91,12 @@ export enum AccountProvider {
 
 /** The data required to create a new user. */
 export type CreateUserInput = {
+  /**
+   * The ID of the new user, this is useful if we want to sign up
+   * with Github or some other provider, if not specified a unique id
+   * will be generated.
+   */
+  id?: Maybe<Scalars['ID']>;
   /** The URL of the new user's picture/profile picture. */
   picture?: Maybe<Scalars['String']>;
   /** The username of the new user. */
