@@ -40,7 +40,7 @@ export const AuthScreenInfoOuterContainer = styled.section<
     centerOnSmHeights &&
     css`
       @media screen and (max-height: 56em) {
-        padding: 0.75rem;
+        padding: 0.75rem 1.25rem;
         justify-content: center;
       }
     `}
