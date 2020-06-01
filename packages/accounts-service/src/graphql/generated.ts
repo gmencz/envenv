@@ -62,6 +62,7 @@ export type Mutation = {
 
 export type MutationSignupArgs = {
   data: CreateUserInput;
+  provider?: Maybe<AccountProvider>;
 };
 
 export type MutationLoginArgs = {

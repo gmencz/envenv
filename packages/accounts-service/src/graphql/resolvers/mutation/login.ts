@@ -24,8 +24,18 @@ const login: MutationResolvers['login'] = async (
 
     const consumableUsername = addAtToUsername(username);
 
-    const user = await prisma.user.findOne({
-      where: { username: consumableUsername },
+    const usersMatchingCredentials = await prisma.user.findMany({
+      where: {
+        AND: [
+          {
+            username: consumableUsername,
+          },
+          {
+            provider: 'NONE',
+          },
+        ],
+      },
+      take: 1,
     });
 
     const invalidCredentialsResponse: InvalidCredentials = {
@@ -34,10 +44,11 @@ const login: MutationResolvers['login'] = async (
         "Either the username or the password is invalid, make sure you didn't make any typos",
     };
 
-    if (!user) {
+    if (usersMatchingCredentials.length === 0) {
       return invalidCredentialsResponse;
     }
 
+    const user = usersMatchingCredentials[0];
     const isPasswordValid = await compare(password, user.password);
     if (!isPasswordValid) {
       return invalidCredentialsResponse;

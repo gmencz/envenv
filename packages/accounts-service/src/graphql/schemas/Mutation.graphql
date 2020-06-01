@@ -1,6 +1,6 @@
 extend type Mutation {
   "Signs user up."
-  signup(data: CreateUserInput!): SignupResult!
+  signup(data: CreateUserInput!, provider: AccountProvider): SignupResult!
 
   "Logs user in."
   login(

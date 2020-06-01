@@ -21,6 +21,7 @@ import { useAuth } from '../../../hooks/use-auth';
 import { useUnexpectedTypename } from '../../../hooks/use-unexpected-typename';
 import { StyledInputError } from '../../../components/input/styles';
 import { reach, object } from 'yup';
+import { generate } from 'generate-password';
 
 type NewUserData = {
   id: string;
@@ -66,18 +67,24 @@ export const AuthFlowLastStep: React.FC = () => {
       return null;
     }
 
-    const validationSchema = object().shape({});
+    if (
+      fieldsToFill.array.some(
+        field => !(field in signupValidationSchema.fields!)
+      )
+    ) {
+      return null;
+    }
+
+    const fields = {} as any;
 
     fieldsToFill.array.forEach(field => {
-      validationSchema.concat(
-        object().shape({
-          [field]: reach(signupValidationSchema, field),
-        })
-      );
+      fields[field] = reach(signupValidationSchema, field);
     });
 
-    // figure this out
-    return validationSchema;
+    return object().shape({
+      ...fields,
+      agreedToTos: reach(signupValidationSchema, 'agreedToTos'),
+    });
   }, [fieldsToFill]);
 
   // Put new user data from url into object which we can then use to finish signing up.
@@ -105,11 +112,9 @@ export const AuthFlowLastStep: React.FC = () => {
     return <Redirect to='/' />;
   }
 
-  if (!fieldsToFill || !newUserData) {
+  if (!fieldsToFill || !newUserData || !validationSchema) {
     return <Redirect to='/' />;
   }
-
-  console.log(validationSchema);
 
   return (
     <AuthScreenInfoContainer>
@@ -132,9 +137,18 @@ export const AuthFlowLastStep: React.FC = () => {
             agreedToTos: false,
           }}
           onSubmit={values => {
-            console.log(values);
             signup.execute({
-              variables: { data: { ...newUserData, ...values } },
+              variables: {
+                data: {
+                  ...newUserData,
+                  ...values,
+                  password: generate({
+                    length: 19,
+                    symbols: true,
+                    numbers: true,
+                  }),
+                },
+              },
             });
           }}
           validationSchema={validationSchema}
