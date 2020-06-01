@@ -22,6 +22,7 @@ import { StyledInputError } from '../../../components/input/styles';
 import { reach, object } from 'yup';
 import { generate } from 'generate-password';
 import { useSignUpWithGithubMutation } from '../../../generated/graphql';
+import { useAuth } from '../../../hooks/use-auth';
 
 type NewUserData = {
   id: string;
@@ -34,9 +35,10 @@ type NewUserData = {
 
 export const AuthFlowLastStep: React.FC = () => {
   const params = useQueryParams();
+  const { updateClientCacheForUserLogin } = useAuth();
   const [
     signupWithGithub,
-    { data, loading: signingUp },
+    { data, loading: signingUp, error },
   ] = useSignUpWithGithubMutation();
 
   const { failedOperationMessage } = useUnexpectedTypename(
@@ -116,6 +118,9 @@ export const AuthFlowLastStep: React.FC = () => {
   }, [params]);
 
   if (data?.signup.__typename === 'SuccessfulSignup') {
+    updateClientCacheForUserLogin.execute({
+      variables: { csrfToken: data.signup.csrfToken },
+    });
     return <Redirect to='/' />;
   }
 
@@ -233,6 +238,12 @@ export const AuthFlowLastStep: React.FC = () => {
                 <StyledInputError>
                   <ErrorIcon />
                   <strong>{failedOperationMessage}</strong>
+                </StyledInputError>
+              )}
+              {error && (
+                <StyledInputError>
+                  <ErrorIcon />
+                  <strong>{error.message}</strong>
                 </StyledInputError>
               )}
             </form>

@@ -101,8 +101,6 @@ export const callbackGithubAuth = async (
       user = await prisma.user.findOne({ where: { id } });
     }
 
-    console.log(user);
-
     if (operation === 'login') {
       // Check if the user has an account or not
       // Yes? redirect to route where the login will be automated
