@@ -8,6 +8,7 @@ import {
   SignUpMutationFn,
   useLoginOnClientMutation,
   SignUpMutation,
+  LoginOnClientMutationFn,
 } from '../generated/graphql';
 import { QueryLazyOptions, ApolloError } from '@apollo/client';
 
@@ -34,6 +35,18 @@ interface UseAuthHook {
     error: ApolloError | undefined;
     data: SignUpMutation | null | undefined;
   };
+  updateClientCacheForUserLogin: {
+    execute: LoginOnClientMutationFn;
+    loading: boolean;
+  };
+  logoutAsync: {
+    execute: () => Promise<void>;
+    loading: boolean;
+    error: {
+      onClient: ApolloError | undefined;
+      onAPI: ApolloError | undefined;
+    };
+  };
 }
 
 export function useAuth(): UseAuthHook {
@@ -42,7 +55,10 @@ export function useAuth(): UseAuthHook {
     { data: whoAmIResult, loading: whoAmILoadingStatus, error: whoAmIError },
   ] = useWhoAmILazyQuery();
 
-  const [updateClientCacheForAuthentication] = useLoginOnClientMutation();
+  const [
+    updateClientCacheForAuthentication,
+    { loading: updateClientCacheForAuthenticationLoading },
+  ] = useLoginOnClientMutation();
 
   const [
     logoutOnAPI,
@@ -72,6 +88,11 @@ export function useAuth(): UseAuthHook {
     logoutOnClient();
   };
 
+  const logoutAsync = async () => {
+    await logoutOnAPI();
+    await logoutOnClient();
+  };
+
   return {
     whoAmI: {
       execute: whoAmI,
@@ -92,6 +113,18 @@ export function useAuth(): UseAuthHook {
       loading: signupLoadingStatus,
       error: signupError,
       data: signupData,
+    },
+    updateClientCacheForUserLogin: {
+      execute: updateClientCacheForAuthentication,
+      loading: updateClientCacheForAuthenticationLoading,
+    },
+    logoutAsync: {
+      execute: logoutAsync,
+      loading: logoutOnAPILoadingStatus || logoutOnClientLoadingStatus,
+      error: {
+        onAPI: logoutOnAPIError,
+        onClient: logoutOnClientError,
+      },
     },
   };
 }

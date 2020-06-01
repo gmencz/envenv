@@ -20,8 +20,6 @@ export default async function getSession(
       `session_${decryptedSessionId}`
     );
 
-    console.log('ses ' + redisResponse);
-
     if (!redisResponse) {
       return null;
     }

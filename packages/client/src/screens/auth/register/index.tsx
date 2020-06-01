@@ -45,7 +45,7 @@ export const SignupScreen: React.FC = () => {
         </Button>
       </FlexContainer>
       <Paragraph marginTop='2.5rem' fontSize='1rem'>
-        Already have an account? <AppLink to='/auth/login'>Log in</AppLink>.
+        Already have an account? <AppLink to='/login'>Log in</AppLink>.
       </Paragraph>
     </AuthScreenInfoContainer>
   );

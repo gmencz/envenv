@@ -1,5 +1,5 @@
 import React from 'react';
-import { Switch, Route } from 'react-router-dom';
+import { Switch, Route, Redirect } from 'react-router-dom';
 import { SignupScreen } from './screens/auth/register';
 import { LoginScreen } from './screens/auth/login';
 import { SignupLastStepScreen } from './screens/auth/register/lastStep';
@@ -8,6 +8,8 @@ import {
   AuthScreenHero,
   AuthScreenInfoOuterContainer,
 } from './screens/auth/styles';
+import { AuthFlowSuccess } from './screens/auth/flow/success';
+import { AuthFlowLastStep } from './screens/auth/flow/lastStep';
 
 const UnauthenticatedApp: React.FC = () => <Routes />;
 
@@ -21,6 +23,9 @@ const Routes: React.FC = () => (
         <AuthScreenHero />
       </AuthScreenContainer>
     </Route>
+    <Route path='/signup'>
+      <Redirect to='/register' />
+    </Route>
     <Route path='/login'>
       <LoginScreen />
     </Route>
@@ -31,6 +36,12 @@ const Routes: React.FC = () => (
         </AuthScreenInfoOuterContainer>
         <AuthScreenHero />
       </AuthScreenContainer>
+    </Route>
+    <Route path='/auth/flow/success' exact>
+      <AuthFlowSuccess />
+    </Route>
+    <Route path='/auth/flow/success/lastStep' exact>
+      <AuthFlowLastStep />
     </Route>
     <Route path='*'>
       <p>not found</p>

@@ -9,6 +9,8 @@ import { generate } from 'generate-password';
 import { hash } from 'bcryptjs';
 import addAtToUsername from '../../helpers/addAtToUsername';
 import { getCachedUser, cacheUser } from '../../helpers/cache/user';
+import Encryptor from 'cryptr';
+import { addYears } from 'date-fns';
 
 export const githubStrategy = new GithubStrategy(
   {
@@ -99,6 +101,8 @@ export const callbackGithubAuth = async (
       user = await prisma.user.findOne({ where: { id } });
     }
 
+    console.log(user);
+
     if (operation === 'login') {
       // Check if the user has an account or not
       // Yes? redirect to route where the login will be automated
@@ -109,7 +113,7 @@ export const callbackGithubAuth = async (
         res.cookie('SessionID', newSession.sessionId, {
           httpOnly: true,
           secure: process.env.NODE_ENV === 'production',
-          maxAge: 31556952000,
+          expires: addYears(Date.now(), 1),
           sameSite: 'strict',
         });
 
@@ -151,7 +155,7 @@ export const callbackGithubAuth = async (
         res.cookie('SessionID', newSession.sessionId, {
           httpOnly: true,
           secure: process.env.NODE_ENV === 'production',
-          maxAge: 31556952000,
+          expires: addYears(Date.now(), 1),
           sameSite: 'strict',
         });
 
@@ -168,6 +172,49 @@ export const callbackGithubAuth = async (
       }
 
       if (!user) {
+        // Check if username/email are taken
+        const takenUsername = await prisma.user.findOne({
+          where: { username: addAtToUsername(username) },
+        });
+
+        const takenEmail = await prisma.user.findOne({
+          where: { email },
+        });
+
+        const duplicateFields = [];
+        const userData = { id, name, provider, picture, email, username };
+
+        if (takenUsername) {
+          duplicateFields.push('username');
+          delete userData.username;
+        }
+
+        if (takenEmail) {
+          duplicateFields.push('email');
+          delete userData.email;
+        }
+
+        if (duplicateFields.length > 0) {
+          const consumableDuplicateFields = duplicateFields.join(',');
+
+          const encryptedUserData = new Encryptor(
+            process.env.NEW_USER_DATA_SECRET!
+          ).encrypt(JSON.stringify({ ...userData }));
+
+          res.cookie('NewUserData', encryptedUserData, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            expires: addYears(Date.now(), 1),
+            sameSite: 'strict',
+          });
+
+          return res.redirect(
+            process.env.NODE_ENV === 'production'
+              ? `https://envenv.com/auth/flow/success/lastStep?fill=${consumableDuplicateFields}`
+              : `http://localhost:8080/auth/flow/success/lastStep?fill=${consumableDuplicateFields}`
+          );
+        }
+
         const password = await hash(
           generate({ length: 19, symbols: true, numbers: true }),
           12
@@ -190,7 +237,7 @@ export const callbackGithubAuth = async (
         res.cookie('SessionID', newSession.sessionId, {
           httpOnly: true,
           secure: process.env.NODE_ENV === 'production',
-          maxAge: 31556952000,
+          expires: addYears(Date.now(), 1),
           sameSite: 'strict',
         });
 

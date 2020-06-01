@@ -11,6 +11,7 @@ import {
 import createSession from '../../../helpers/createSession';
 import redisClient from '../../../helpers/redisClient';
 import getSession from '../../../helpers/getSession';
+import { addYears } from 'date-fns';
 
 const login: MutationResolvers['login'] = async (
   _,
@@ -55,7 +56,7 @@ const login: MutationResolvers['login'] = async (
     res.cookie('SessionID', newSession.sessionId, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
-      maxAge: 31556952000,
+      expires: addYears(Date.now(), 1),
       sameSite: 'strict',
     });
 
