@@ -197,21 +197,20 @@ export const callbackGithubAuth = async (
         if (duplicateFields.length > 0) {
           const consumableDuplicateFields = duplicateFields.join(',');
 
-          const encryptedUserData = new Encryptor(
-            process.env.NEW_USER_DATA_SECRET!
-          ).encrypt(JSON.stringify({ ...userData }));
-
-          res.cookie('NewUserData', encryptedUserData, {
-            httpOnly: true,
-            secure: process.env.NODE_ENV === 'production',
-            expires: addYears(Date.now(), 1),
-            sameSite: 'strict',
-          });
+          const consumableNewUserData = Object.entries(userData)
+            .reduce((accumulator, [key, value]) => {
+              return [...accumulator, `${key}=${value}`];
+            }, [] as string[])
+            .join('&');
 
           return res.redirect(
             process.env.NODE_ENV === 'production'
-              ? `https://envenv.com/auth/flow/success/lastStep?fill=${consumableDuplicateFields}`
-              : `http://localhost:8080/auth/flow/success/lastStep?fill=${consumableDuplicateFields}`
+              ? `https://envenv.com/auth/flow/success/lastStep?fill=${consumableDuplicateFields}&newUserData=${encodeURIComponent(
+                  consumableNewUserData
+                )}`
+              : `http://localhost:8080/auth/flow/success/lastStep?fill=${consumableDuplicateFields}&newUserData=${encodeURIComponent(
+                  consumableNewUserData
+                )}`
           );
         }
 

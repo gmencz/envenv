@@ -41,7 +41,12 @@ const Routes: React.FC = () => (
       <AuthFlowSuccess />
     </Route>
     <Route path='/auth/flow/success/lastStep' exact>
-      <AuthFlowLastStep />
+      <AuthScreenContainer>
+        <AuthScreenInfoOuterContainer neverCenterVertically fullScreenOnSm>
+          <AuthFlowLastStep />
+        </AuthScreenInfoOuterContainer>
+        <AuthScreenHero />
+      </AuthScreenContainer>
     </Route>
     <Route path='*'>
       <p>not found</p>
