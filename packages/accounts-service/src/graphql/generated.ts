@@ -34,6 +34,12 @@ export type ResetPasswordInput = {
 
 /** The data required to create a new user. */
 export type CreateUserInput = {
+  /**
+   * The ID of the new user, this is useful if we want to sign up
+   * with Github or some other provider, if not specified a unique id
+   * will be generated.
+   */
+  id?: Maybe<Scalars['ID']>;
   /** The URL of the new user's picture/profile picture. */
   picture?: Maybe<Scalars['String']>;
   /** The username of the new user. */
@@ -402,6 +408,7 @@ export type ResolversTypes = {
   DateTime: ResolverTypeWrapper<Scalars['DateTime']>;
   ResetPasswordInput: ResetPasswordInput;
   CreateUserInput: CreateUserInput;
+  ID: ResolverTypeWrapper<Scalars['ID']>;
   Mutation: ResolverTypeWrapper<{}>;
   DeleteAllUsersResult:
     | ResolversTypes['NotInTestingEnvironment']
@@ -447,7 +454,6 @@ export type ResolversTypes = {
   SuccessfulLogout: ResolverTypeWrapper<SuccessfulLogout>;
   Query: ResolverTypeWrapper<{}>;
   User: ResolverTypeWrapper<User>;
-  ID: ResolverTypeWrapper<Scalars['ID']>;
   UserRole: UserRole;
   AccountProvider: AccountProvider;
 };
@@ -460,6 +466,7 @@ export type ResolversParentTypes = {
   DateTime: Scalars['DateTime'];
   ResetPasswordInput: ResetPasswordInput;
   CreateUserInput: CreateUserInput;
+  ID: Scalars['ID'];
   Mutation: {};
   DeleteAllUsersResult:
     | ResolversParentTypes['NotInTestingEnvironment']
@@ -505,7 +512,6 @@ export type ResolversParentTypes = {
   SuccessfulLogout: SuccessfulLogout;
   Query: {};
   User: User;
-  ID: Scalars['ID'];
   UserRole: UserRole;
   AccountProvider: AccountProvider;
 };

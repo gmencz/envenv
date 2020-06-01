@@ -45,7 +45,14 @@ const signup: MutationResolvers['signup'] = async (
     const username = addAtToUsername(data.username);
 
     const newUser = await prisma.user.create({
-      data: { ...data, password, username, provider: provider ?? 'NONE' },
+      data: {
+        ...data,
+        password,
+        username,
+        provider: provider ?? 'NONE',
+        // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
+        id: data.id as string | undefined,
+      },
     });
 
     const newSession = await createSession(newUser.id, redisClient);

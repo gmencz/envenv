@@ -17,11 +17,11 @@ import TermsOfServicePDF from '../../../assets/EnvenvTOS.pdf';
 import PrivacyPolicyPDF from '../../../assets/EnvenvPrivacyPolicy.pdf';
 import { Button } from '../../../components/button';
 import { Loader } from '../../../components/loader';
-import { useAuth } from '../../../hooks/use-auth';
 import { useUnexpectedTypename } from '../../../hooks/use-unexpected-typename';
 import { StyledInputError } from '../../../components/input/styles';
 import { reach, object } from 'yup';
 import { generate } from 'generate-password';
+import { useSignUpWithGithubMutation } from '../../../generated/graphql';
 
 type NewUserData = {
   id: string;
@@ -34,10 +34,10 @@ type NewUserData = {
 
 export const AuthFlowLastStep: React.FC = () => {
   const params = useQueryParams();
-  const {
-    signup,
-    signup: { data, loading: signingUp },
-  } = useAuth();
+  const [
+    signupWithGithub,
+    { data, loading: signingUp },
+  ] = useSignUpWithGithubMutation();
 
   const { failedOperationMessage } = useUnexpectedTypename(
     data,
@@ -102,7 +102,14 @@ export const AuthFlowLastStep: React.FC = () => {
           pieceOfUserDataValue,
         ] = pieceOfUserData.split('=');
 
-        return { ...accumulator, [pieceOfUserDataName]: pieceOfUserDataValue };
+        if (pieceOfUserDataName !== 'provider') {
+          return {
+            ...accumulator,
+            [pieceOfUserDataName]: pieceOfUserDataValue,
+          };
+        }
+
+        return { ...accumulator };
       }, {} as NewUserData);
 
     return decoded;
@@ -137,11 +144,13 @@ export const AuthFlowLastStep: React.FC = () => {
             agreedToTos: false,
           }}
           onSubmit={values => {
-            signup.execute({
+            const clonedValues = { ...values };
+            delete clonedValues.agreedToTos;
+            signupWithGithub({
               variables: {
                 data: {
                   ...newUserData,
-                  ...values,
+                  ...clonedValues,
                   password: generate({
                     length: 19,
                     symbols: true,
