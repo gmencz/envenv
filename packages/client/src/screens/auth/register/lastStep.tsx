@@ -23,7 +23,7 @@ import PrivacyPolicyPDF from '../../../assets/EnvenvPrivacyPolicy.pdf';
 export const SignupLastStepScreen: React.FC = () => {
   const {
     signup,
-    signup: { data, loading: signingUp },
+    signup: { data, loading: signingUp, error },
   } = useAuth();
   const { failedOperationMessage } = useUnexpectedTypename(
     data,
@@ -150,6 +150,12 @@ export const SignupLastStepScreen: React.FC = () => {
                 <StyledInputError>
                   <ErrorIcon />
                   <strong>{failedOperationMessage}</strong>
+                </StyledInputError>
+              )}
+              {error && (
+                <StyledInputError>
+                  <ErrorIcon />
+                  <strong>{error.message}</strong>
                 </StyledInputError>
               )}
             </form>
