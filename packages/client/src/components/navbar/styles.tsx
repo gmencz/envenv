@@ -40,7 +40,7 @@ export const StyledNavbar = styled.nav`
     align-items: center;
 
     li:not(:last-of-type) {
-      margin-right: 32px;
+      margin-right: 40px;
     }
   }
 `;

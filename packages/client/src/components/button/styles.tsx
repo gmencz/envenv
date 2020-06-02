@@ -1,5 +1,12 @@
 import styled, { css } from 'styled-components';
 import { Link } from 'react-router-dom';
+import { ButtonProps } from '.';
+
+const spreadStyles = (props: Omit<ButtonProps, 'label' | 'autoFocus'>) => ({
+  ...props,
+  children: undefined,
+  to: undefined,
+});
 
 export const DefaultStyledButton = styled.button<{ primary?: boolean }>`
   padding: 0.75rem;
@@ -36,6 +43,8 @@ export const DefaultStyledButton = styled.button<{ primary?: boolean }>`
         cursor: not-allowed;
       }
     `}
+
+  ${(props: any) => spreadStyles(props) as any}
 `;
 
 export const DefaultStyledButtonAnchor = styled.a`
@@ -50,6 +59,7 @@ export const DefaultStyledButtonAnchor = styled.a`
   color: rgb(34, 34, 34);
   font-size: 1rem;
   box-shadow: 0px 0px 2px 0px rgba(34, 34, 34, 1);
+  ${(props: any) => spreadStyles(props) as any}
 `;
 
 export const StyledLink = styled(Link)`
@@ -64,4 +74,5 @@ export const StyledLink = styled(Link)`
   color: rgb(34, 34, 34);
   font-size: 1rem;
   box-shadow: 0px 0px 2px 0px rgba(34, 34, 34, 1);
+  ${props => spreadStyles(props as any) as any}
 `;
