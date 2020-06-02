@@ -8,7 +8,7 @@ import styled from 'styled-components';
 
 const StyledContent = styled.main`
   margin-top: 120px;
-  max-width: 1100px;
+  max-width: 1056px;
   margin: 120px auto;
 `;
 
@@ -41,7 +41,7 @@ const AuthenticatedApp: React.FC = () => {
 
   return (
     <>
-      <Navbar />
+      <Navbar picture={whoAmI.data?.me.picture || ''} />
       <StyledContent>
         <Routes />
       </StyledContent>

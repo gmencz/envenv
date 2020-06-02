@@ -57,6 +57,7 @@ const signup: MutationResolvers['signup'] = async (
         provider: provider ?? 'NONE',
         // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
         id: data.id as string | undefined,
+        picture: data.picture as any,
       },
     });
 

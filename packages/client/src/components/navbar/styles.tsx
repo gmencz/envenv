@@ -2,6 +2,15 @@ import styled from 'styled-components';
 
 export const StyledNavbarLogoContainer = styled.div`
   flex-basis: 230px;
+  margin-right: 1.5rem;
+
+  + div {
+    flex-grow: 1;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 100%;
+  }
 `;
 
 export const StyledHeader = styled.header`
@@ -17,15 +26,21 @@ export const StyledHeader = styled.header`
 `;
 
 export const StyledNavbar = styled.nav`
-  max-width: 1100px;
+  max-width: 1056px;
   width: 100%;
+  padding: 0 1.5rem;
   margin: 0 auto;
   display: flex;
   align-items: center;
 
   ul {
-    flex-grow: 1;
     list-style-type: none;
     margin: 0;
+    display: flex;
+    align-items: center;
+
+    li:not(:last-of-type) {
+      margin-right: 32px;
+    }
   }
 `;

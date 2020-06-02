@@ -1,6 +1,6 @@
 datasource db {
   provider = "postgresql"
-  url      = env("POSTGRES_DB_URI")
+  url = "***"
 }
 
 generator client {
@@ -10,7 +10,7 @@ generator client {
 
 model User {
   id                 String          @default(cuid()) @id
-  picture            String?         @default("https://envenvbucket.s3.eu-west-3.amazonaws.com/defaults/default-profile-picture.png")
+  picture            String          @default("https://envenvbucket.s3.eu-west-3.amazonaws.com/defaults/default-profile-picture.png")
   provider           AccountProvider @default(NONE)
   username           String          @unique
   email              String          @unique

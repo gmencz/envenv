@@ -5,6 +5,7 @@ import { AppLinkProps } from '.';
 const spreadStyles = (props: Omit<AppLinkProps, 'external' | 'to'>) => ({
   ...props,
   children: undefined,
+  to: undefined,
 });
 
 export const StyledAppLink = styled(Link)<AppLinkProps>`
