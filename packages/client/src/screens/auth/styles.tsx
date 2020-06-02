@@ -60,4 +60,5 @@ export const AuthScreenInfoOuterContainer = styled.section<
 export const AuthScreenInfoContainer = styled.div`
   max-width: 500px;
   margin: 0 auto;
+  width: 100%;
 `;

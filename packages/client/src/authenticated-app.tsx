@@ -2,6 +2,15 @@ import React from 'react';
 import { FullpageLoader } from './components/fullpage-loader';
 import { Redirect, Switch, Route } from 'react-router-dom';
 import { useAuth } from './hooks/use-auth';
+import { HomeScreen } from './screens/home';
+import { Navbar } from './components/navbar';
+import styled from 'styled-components';
+
+const StyledContent = styled.main`
+  margin-top: 120px;
+  max-width: 1100px;
+  margin: 120px auto;
+`;
 
 const AuthenticatedApp: React.FC = () => {
   // Using lazy query because @apollo/client v3.0.0-beta.50
@@ -25,16 +34,26 @@ const AuthenticatedApp: React.FC = () => {
     return <FullpageLoader />;
   }
 
-  if (whoAmI.error) {
+  if (whoAmI.error && whoAmI.error.graphQLErrors.length > 0) {
     logout.execute();
     return <Redirect to='/' />;
   }
 
-  return <Routes />;
+  return (
+    <>
+      <Navbar />
+      <StyledContent>
+        <Routes />
+      </StyledContent>
+    </>
+  );
 };
 
 const Routes: React.FC = () => (
   <Switch>
+    <Route exact path='/'>
+      <HomeScreen />
+    </Route>
     <Route path='/auth/flow/success'>
       <Redirect to='/' />
     </Route>

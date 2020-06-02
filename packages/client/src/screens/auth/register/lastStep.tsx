@@ -46,7 +46,7 @@ export const SignupLastStepScreen: React.FC = () => {
         Set up your account.
       </Title>
       <Paragraph fontSize='1.2rem' lineHeight='1.5' marginBottom='2rem'>
-        We just need you to fill in some details so others can know who you are.
+        Fill in some details so others can know who you are.
       </Paragraph>
       <FlexContainer flexDirection='column'>
         <Formik

@@ -10,7 +10,7 @@ import {
   SignUpMutation,
   LoginOnClientMutationFn,
 } from '../generated/graphql';
-import { QueryLazyOptions, ApolloError } from '@apollo/client';
+import { QueryLazyOptions, ApolloError, NetworkStatus } from '@apollo/client';
 
 interface UseAuthHook {
   whoAmI: {
@@ -20,6 +20,8 @@ interface UseAuthHook {
     data: WhoAmIQuery | undefined;
     loading: boolean;
     error: ApolloError | undefined;
+    networkStatus: NetworkStatus;
+    called: boolean;
   };
   logout: {
     execute: () => void;
@@ -52,7 +54,13 @@ interface UseAuthHook {
 export function useAuth(): UseAuthHook {
   const [
     whoAmI,
-    { data: whoAmIResult, loading: whoAmILoadingStatus, error: whoAmIError },
+    {
+      data: whoAmIResult,
+      loading: whoAmILoadingStatus,
+      error: whoAmIError,
+      networkStatus: whoAmINetworkStatus,
+      called: whoAmICalled,
+    },
   ] = useWhoAmILazyQuery();
 
   const [
@@ -99,6 +107,8 @@ export function useAuth(): UseAuthHook {
       data: whoAmIResult,
       loading: whoAmILoadingStatus,
       error: whoAmIError,
+      networkStatus: whoAmINetworkStatus,
+      called: whoAmICalled,
     },
     logout: {
       execute: logout,
