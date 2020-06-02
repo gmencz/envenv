@@ -39,6 +39,8 @@ const AuthenticatedApp: React.FC = () => {
     return <Redirect to='/' />;
   }
 
+  console.log(whoAmI.data?.me.picture);
+
   return (
     <>
       <Navbar picture={whoAmI.data?.me.picture || ''} />

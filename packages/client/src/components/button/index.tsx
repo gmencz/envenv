@@ -4,6 +4,7 @@ import {
   DefaultStyledButtonAnchor,
   StyledLink,
 } from './styles';
+import { CSSProperties } from 'styled-components';
 
 interface Icon {
   src: string; // Imported asset via webpack, e.g (import Image from '../../assets/image.svg')
@@ -11,8 +12,9 @@ interface Icon {
   size?: string;
 }
 
-interface ButtonProps
-  extends Omit<ButtonHTMLAttributes<any>, 'style' | 'children'> {
+export interface ButtonProps
+  extends Omit<ButtonHTMLAttributes<any>, 'style' | 'children'>,
+    Omit<CSSProperties, 'translate'> {
   padding?: string;
   margin?: string;
   iconStart?: Icon;
@@ -33,31 +35,9 @@ export const Button: React.FC<ButtonProps> = ({
   component = 'button',
   ...props
 }) => {
-  // Extract this into its own hook since we reuse it in more components.
-  const memoizedCustomStyles = React.useMemo(() => {
-    const allowedProps: OnlyCustomButtonProps[] = ['padding', 'margin'];
-
-    const filteredProps = Object.keys(props)
-      .filter(propName =>
-        allowedProps.includes(propName as OnlyCustomButtonProps)
-      )
-      .reduce(
-        (accumulator, allowedPropName) => ({
-          ...accumulator,
-          [allowedPropName]:
-            props[
-              allowedPropName as keyof Pick<ButtonProps, 'padding' | 'margin'>
-            ],
-        }),
-        {}
-      );
-
-    return filteredProps;
-  }, [props]);
-
   if (component === 'a') {
     return (
-      <DefaultStyledButtonAnchor style={{ ...memoizedCustomStyles }} {...props}>
+      <DefaultStyledButtonAnchor {...props}>
         {iconStart && (
           <img
             src={iconStart.src}
@@ -100,7 +80,7 @@ export const Button: React.FC<ButtonProps> = ({
   }
 
   return (
-    <DefaultStyledButton style={{ ...memoizedCustomStyles }} {...props}>
+    <DefaultStyledButton {...props}>
       {iconStart && (
         <img
           src={iconStart.src}

@@ -11,6 +11,7 @@ import { FlexContainer } from '../flex-container';
 import { Searchbar } from '../searchbar';
 import { NotificationsBell } from '../notifications-bell';
 import { ProfilePicture } from '../profile-picture';
+import { Button } from '../button';
 
 export const NavbarLogo: React.FC = () => {
   return (
@@ -45,11 +46,17 @@ export const Navbar: React.FC<NavbarProps> = ({ picture }) => {
               </AppLink>
             </li>
             <li>
+              <AppLink color='#4b4b4b' to='/support'>
+                Help & Support
+              </AppLink>
+            </li>
+            <li>
               <AppLink color='#4b4b4b' to='/notifications'>
                 <NotificationsBell />
               </AppLink>
             </li>
             <li>
+              {/* On click this opens a dropdown with some options */}
               <ProfilePicture picture={picture} />
             </li>
           </ul>
