@@ -30,12 +30,7 @@ const AuthenticatedApp: React.FC = () => {
     return <Redirect to='/' />;
   }
 
-  return (
-    <>
-      {whoAmI.data && <h1>Hey, {whoAmI.data.me.name}! 🚀</h1>}
-      <Routes />
-    </>
-  );
+  return <Routes />;
 };
 
 const Routes: React.FC = () => (
