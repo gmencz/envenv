@@ -6,6 +6,7 @@ import { hash } from 'bcryptjs';
 import addAtToUsername from '../../../helpers/addAtToUsername';
 import { MutationResolvers, SignupResult } from '../../generated';
 import { addYears } from 'date-fns';
+import { cacheUser } from '../../../helpers/cache/user';
 
 const signup: MutationResolvers['signup'] = async (
   _,
@@ -67,6 +68,8 @@ const signup: MutationResolvers['signup'] = async (
       expires: addYears(Date.now(), 1),
       sameSite: 'strict',
     });
+
+    await cacheUser(newUser);
 
     return {
       __typename: 'SuccessfulSignup',

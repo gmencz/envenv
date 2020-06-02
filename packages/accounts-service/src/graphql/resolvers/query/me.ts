@@ -43,7 +43,7 @@ const me: QueryResolvers['me'] = async (_, __, { auth, prisma }) => {
       {
         errorCode: 'server_error',
       }
-    );
+    ) as any;
   }
 };
 
