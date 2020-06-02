@@ -1,7 +1,13 @@
 import React from 'react';
 import { StyledSearchbar, StyledSearchbarContainer } from './styles';
+import { useOnClickOutside } from '../../hooks/use-on-click-outside';
 
 export const Searchbar: React.FC = () => {
+  const searchbarRef = React.useRef<HTMLInputElement>(null);
+  useOnClickOutside(searchbarRef, e => {
+    console.log(e);
+  });
+
   return (
     <StyledSearchbarContainer>
       <svg
@@ -17,7 +23,7 @@ export const Searchbar: React.FC = () => {
         />
       </svg>
 
-      <StyledSearchbar placeholder='Search or jump to...' />
+      <StyledSearchbar placeholder='Search or jump to...' ref={searchbarRef} />
     </StyledSearchbarContainer>
   );
 };
