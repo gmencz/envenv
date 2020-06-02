@@ -3,13 +3,15 @@ import { StyledSearchbar, StyledSearchbarContainer } from './styles';
 import { useOnClickOutside } from '../../hooks/use-on-click-outside';
 
 export const Searchbar: React.FC = () => {
+  const [clickedSearchbar, setClickedSearchbar] = React.useState(false);
   const searchbarRef = React.useRef<HTMLInputElement>(null);
-  useOnClickOutside(searchbarRef, e => {
-    console.log(e);
+
+  useOnClickOutside(searchbarRef, () => {
+    setClickedSearchbar(false);
   });
 
   return (
-    <StyledSearchbarContainer>
+    <StyledSearchbarContainer active={clickedSearchbar}>
       <svg
         width='15'
         height='15'
@@ -23,7 +25,12 @@ export const Searchbar: React.FC = () => {
         />
       </svg>
 
-      <StyledSearchbar placeholder='Search or jump to...' ref={searchbarRef} />
+      <StyledSearchbar
+        active={clickedSearchbar}
+        onClick={() => setClickedSearchbar(true)}
+        placeholder='Search or jump to...'
+        ref={searchbarRef}
+      />
     </StyledSearchbarContainer>
   );
 };
