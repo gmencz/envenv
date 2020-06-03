@@ -6,8 +6,8 @@ interface StyledSearchbarProps {
 
 export const StyledSearchbarContainer = styled.div<StyledSearchbarProps>`
   padding-left: 10px;
-  background-color: #fff;
-  box-shadow: rgb(226, 226, 226) 0px 0px 0px 1px;
+  background-color: ${({ theme }) => theme.dark.background};
+  box-shadow: ${({ theme }) => theme.dark.border};
   display: flex;
   align-items: center;
   border-radius: 5px;
@@ -21,12 +21,12 @@ export const StyledSearchbarContainer = styled.div<StyledSearchbarProps>`
   ${({ active }) =>
     active &&
     css`
-      border: 1px solid var(--primary-color);
-      box-shadow: 0px 0px 2.35px 0px rgba(24, 144, 255, 1);
+      box-shadow: ${({ theme }) =>
+        `${theme.dark.textSecondary} 0px 0px 0px 1px`};
 
       svg,
       path {
-        fill: var(--primary-color);
+        fill: ${({ theme }) => theme.dark.textSecondary};
       }
     `}
 `;
@@ -39,6 +39,8 @@ export const StyledSearchbar = styled.input<StyledSearchbarProps>`
   padding: 10px;
   border-radius: 5px;
   outline: none;
+  background-color: ${({ theme }) => theme.dark.background};
   transition: all 200ms linear;
   width: ${({ active }) => (active ? '250px' : '180px')};
+  color: ${({ theme }) => theme.dark.textPrimary};
 `;

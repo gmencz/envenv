@@ -5,7 +5,7 @@ export const StyledNavbarLogoContainer = styled.div`
   display: flex;
 
   h1 {
-    color: #4b4b4b !important;
+    color: ${({ theme }) => theme.dark.textPrimary} !important;
     font-size: 1rem;
     margin-left: 12px;
   }
@@ -16,6 +16,11 @@ export const StyledNavbarLogoContainer = styled.div`
     justify-content: space-between;
     align-items: center;
     height: 100%;
+  }
+
+  svg,
+  path {
+    fill: ${({ theme }) => theme.dark.primary} !important;
   }
 
   @media screen and (max-width: 48em) {
@@ -32,13 +37,13 @@ export const StyledNavbarLogoContainer = styled.div`
 export const StyledHeader = styled.header`
   display: flex;
   align-items: center;
-  box-shadow: rgb(226, 226, 226) 0px 0px 0px 1px;
+  box-shadow: ${({ theme }) => theme.dark.border};
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 82px;
-  background-color: rgba(255, 255, 255, 0.85);
+  background-color: rgba(0, 0, 0, 0.85);
 `;
 
 export const StyledNavbar = styled.nav`
@@ -64,7 +69,7 @@ export const StyledNavbar = styled.nav`
 
       & > a {
         white-space: nowrap;
-        color: #4b4b4b;
+        color: ${({ theme }) => theme.dark.textSecondary};
       }
     }
 
@@ -74,6 +79,7 @@ export const StyledNavbar = styled.nav`
 
     & > div {
       display: flex;
+      align-items: center;
 
       &:first-of-type {
         margin-right: 40px;

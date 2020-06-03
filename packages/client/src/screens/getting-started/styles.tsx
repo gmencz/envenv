@@ -6,6 +6,6 @@ export const StyledGettingStarted = styled.section`
     font-weight: 100;
     margin-bottom: 40px;
     margin-top: 0;
-    color: #212121;
+    color: ${({ theme }) => theme.dark.textPrimary};
   }
 `;

@@ -77,7 +77,7 @@ export const ProfileDropdown: React.FC<ProfileDropdownProps> = ({
       <StyledProfileDropdownImage>
         <img src={whoAmI.data?.me.picture || ''} alt={whoAmI.data?.me.name} />
         <div>
-          <Paragraph color='#000'>{whoAmI.data?.me.name}</Paragraph>
+          <Paragraph>{whoAmI.data?.me.name}</Paragraph>
           <AppLink to='/profile'>View profile</AppLink>
         </div>
       </StyledProfileDropdownImage>

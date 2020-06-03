@@ -3,20 +3,15 @@ import { Link } from 'react-router-dom';
 
 export const StyledCard = styled.article`
   display: flex;
-  background-color: #fff;
+  background-color: ${props => props.theme.dark.background};
   padding: 32px;
   border-radius: 5px;
   transition: box-shadow 0.1s ease 0s, transform 0.1s ease 0s;
-  box-shadow: rgb(226, 226, 226) 0px 0px 0px 1px;
-
-  &:hover {
-    box-shadow: rgb(226, 226, 226) 0px 0px 0px 1px,
-      rgba(34, 36, 38, 0.15) 0px 2px 8px 0px;
-  }
+  box-shadow: ${props => props.theme.dark.border};
 `;
 
 export const StyledCardIcon = styled.div`
-  background-color: rgb(236, 236, 236);
+  background-color: ${props => props.theme.dark.secondaryBackground};
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -29,6 +24,7 @@ export const StyledCardIcon = styled.div`
   svg {
     width: 25px;
     height: 25px;
+    fill: ${props => props.theme.dark.textPrimary};
   }
 `;
 
@@ -38,7 +34,7 @@ export const StyledCardContent = styled.div`
 
 export const StyledCardLink = styled(Link)`
   text-decoration: none;
-  color: rgb(255, 62, 0);
+  color: ${props => props.theme.dark.primary};
   display: flex;
   align-items: center;
 

@@ -14,14 +14,10 @@ export const SignupScreen: React.FC = () => {
     <AuthScreenInfoContainer>
       <FlexContainer margin='0 0 3rem 0' alignItems='center'>
         <Logo margin='0 .75rem 0 0' size='30px' />
-        <Title fontSize='1.15rem' component='h1'>
-          Envenv
-        </Title>
+        <Title>Envenv</Title>
       </FlexContainer>
-      <Title component='h2' fontSize='1.6rem'>
-        Let's improve your organization's collaboration experience.
-      </Title>
-      <Paragraph fontSize='1.2rem' lineHeight='1.5' marginBottom='2rem'>
+      <Title>Let's improve your organization's collaboration experience.</Title>
+      <Paragraph>
         Create an account and get the tools that allow your organization to
         synchronize and share critical information, environment secrets and more
         without having to worry about security.
@@ -44,7 +40,7 @@ export const SignupScreen: React.FC = () => {
           Continue with Email
         </Button>
       </FlexContainer>
-      <Paragraph marginTop='2.5rem' fontSize='1rem'>
+      <Paragraph>
         Already have an account? <AppLink to='/login'>Log in</AppLink>.
       </Paragraph>
     </AuthScreenInfoContainer>

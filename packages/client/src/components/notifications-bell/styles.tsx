@@ -1,8 +1,13 @@
 import styled from 'styled-components';
 
 export const StyledNotificationsBellContainer = styled.div`
-  margin-top: 5px;
   position: relative;
+  margin-top: 9px;
+
+  svg,
+  path {
+    fill: ${props => props.theme.dark.textSecondary};
+  }
 `;
 
 export const Notification = styled.div`
@@ -16,6 +21,6 @@ export const Notification = styled.div`
   position: absolute;
   top: -10px;
   right: -10px;
-  color: #fff;
-  background-color: rgb(255, 62, 0);
+  color: ${props => props.theme.dark.textPrimary};
+  background-color: ${props => props.theme.dark.primary};
 `;

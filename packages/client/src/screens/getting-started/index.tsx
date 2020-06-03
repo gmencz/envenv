@@ -22,7 +22,7 @@ export const GettingStarted: React.FC = () => {
         }
       >
         <Title>Integrate Envenv into your project</Title>
-        <Paragraph color='#4b4b4b'>
+        <Paragraph>
           Add Envenv to any kind of project or technology in a matter of minutes
           and seamlessly integrate it into your development workflow.
         </Paragraph>

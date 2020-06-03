@@ -17,9 +17,14 @@ const StyledContent = styled.main`
 const StyledMainWrapper = styled.div`
   margin-top: 120px;
   max-width: 1056px;
-  margin: 160px auto;
+  margin: 0 auto;
+  padding: 160px 1.5rem;
   display: flex;
-  padding: 0 1.5rem;
+`;
+
+const StyledAppWrapper = styled.div`
+  min-height: 100vh;
+  background-color: ${({ theme }) => theme.dark.background};
 `;
 
 const AuthenticatedApp: React.FC = () => {
@@ -50,7 +55,7 @@ const AuthenticatedApp: React.FC = () => {
   }
 
   return (
-    <>
+    <StyledAppWrapper>
       <Navbar picture={whoAmI.data?.me.picture} />
       <StyledMainWrapper>
         <MainSidebar />
@@ -58,7 +63,7 @@ const AuthenticatedApp: React.FC = () => {
           <Routes />
         </StyledContent>
       </StyledMainWrapper>
-    </>
+    </StyledAppWrapper>
   );
 };
 

@@ -19,7 +19,7 @@ export const NavbarLogo: React.FC = () => {
     <StyledNavbarLogoContainer>
       <AppLink to='/'>
         <FlexContainer alignItems='center'>
-          <Logo />
+          <Logo size='35px' />
           <Title>Envenv</Title>
         </FlexContainer>
       </AppLink>
