@@ -13,11 +13,21 @@ export const StyledSearchbarContainer = styled.div<StyledSearchbarProps>`
   border-radius: 5px;
   transition: all 200ms ease-in-out;
 
+  svg,
+  path {
+    transition: fill 200ms ease-in-out;
+  }
+
   ${({ active }) =>
     active &&
     css`
       border: 1px solid var(--primary-color);
       box-shadow: 0px 0px 2.35px 0px rgba(24, 144, 255, 1);
+
+      svg,
+      path {
+        fill: var(--primary-color);
+      }
     `}
 `;
 

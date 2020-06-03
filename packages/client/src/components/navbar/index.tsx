@@ -6,22 +6,17 @@ import {
 } from './styles';
 import { AppLink } from '../link';
 import { Logo } from '../logo';
-import { Title } from '../title';
 import { FlexContainer } from '../flex-container';
 import { Searchbar } from '../searchbar';
 import { NotificationsBell } from '../notifications-bell';
 import { ProfilePicture } from '../profile-picture';
-import { Button } from '../button';
 
 export const NavbarLogo: React.FC = () => {
   return (
     <StyledNavbarLogoContainer>
       <AppLink to='/'>
         <FlexContainer alignItems='center'>
-          <Logo size='46px' />
-          <Title fontSize='1.15rem' component='h1' marginLeft='.75rem'>
-            Envenv
-          </Title>
+          <Logo />
         </FlexContainer>
       </AppLink>
     </StyledNavbarLogoContainer>
@@ -40,25 +35,29 @@ export const Navbar: React.FC<NavbarProps> = ({ picture }) => {
         <div>
           <Searchbar />
           <ul>
-            <li>
-              <AppLink color='#4b4b4b' to='/pricing'>
-                Pricing
-              </AppLink>
-            </li>
-            <li>
-              <AppLink color='#4b4b4b' to='/support'>
-                Help & Support
-              </AppLink>
-            </li>
-            <li>
-              <AppLink color='#4b4b4b' to='/notifications'>
-                <NotificationsBell />
-              </AppLink>
-            </li>
-            <li>
-              {/* On click this opens a dropdown with some options */}
-              <ProfilePicture picture={picture} />
-            </li>
+            <div>
+              <li>
+                <AppLink color='#4b4b4b' to='/pricing'>
+                  Pricing
+                </AppLink>
+              </li>
+              <li>
+                <AppLink color='#4b4b4b' to='/support'>
+                  Help & Support
+                </AppLink>
+              </li>
+            </div>
+            <div>
+              <li>
+                <AppLink color='#4b4b4b' to='/notifications'>
+                  <NotificationsBell />
+                </AppLink>
+              </li>
+              <li>
+                {/* On click this opens a dropdown with some options */}
+                <ProfilePicture picture={picture} />
+              </li>
+            </div>
           </ul>
         </div>
       </StyledNavbar>

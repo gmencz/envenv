@@ -38,9 +38,15 @@ export const StyledNavbar = styled.nav`
     margin: 0;
     display: flex;
     align-items: center;
+    justify-content: space-between;
+    flex-grow: 1;
 
     li:not(:last-of-type) {
       margin-right: 40px;
+    }
+
+    & > div {
+      display: flex;
     }
   }
 `;
