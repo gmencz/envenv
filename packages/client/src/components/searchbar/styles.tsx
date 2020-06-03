@@ -7,7 +7,7 @@ interface StyledSearchbarProps {
 export const StyledSearchbarContainer = styled.div<StyledSearchbarProps>`
   padding-left: 10px;
   background-color: #fff;
-  border: 1px solid #eaeaea;
+  box-shadow: rgb(226, 226, 226) 0px 0px 0px 1px;
   display: flex;
   align-items: center;
   border-radius: 5px;

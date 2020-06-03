@@ -32,7 +32,7 @@ export const StyledNavbarLogoContainer = styled.div`
 export const StyledHeader = styled.header`
   display: flex;
   align-items: center;
-  border-bottom: 1px solid #eaeaea;
+  box-shadow: rgb(226, 226, 226) 0px 0px 0px 1px;
   position: fixed;
   top: 0;
   left: 0;
@@ -59,9 +59,13 @@ export const StyledNavbar = styled.nav`
     justify-content: space-between;
     flex-grow: 1;
 
-    a {
-      white-space: nowrap;
-      color: #4b4b4b;
+    li {
+      position: relative;
+
+      & > a {
+        white-space: nowrap;
+        color: #4b4b4b;
+      }
     }
 
     li:not(:last-of-type) {

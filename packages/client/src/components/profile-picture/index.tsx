@@ -3,11 +3,18 @@ import { StyledProfilePictureWrapper, StyledProfilePicture } from './styles';
 
 interface ProfilePictureProps {
   picture: string;
+  setProfileDropdownOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export const ProfilePicture: React.FC<ProfilePictureProps> = ({ picture }) => {
+export const ProfilePicture: React.FC<ProfilePictureProps> = ({
+  picture,
+  setProfileDropdownOpen,
+}) => {
   return (
-    <StyledProfilePictureWrapper role='button'>
+    <StyledProfilePictureWrapper
+      role='button'
+      onClick={() => setProfileDropdownOpen(true)}
+    >
       <StyledProfilePicture src={picture as string} alt='My Profile' />
       <svg
         width='7'

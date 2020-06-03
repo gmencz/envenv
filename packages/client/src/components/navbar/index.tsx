@@ -11,6 +11,8 @@ import { Searchbar } from '../searchbar';
 import { NotificationsBell } from '../notifications-bell';
 import { ProfilePicture } from '../profile-picture';
 import { Title } from '../title';
+import { ProfileDropdown } from '../profile-dropdown';
+import { useOnClickOutside } from '../../hooks/use-on-click-outside';
 
 export const NavbarLogo: React.FC = () => {
   return (
@@ -30,6 +32,12 @@ interface NavbarProps {
 }
 
 export const Navbar: React.FC<NavbarProps> = ({ picture }) => {
+  const [profileDropdownOpen, setProfileDropdownOpen] = React.useState(false);
+  const profileDropdownRef = React.useRef<HTMLDivElement>(null);
+  useOnClickOutside(profileDropdownRef, () => {
+    setProfileDropdownOpen(false);
+  });
+
   return (
     <StyledHeader>
       <StyledNavbar>
@@ -62,7 +70,14 @@ export const Navbar: React.FC<NavbarProps> = ({ picture }) => {
               </li>
               <li>
                 {/* On click this opens a dropdown with some options */}
-                <ProfilePicture picture={picture || ''} />
+                <ProfilePicture
+                  setProfileDropdownOpen={setProfileDropdownOpen}
+                  picture={picture || ''}
+                />
+                <ProfileDropdown
+                  open={profileDropdownOpen}
+                  reference={profileDropdownRef}
+                />
               </li>
             </div>
           </ul>
