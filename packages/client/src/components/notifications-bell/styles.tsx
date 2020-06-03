@@ -17,5 +17,5 @@ export const Notification = styled.div`
   top: -10px;
   right: -10px;
   color: #fff;
-  background-color: var(--primary-color);
+  background-color: rgb(255, 62, 0);
 `;

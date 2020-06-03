@@ -10,6 +10,7 @@ import { FlexContainer } from '../flex-container';
 import { Searchbar } from '../searchbar';
 import { NotificationsBell } from '../notifications-bell';
 import { ProfilePicture } from '../profile-picture';
+import { Title } from '../title';
 
 export const NavbarLogo: React.FC = () => {
   return (
@@ -17,6 +18,7 @@ export const NavbarLogo: React.FC = () => {
       <AppLink to='/'>
         <FlexContainer alignItems='center'>
           <Logo />
+          <Title>Envenv</Title>
         </FlexContainer>
       </AppLink>
     </StyledNavbarLogoContainer>
@@ -37,19 +39,24 @@ export const Navbar: React.FC<NavbarProps> = ({ picture }) => {
           <ul>
             <div>
               <li>
-                <AppLink color='#4b4b4b' to='/pricing'>
+                <AppLink navLink to='/pricing'>
                   Pricing
                 </AppLink>
               </li>
               <li>
-                <AppLink color='#4b4b4b' to='/support'>
-                  Help & Support
+                <AppLink external to='https://docs.envenv.es/'>
+                  Docs
+                </AppLink>
+              </li>
+              <li>
+                <AppLink navLink to='/explore'>
+                  Explore
                 </AppLink>
               </li>
             </div>
             <div>
               <li>
-                <AppLink color='#4b4b4b' to='/notifications'>
+                <AppLink to='/notifications'>
                   <NotificationsBell />
                 </AppLink>
               </li>

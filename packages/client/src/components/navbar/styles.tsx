@@ -3,7 +3,12 @@ import styled from 'styled-components';
 export const StyledNavbarLogoContainer = styled.div`
   flex-basis: 230px;
   display: flex;
-  margin-right: 1.5rem;
+
+  h1 {
+    color: #4b4b4b !important;
+    font-size: 1rem;
+    margin-left: 12px;
+  }
 
   + div {
     flex-grow: 1;
@@ -11,6 +16,16 @@ export const StyledNavbarLogoContainer = styled.div`
     justify-content: space-between;
     align-items: center;
     height: 100%;
+  }
+
+  @media screen and (max-width: 48em) {
+    h1 {
+      display: none;
+    }
+
+    + div {
+      margin-left: 24px;
+    }
   }
 `;
 
@@ -37,10 +52,17 @@ export const StyledNavbar = styled.nav`
   ul {
     list-style-type: none;
     margin: 0;
+    margin-left: 40px;
+    padding: 0;
     display: flex;
     align-items: center;
     justify-content: space-between;
     flex-grow: 1;
+
+    a {
+      white-space: nowrap;
+      color: #4b4b4b;
+    }
 
     li:not(:last-of-type) {
       margin-right: 40px;
@@ -48,6 +70,10 @@ export const StyledNavbar = styled.nav`
 
     & > div {
       display: flex;
+
+      &:first-of-type {
+        margin-right: 40px;
+      }
     }
   }
 `;

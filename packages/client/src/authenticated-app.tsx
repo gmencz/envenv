@@ -17,7 +17,7 @@ const StyledContent = styled.main`
 const StyledMainWrapper = styled.div`
   margin-top: 120px;
   max-width: 1056px;
-  margin: 120px auto;
+  margin: 160px auto;
   display: flex;
   padding: 0 1.5rem;
 `;
@@ -65,6 +65,9 @@ const AuthenticatedApp: React.FC = () => {
 const Routes: React.FC = () => (
   <Switch>
     <Route exact path='/'>
+      <Redirect to='/gettingStarted' />
+    </Route>
+    <Route exact path='/gettingStarted'>
       <GettingStarted />
     </Route>
     <Route path='/auth/flow/success'>
