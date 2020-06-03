@@ -24,7 +24,7 @@ export const NavbarLogo: React.FC = () => {
 };
 
 interface NavbarProps {
-  picture: string;
+  picture: string | null | undefined;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({ picture }) => {
@@ -55,7 +55,7 @@ export const Navbar: React.FC<NavbarProps> = ({ picture }) => {
               </li>
               <li>
                 {/* On click this opens a dropdown with some options */}
-                <ProfilePicture picture={picture} />
+                <ProfilePicture picture={picture || ''} />
               </li>
             </div>
           </ul>

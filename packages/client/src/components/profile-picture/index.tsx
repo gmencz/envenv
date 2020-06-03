@@ -7,8 +7,8 @@ interface ProfilePictureProps {
 
 export const ProfilePicture: React.FC<ProfilePictureProps> = ({ picture }) => {
   return (
-    <StyledProfilePictureWrapper>
-      <StyledProfilePicture src={picture} alt='My Profile' />
+    <StyledProfilePictureWrapper role='button'>
+      <StyledProfilePicture src={picture as string} alt='My Profile' />
       <svg
         width='7'
         height='4'

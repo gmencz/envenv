@@ -2,6 +2,7 @@ import styled from 'styled-components';
 
 export const StyledNavbarLogoContainer = styled.div`
   flex-basis: 230px;
+  display: flex;
   margin-right: 1.5rem;
 
   + div {
