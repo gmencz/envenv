@@ -6,6 +6,7 @@ export const StyledFullpageLoaderWrapper = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  background-color: ${props => props.theme.dark.background};
 
   & > h1 {
     margin-top: 4rem;

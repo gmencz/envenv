@@ -5,7 +5,7 @@ export const StyledCheckbox = styled.label<CheckboxProps>`
   --background: #fff;
   --border: #d1d6ee;
   --border-hover: #bbc1e1;
-  --border-active: #1890ff;
+  --border-active: ${props => props.theme.dark.primary};
   --tick: #fff;
 
   position: relative;

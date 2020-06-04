@@ -11,19 +11,19 @@ const spreadStyles = (
 });
 
 export const StyledAppLink = styled(Link)<AppLinkProps>`
-  color: var(--primary-color);
+  color: ${props => props.theme.dark.primary};
   text-decoration: none;
   ${props => spreadStyles(props)}
 `;
 
 export const StyledExternalAppLink = styled.a<Omit<AppLinkProps, 'to'>>`
-  color: var(--primary-color);
+  color: ${props => props.theme.dark.primary};
   text-decoration: none;
   ${props => spreadStyles(props)}
 `;
 
 export const StyledAppNavLink = styled(NavLink)<AppLinkProps>`
-  color: var(--primary-color);
+  color: ${props => props.theme.dark.primary};
   text-decoration: none;
   ${props => spreadStyles(props)}
   position: relative;

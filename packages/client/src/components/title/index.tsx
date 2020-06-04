@@ -1,12 +1,18 @@
 import React from 'react';
 import styled from 'styled-components';
 
-interface TitleProps {}
+interface TitleProps {
+  className?: string;
+}
 
 const StyledTitle = styled.h1`
   color: ${({ theme }) => theme.dark.textPrimary};
+
+  &.xl {
+    font-size: 1.55rem;
+  }
 `;
 
-export const Title: React.FC<TitleProps> = ({ children }) => {
-  return <StyledTitle>{children}</StyledTitle>;
+export const Title: React.FC<TitleProps> = ({ children, className }) => {
+  return <StyledTitle className={className}>{children}</StyledTitle>;
 };

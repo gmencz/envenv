@@ -1,8 +1,17 @@
 import React from 'react';
 import { DefaultStyledParagraph } from './styles';
 
-export interface ParagraphProps {}
+export interface ParagraphProps {
+  className?: string;
+}
 
-export const Paragraph: React.FC<ParagraphProps> = ({ children }) => {
-  return <DefaultStyledParagraph>{children}</DefaultStyledParagraph>;
+export const Paragraph: React.FC<ParagraphProps> = ({
+  children,
+  className,
+}) => {
+  return (
+    <DefaultStyledParagraph className={className}>
+      {children}
+    </DefaultStyledParagraph>
+  );
 };

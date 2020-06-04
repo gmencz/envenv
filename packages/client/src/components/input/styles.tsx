@@ -16,27 +16,25 @@ export const DefaultStyledInput = styled.input<
   box-sizing: border-box;
   border: 1px solid rgba(0, 0, 0, 0.2);
   border-radius: 4px;
-  transition: all 250ms ease-in-out;
+  padding: 0.85rem;
   font-family: 'Source Sans Pro', sans-serif, -apple-system, BlinkMacSystemFont,
     Segoe UI, Helvetica, Arial, sans-serif, Apple Color Emoji, Segoe UI Emoji;
 
   ${({ error }) =>
     error &&
     css`
-      box-shadow: 0px 0px 2.35px 0px var(--warning-color);
-      border: 1px solid var(--warning-color);
+      box-shadow: 0px 0px 2.35px 2px var(--warning-color);
     `}
 
   &:focus {
-    border: 1px solid var(--primary-color);
-    box-shadow: 0px 0px 2.35px 0px rgba(24, 144, 255, 1);
+    box-shadow: 0px 0px 2.35px 2px ${props => props.theme.dark.primary};
   }
 
   ${(props: any) => spreadStyles(props) as any}
 `;
 
 export const DefaultStyledLabel = styled.label`
-  color: #333;
+  color: ${props => props.theme.dark.textPrimary};
   font-weight: 600;
   margin-right: 1rem;
   font-size: 1.075rem;

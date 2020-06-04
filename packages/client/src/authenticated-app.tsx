@@ -45,7 +45,7 @@ const AuthenticatedApp: React.FC = () => {
     };
   }, [whoAmI]);
 
-  if (whoAmI.loading) {
+  if (whoAmI.loading || mounted.current) {
     return <FullpageLoader />;
   }
 

@@ -40,8 +40,8 @@ export const SignupLastStepScreen: React.FC = () => {
         <Logo margin='0 .75rem 0 0' size='30px' />
         <Title>Envenv</Title>
       </FlexContainer>
-      <Title>Set up your account.</Title>
-      <Paragraph>
+      <h2>Set up your account.</h2>
+      <Paragraph className='xl'>
         Fill in some details so others can know who you are.
       </Paragraph>
       <FlexContainer flexDirection='column'>
