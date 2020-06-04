@@ -47,11 +47,7 @@ export default class AuthenticatedDataSource extends RemoteGraphQLDataSource {
       const cookies = parseCookies(rawCookies);
       cookies.forEach(({ cookieName, cookieValue, options }) => {
         if (context && context.res) {
-          const validCookieOptions = { ...options };
-          delete validCookieOptions.maxAge;
-          context.res.cookie(cookieName, cookieValue, {
-            ...validCookieOptions,
-          });
+          context.res.cookie(cookieName, cookieValue, options);
         }
       });
     }

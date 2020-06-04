@@ -5,7 +5,13 @@ import helmet from 'helmet';
 
 export default function initExpress(): Express {
   const app = express();
-  app.use(helmet());
+  app.use(
+    helmet({
+      hsts: {
+        maxAge: 31556952000, // So our cookies can last at maximum 1 year.
+      },
+    })
+  );
   app.use(cookieParser());
 
   return app;
