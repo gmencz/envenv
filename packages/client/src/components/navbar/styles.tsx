@@ -5,7 +5,7 @@ export const StyledNavbarLogoContainer = styled.div`
   display: flex;
 
   h1 {
-    color: ${({ theme }) => theme.dark.textPrimary} !important;
+    color: ${({ theme }) => theme.textPrimary} !important;
     font-size: 1rem;
     margin-left: 12px;
   }
@@ -20,7 +20,7 @@ export const StyledNavbarLogoContainer = styled.div`
 
   svg,
   path {
-    fill: ${({ theme }) => theme.dark.primary} !important;
+    fill: ${({ theme }) => theme.primary} !important;
   }
 
   @media screen and (max-width: 48em) {
@@ -37,13 +37,13 @@ export const StyledNavbarLogoContainer = styled.div`
 export const StyledHeader = styled.header`
   display: flex;
   align-items: center;
-  box-shadow: ${({ theme }) => theme.dark.border};
+  box-shadow: ${({ theme }) => theme.border};
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 82px;
-  background-color: rgba(0, 0, 0, 0.85);
+  background-color: ${props => props.theme.navbarBg};
 `;
 
 export const StyledNavbar = styled.nav`
@@ -69,7 +69,26 @@ export const StyledNavbar = styled.nav`
 
       & > a {
         white-space: nowrap;
-        color: ${({ theme }) => theme.dark.textSecondary};
+        color: ${({ theme }) => theme.textSecondary};
+
+        &.active {
+          &::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: -10px;
+            background-color: ${props => props.theme.textPrimary};
+          }
+
+          &.active {
+            color: ${props => props.theme.textPrimary};
+
+            &::after {
+              width: 100%;
+              height: 1px;
+            }
+          }
+        }
       }
     }
 

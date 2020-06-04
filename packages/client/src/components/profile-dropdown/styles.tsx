@@ -17,8 +17,8 @@ export const StyledProfileDropdown = styled.div<StyledProfileDropdownProps>`
   top: 30px;
   right: 0;
   transform: scale(0.8) translateY(-10%);
-  background-color: ${props => props.theme.dark.background};
-  box-shadow: ${props => props.theme.dark.boxShadowPrimary};
+  background-color: ${props => props.theme.background};
+  box-shadow: ${props => props.theme.boxShadowPrimary};
   border-radius: 3px;
 
   ${({ open }) =>
@@ -38,7 +38,7 @@ export const StyledProfileDropdown = styled.div<StyledProfileDropdownProps>`
     padding: 12px;
     display: flex;
     align-items: center;
-    color: ${props => props.theme.dark.textSecondary};
+    color: ${props => props.theme.textSecondary};
     transition: none;
     font-size: 0.9rem;
     border-radius: 0;
@@ -55,21 +55,21 @@ export const StyledProfileDropdown = styled.div<StyledProfileDropdownProps>`
     }
 
     &:hover {
-      background-color: ${props => props.theme.dark.secondaryBackground};
+      background-color: ${props => props.theme.secondaryBackground};
     }
   }
 
   & > a {
     &:first-of-type {
       font-weight: bold;
-      color: ${props => props.theme.dark.textPrimary};
+      color: ${props => props.theme.textPrimary};
     }
   }
 `;
 
 export const StyledDivider = styled.div`
   height: 1px;
-  background-color: ${props => props.theme.dark.secondaryBackground};
+  background-color: ${props => props.theme.secondaryBackground};
 `;
 
 export const StyledProfileDropdownImage = styled.div`
@@ -90,7 +90,7 @@ export const StyledProfileDropdownImage = styled.div`
 
   a {
     font-size: 0.899rem;
-    color: ${props => props.theme.dark.primary};
+    color: ${props => props.theme.primary};
 
     &:hover {
       opacity: 0.9;
@@ -102,7 +102,7 @@ export const ProfileDropdownLink = styled(NavLink)`
   padding: 12px;
   display: flex;
   align-items: center;
-  color: ${props => props.theme.dark.textSecondary};
+  color: ${props => props.theme.textSecondary};
   font-size: 0.9rem;
   text-decoration: none;
 
@@ -117,6 +117,6 @@ export const ProfileDropdownLink = styled(NavLink)`
 
   &:hover,
   &.active {
-    background-color: ${props => props.theme.dark.secondaryBackground};
+    background-color: ${props => props.theme.secondaryBackground};
   }
 `;

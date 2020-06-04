@@ -111,7 +111,7 @@ export const callbackGithubAuth = async (
         res.cookie('SessionID', newSession.sessionId, {
           httpOnly: true,
           secure: process.env.NODE_ENV === 'production',
-          expires: addYears(Date.now(), 1),
+          maxAge: 31556952000,
           sameSite: 'strict',
         });
 
@@ -153,7 +153,7 @@ export const callbackGithubAuth = async (
         res.cookie('SessionID', newSession.sessionId, {
           httpOnly: true,
           secure: process.env.NODE_ENV === 'production',
-          expires: addYears(Date.now(), 1),
+          maxAge: 31556952000,
           sameSite: 'strict',
         });
 
@@ -234,7 +234,7 @@ export const callbackGithubAuth = async (
         res.cookie('SessionID', newSession.sessionId, {
           httpOnly: true,
           secure: process.env.NODE_ENV === 'production',
-          expires: addYears(Date.now(), 1),
+          maxAge: 31556952000,
           sameSite: 'strict',
         });
 

@@ -5,7 +5,7 @@ export const StyledCheckbox = styled.label<CheckboxProps>`
   --background: #fff;
   --border: #d1d6ee;
   --border-hover: #bbc1e1;
-  --border-active: #1890ff;
+  --border-active: ${props => props.theme.primary};
   --tick: #fff;
 
   position: relative;
@@ -30,9 +30,9 @@ export const StyledCheckbox = styled.label<CheckboxProps>`
     cursor: pointer;
     border-radius: 5px;
     transition: box-shadow 0.3s;
-    box-shadow: ${({ error }) =>
+    box-shadow: ${({ error, theme }) =>
       error
-        ? 'inset 0 0 0 var(--s, 1px) var(--warning-color)'
+        ? `inset 0 0 0 var(--s, 1px) ${theme.warning}`
         : 'inset 0 0 0 var(--s, 1px) var(--b, var(--border))'};
     &:hover {
       --s: 2px;

@@ -7,7 +7,7 @@ export const StyledProfilePictureWrapper = styled.div`
 
   svg,
   path {
-    fill: ${props => props.theme.dark.textSecondary};
+    fill: ${props => props.theme.textSecondary};
   }
 `;
 

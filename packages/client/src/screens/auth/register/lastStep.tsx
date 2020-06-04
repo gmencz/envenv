@@ -36,11 +36,15 @@ export const SignupLastStepScreen: React.FC = () => {
 
   return (
     <AuthScreenInfoContainer>
-      <FlexContainer margin='0 0 3rem 0' alignItems='center'>
+      <FlexContainer
+        margin='0 0 3rem 0'
+        alignItems='center '
+        className='logo-container last-step'
+      >
         <Logo margin='0 .75rem 0 0' size='30px' />
         <Title>Envenv</Title>
       </FlexContainer>
-      <Title>Set up your account.</Title>
+      <h2>Set up your account.</h2>
       <Paragraph>
         Fill in some details so others can know who you are.
       </Paragraph>

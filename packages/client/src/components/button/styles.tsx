@@ -1,41 +1,49 @@
 import styled, { css } from 'styled-components';
 import { Link } from 'react-router-dom';
-import { ButtonProps } from '.';
 
-const spreadStyles = (props: Omit<ButtonProps, 'label' | 'autoFocus'>) => ({
-  ...props,
-  children: undefined,
-  to: undefined,
-});
+const DefaultButtonStyling = css`
+  padding: 0.75rem;
+  display: flex;
+  border-radius: 4px;
+  text-decoration: none;
+  cursor: pointer;
+  border: none;
+  align-items: center;
+  font-weight: 600;
+  color: ${props => props.theme.textPrimary};
+  font-size: 1rem;
+  box-shadow: ${props => props.theme.border};
+
+  svg,
+  path {
+    fill: ${props => props.theme.textPrimary};
+  }
+`;
 
 export const DefaultStyledButton = styled.button<{ primary?: boolean }>`
-  padding: 0.75rem;
+  padding: 0.85rem;
   display: flex;
   border-radius: 4px;
   cursor: pointer;
   border: none;
   align-items: center;
-  color: rgb(34, 34, 34);
+  color: ${props => props.theme.textSecondary};
   font-size: 1.1rem;
-  background-color: #fff;
+  background-color: ${props => props.theme.background};
   font-family: 'Source Sans Pro', sans-serif, -apple-system, BlinkMacSystemFont,
     Segoe UI, Helvetica, Arial, sans-serif, Apple Color Emoji, Segoe UI Emoji;
-  transition: background-color 200ms ease-in-out;
-
-  &:hover {
-    background-color: #eee;
-  }
+  transition: all 200ms ease-in-out;
 
   ${({ primary }) =>
     primary &&
     css`
-      background-color: var(--primary-color);
+      background-color: ${props => props.theme.primary};
       color: white;
       width: 100%;
       justify-content: center;
 
       &:hover {
-        background-color: #006dd1;
+        opacity: 0.7;
       }
 
       &:disabled {
@@ -43,36 +51,12 @@ export const DefaultStyledButton = styled.button<{ primary?: boolean }>`
         cursor: not-allowed;
       }
     `}
-
-  ${(props: any) => spreadStyles(props) as any}
 `;
 
 export const DefaultStyledButtonAnchor = styled.a`
-  padding: 0.75rem;
-  display: flex;
-  border-radius: 4px;
-  text-decoration: none;
-  cursor: pointer;
-  border: none;
-  align-items: center;
-  font-weight: 600;
-  color: rgb(34, 34, 34);
-  font-size: 1rem;
-  box-shadow: 0px 0px 2px 0px rgba(34, 34, 34, 1);
-  ${(props: any) => spreadStyles(props) as any}
+  ${DefaultButtonStyling}
 `;
 
 export const StyledLink = styled(Link)`
-  padding: 0.75rem;
-  display: flex;
-  border-radius: 4px;
-  text-decoration: none;
-  cursor: pointer;
-  border: none;
-  align-items: center;
-  font-weight: 600;
-  color: rgb(34, 34, 34);
-  font-size: 1rem;
-  box-shadow: 0px 0px 2px 0px rgba(34, 34, 34, 1);
-  ${props => spreadStyles(props as any) as any}
+  ${DefaultButtonStyling}
 `;

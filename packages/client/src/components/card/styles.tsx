@@ -3,15 +3,15 @@ import { Link } from 'react-router-dom';
 
 export const StyledCard = styled.article`
   display: flex;
-  background-color: ${props => props.theme.dark.background};
+  background-color: ${props => props.theme.background};
   padding: 32px;
   border-radius: 5px;
   transition: box-shadow 0.1s ease 0s, transform 0.1s ease 0s;
-  box-shadow: ${props => props.theme.dark.border};
+  box-shadow: ${props => props.theme.border};
 `;
 
 export const StyledCardIcon = styled.div`
-  background-color: ${props => props.theme.dark.secondaryBackground};
+  background-color: ${props => props.theme.secondaryBackground};
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -24,7 +24,7 @@ export const StyledCardIcon = styled.div`
   svg {
     width: 25px;
     height: 25px;
-    fill: ${props => props.theme.dark.textPrimary};
+    fill: ${props => props.theme.textPrimary};
   }
 `;
 
@@ -34,7 +34,7 @@ export const StyledCardContent = styled.div`
 
 export const StyledCardLink = styled(Link)`
   text-decoration: none;
-  color: ${props => props.theme.dark.primary};
+  color: ${props => props.theme.secondary};
   display: flex;
   align-items: center;
 
