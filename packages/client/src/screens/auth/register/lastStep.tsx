@@ -38,14 +38,10 @@ export const SignupLastStepScreen: React.FC = () => {
     <AuthScreenInfoContainer>
       <FlexContainer margin='0 0 3rem 0' alignItems='center'>
         <Logo margin='0 .75rem 0 0' size='30px' />
-        <Title fontSize='1.15rem' component='h1'>
-          Envenv
-        </Title>
+        <Title>Envenv</Title>
       </FlexContainer>
-      <Title component='h2' fontSize='1.6rem'>
-        Set up your account.
-      </Title>
-      <Paragraph fontSize='1.2rem' lineHeight='1.5' marginBottom='2rem'>
+      <Title>Set up your account.</Title>
+      <Paragraph>
         Fill in some details so others can know who you are.
       </Paragraph>
       <FlexContainer flexDirection='column'>

@@ -4,6 +4,11 @@ export const StyledProfilePictureWrapper = styled.div`
   display: flex;
   align-items: center;
   cursor: pointer;
+
+  svg,
+  path {
+    fill: ${props => props.theme.dark.textSecondary};
+  }
 `;
 
 export const StyledProfilePicture = styled.img`

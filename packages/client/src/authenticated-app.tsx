@@ -2,14 +2,29 @@ import React from 'react';
 import { FullpageLoader } from './components/fullpage-loader';
 import { Redirect, Switch, Route } from 'react-router-dom';
 import { useAuth } from './hooks/use-auth';
-import { HomeScreen } from './screens/home';
+// import { HomeScreen } from './screens/home';
+import { GettingStarted } from './screens/getting-started';
 import { Navbar } from './components/navbar';
 import styled from 'styled-components';
+import { MainSidebar } from './components/main-sidebar';
 
 const StyledContent = styled.main`
+  h1 {
+    margin: 0;
+  }
+`;
+
+const StyledMainWrapper = styled.div`
   margin-top: 120px;
   max-width: 1056px;
-  margin: 120px auto;
+  margin: 0 auto;
+  padding: 160px 1.5rem;
+  display: flex;
+`;
+
+const StyledAppWrapper = styled.div`
+  min-height: 100vh;
+  background-color: ${({ theme }) => theme.dark.background};
 `;
 
 const AuthenticatedApp: React.FC = () => {
@@ -39,22 +54,26 @@ const AuthenticatedApp: React.FC = () => {
     return <Redirect to='/' />;
   }
 
-  console.log(whoAmI.data?.me.picture);
-
   return (
-    <>
-      <Navbar picture={whoAmI.data?.me.picture || ''} />
-      <StyledContent>
-        <Routes />
-      </StyledContent>
-    </>
+    <StyledAppWrapper>
+      <Navbar picture={whoAmI.data?.me.picture} />
+      <StyledMainWrapper>
+        <MainSidebar />
+        <StyledContent>
+          <Routes />
+        </StyledContent>
+      </StyledMainWrapper>
+    </StyledAppWrapper>
   );
 };
 
 const Routes: React.FC = () => (
   <Switch>
     <Route exact path='/'>
-      <HomeScreen />
+      <Redirect to='/gettingStarted' />
+    </Route>
+    <Route exact path='/gettingStarted'>
+      <GettingStarted />
     </Route>
     <Route path='/auth/flow/success'>
       <Redirect to='/' />

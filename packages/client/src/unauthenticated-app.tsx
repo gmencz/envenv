@@ -49,7 +49,7 @@ const Routes: React.FC = () => (
       </AuthScreenContainer>
     </Route>
     <Route path='*'>
-      <p>not found</p>
+      <Redirect to='/' />
     </Route>
   </Switch>
 );

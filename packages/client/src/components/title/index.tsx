@@ -1,19 +1,12 @@
-import React, { CSSProperties } from 'react';
+import React from 'react';
+import styled from 'styled-components';
 
-interface TitleProps extends CSSProperties {
-  component?: 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6';
-}
+interface TitleProps {}
 
-export const Title: React.FC<TitleProps> = ({
-  component = 'h1',
-  children,
-  ...styles
-}) => {
-  return React.createElement(
-    component,
-    {
-      style: { color: '#222', ...styles },
-    },
-    children
-  );
+const StyledTitle = styled.h1`
+  color: ${({ theme }) => theme.dark.textPrimary};
+`;
+
+export const Title: React.FC<TitleProps> = ({ children }) => {
+  return <StyledTitle>{children}</StyledTitle>;
 };
