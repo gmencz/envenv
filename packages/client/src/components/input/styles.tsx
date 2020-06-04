@@ -17,24 +17,27 @@ export const DefaultStyledInput = styled.input<
   border: 1px solid rgba(0, 0, 0, 0.2);
   border-radius: 4px;
   padding: 0.85rem;
+  transition: all 250ms ease-in-out;
   font-family: 'Source Sans Pro', sans-serif, -apple-system, BlinkMacSystemFont,
     Segoe UI, Helvetica, Arial, sans-serif, Apple Color Emoji, Segoe UI Emoji;
 
   ${({ error }) =>
     error &&
     css`
-      box-shadow: 0px 0px 2.35px 2px var(--warning-color);
+      box-shadow: 0px 0px 2.35px 0px ${props => props.theme.warning};
+      border: 1px solid ${props => props.theme.warning};
     `}
 
   &:focus {
-    box-shadow: 0px 0px 2.35px 2px ${props => props.theme.dark.primary};
+    border: 1px solid ${props => props.theme.primary};
+    box-shadow: 0px 0px 2.35px 0px ${props => props.theme.primary};
   }
 
   ${(props: any) => spreadStyles(props) as any}
 `;
 
 export const DefaultStyledLabel = styled.label`
-  color: ${props => props.theme.dark.textPrimary};
+  color: ${props => props.theme.textPrimary};
   font-weight: 600;
   margin-right: 1rem;
   font-size: 1.075rem;
@@ -43,7 +46,7 @@ export const DefaultStyledLabel = styled.label`
 export const StyledInputError = styled.div`
   display: flex;
   align-items: center;
-  color: var(--warning-color);
+  color: ${props => props.theme.warning};
   position: relative;
 
   strong {
@@ -51,7 +54,7 @@ export const StyledInputError = styled.div`
   }
 
   svg {
-    fill: var(--warning-color);
+    fill: ${props => props.theme.warning};
     width: 18px;
     position: absolute; /* using absolute so the icon doesn't displace the above elements */
     left: 0;

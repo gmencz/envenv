@@ -6,7 +6,7 @@ export const StyledNotificationsBellContainer = styled.div`
 
   svg,
   path {
-    fill: ${props => props.theme.dark.textSecondary};
+    fill: ${props => props.theme.textSecondary};
   }
 `;
 
@@ -21,6 +21,6 @@ export const Notification = styled.div`
   position: absolute;
   top: -10px;
   right: -10px;
-  color: ${props => props.theme.dark.textPrimary};
-  background-color: ${props => props.theme.dark.primary};
+  color: #fff;
+  background-color: ${props => props.theme.primary};
 `;

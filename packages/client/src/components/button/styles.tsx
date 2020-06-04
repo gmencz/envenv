@@ -1,6 +1,25 @@
 import styled, { css } from 'styled-components';
 import { Link } from 'react-router-dom';
 
+const DefaultButtonStyling = css`
+  padding: 0.75rem;
+  display: flex;
+  border-radius: 4px;
+  text-decoration: none;
+  cursor: pointer;
+  border: none;
+  align-items: center;
+  font-weight: 600;
+  color: ${props => props.theme.textPrimary};
+  font-size: 1rem;
+  box-shadow: ${props => props.theme.border};
+
+  svg,
+  path {
+    fill: ${props => props.theme.textPrimary};
+  }
+`;
+
 export const DefaultStyledButton = styled.button<{ primary?: boolean }>`
   padding: 0.85rem;
   display: flex;
@@ -8,9 +27,9 @@ export const DefaultStyledButton = styled.button<{ primary?: boolean }>`
   cursor: pointer;
   border: none;
   align-items: center;
-  color: ${props => props.theme.dark.textSecondary};
+  color: ${props => props.theme.textSecondary};
   font-size: 1.1rem;
-  background-color: ${props => props.theme.dark.background};
+  background-color: ${props => props.theme.background};
   font-family: 'Source Sans Pro', sans-serif, -apple-system, BlinkMacSystemFont,
     Segoe UI, Helvetica, Arial, sans-serif, Apple Color Emoji, Segoe UI Emoji;
   transition: all 200ms ease-in-out;
@@ -18,7 +37,7 @@ export const DefaultStyledButton = styled.button<{ primary?: boolean }>`
   ${({ primary }) =>
     primary &&
     css`
-      background-color: ${props => props.theme.dark.primary};
+      background-color: ${props => props.theme.primary};
       color: white;
       width: 100%;
       justify-content: center;
@@ -35,29 +54,9 @@ export const DefaultStyledButton = styled.button<{ primary?: boolean }>`
 `;
 
 export const DefaultStyledButtonAnchor = styled.a`
-  padding: 0.75rem;
-  display: flex;
-  border-radius: 4px;
-  text-decoration: none;
-  cursor: pointer;
-  border: none;
-  align-items: center;
-  font-weight: 600;
-  color: ${props => props.theme.dark.textSecondary};
-  font-size: 1rem;
-  box-shadow: ${props => props.theme.dark.border};
+  ${DefaultButtonStyling}
 `;
 
 export const StyledLink = styled(Link)`
-  padding: 0.75rem;
-  display: flex;
-  border-radius: 4px;
-  text-decoration: none;
-  cursor: pointer;
-  border: none;
-  align-items: center;
-  font-weight: 600;
-  color: ${props => props.theme.dark.textSecondary};
-  font-size: 1rem;
-  box-shadow: ${props => props.theme.dark.border};
+  ${DefaultButtonStyling}
 `;

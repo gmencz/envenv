@@ -24,7 +24,7 @@ const StyledMainWrapper = styled.div`
 
 const StyledAppWrapper = styled.div`
   min-height: 100vh;
-  background-color: ${({ theme }) => theme.dark.background};
+  background-color: ${({ theme }) => theme.background};
 `;
 
 const AuthenticatedApp: React.FC = () => {

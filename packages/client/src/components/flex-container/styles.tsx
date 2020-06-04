@@ -4,6 +4,7 @@ import { FlexContainerProps } from '.';
 const spreadStyles = (props: FlexContainerProps) => ({
   ...props,
   children: undefined,
+  className: undefined,
 });
 
 export const StyledFlexContainer = styled.div<FlexContainerProps>`

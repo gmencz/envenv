@@ -6,7 +6,7 @@ interface TitleProps {
 }
 
 const StyledTitle = styled.h1`
-  color: ${({ theme }) => theme.dark.textPrimary};
+  color: ${({ theme }) => theme.textPrimary};
 
   &.xl {
     font-size: 1.55rem;

@@ -2,7 +2,7 @@ import styled from 'styled-components';
 import { LoaderProps } from '.';
 
 export const StyledLoader = styled.div<LoaderProps>`
-  border: 5px solid ${props => props.theme.dark.secondaryBackground};
+  border: 5px solid ${props => props.theme.secondaryBackground};
   border-radius: 50%;
   width: ${({ size }) => size ?? '50px'};
   height: ${({ size }) => size ?? '50px'};
@@ -11,7 +11,7 @@ export const StyledLoader = styled.div<LoaderProps>`
   & > div:first-of-type {
     width: 12px;
     height: 12px;
-    background-color: ${props => props.theme.dark.primary};
+    background-color: ${props => props.theme.primary};
     border-radius: 50%;
     position: relative;
     left: 50%;

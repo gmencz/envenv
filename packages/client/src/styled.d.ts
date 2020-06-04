@@ -10,10 +10,10 @@ declare module 'styled-components' {
     textSecondary: string;
     border: string;
     boxShadowPrimary: string;
+    navbarBg: string;
+    authHeroSvg: string;
+    warning: string;
   }
 
-  export interface DefaultTheme {
-    light: ThemeKind;
-    dark: ThemeKind;
-  }
+  export interface DefaultTheme extends ThemeKind {}
 }

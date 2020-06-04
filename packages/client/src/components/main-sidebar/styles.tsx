@@ -17,7 +17,7 @@ export const StyledMainSidebar = styled.nav`
 
     a {
       text-decoration: none;
-      color: ${props => props.theme.dark.textSecondary};
+      color: ${props => props.theme.textSecondary};
       display: flex;
       align-items: center;
 
@@ -26,7 +26,7 @@ export const StyledMainSidebar = styled.nav`
       }
 
       &.active {
-        color: ${props => props.theme.dark.primary};
+        color: ${props => props.theme.primary};
       }
 
       path {

@@ -8,11 +8,6 @@ export const GlobalStyle = createGlobalStyle`
   -webkit-text-size-adjust: 100%; 
   }
 
-  :root {
-    --primary-color: #1890ff;
-    --warning-color: #d80606;
-  }
-
   body {
     margin: 0;
     text-rendering: optimizeLegibility;
