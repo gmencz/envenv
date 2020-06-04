@@ -9,6 +9,7 @@ export const theme: DefaultTheme = {
     textPrimary: '#212121',
     textSecondary: '#4b4b4b',
     border: 'rgb(226,226,226) 0px 0px 0px 1px',
+    boxShadowPrimary: 'rgba(0, 0, 0, 0.176) 0px 6px 12px',
   },
   dark: {
     background: '#000000',
@@ -18,5 +19,6 @@ export const theme: DefaultTheme = {
     textPrimary: '#ffffff',
     textSecondary: '#DCDCDC',
     border: 'rgb(30, 30, 30) 0px 0px 0px 1px',
+    boxShadowPrimary: 'rgb(30, 30, 30) 0px 0px 0px 1px',
   },
 };

@@ -17,8 +17,8 @@ export const StyledProfileDropdown = styled.div<StyledProfileDropdownProps>`
   top: 30px;
   right: 0;
   transform: scale(0.8) translateY(-10%);
-  background-color: #fff;
-  box-shadow: rgba(0, 0, 0, 0.176) 0px 6px 12px;
+  background-color: ${props => props.theme.dark.background};
+  box-shadow: ${props => props.theme.dark.boxShadowPrimary};
   border-radius: 3px;
 
   ${({ open }) =>
@@ -38,30 +38,38 @@ export const StyledProfileDropdown = styled.div<StyledProfileDropdownProps>`
     padding: 12px;
     display: flex;
     align-items: center;
-    color: #4b4b4b;
+    color: ${props => props.theme.dark.textSecondary};
     transition: none;
     font-size: 0.9rem;
+    border-radius: 0;
+    background-color: transparent;
+    outline: none;
 
     svg {
       margin-right: 10px;
+
+      &,
+      path {
+        fill: currentColor;
+      }
     }
 
     &:hover {
-      background-color: rgb(245, 245, 245);
+      background-color: ${props => props.theme.dark.secondaryBackground};
     }
   }
 
   & > a {
     &:first-of-type {
       font-weight: bold;
-      color: #000;
+      color: ${props => props.theme.dark.textPrimary};
     }
   }
 `;
 
 export const StyledDivider = styled.div`
   height: 1px;
-  background-color: #eaeaea;
+  background-color: ${props => props.theme.dark.secondaryBackground};
 `;
 
 export const StyledProfileDropdownImage = styled.div`
@@ -82,10 +90,10 @@ export const StyledProfileDropdownImage = styled.div`
 
   a {
     font-size: 0.899rem;
-    transition: color 150ms ease-in-out;
+    color: ${props => props.theme.dark.primary};
 
     &:hover {
-      color: #0e6abf;
+      opacity: 0.9;
     }
   }
 `;
@@ -94,16 +102,21 @@ export const ProfileDropdownLink = styled(NavLink)`
   padding: 12px;
   display: flex;
   align-items: center;
-  color: #4b4b4b;
+  color: ${props => props.theme.dark.textSecondary};
   font-size: 0.9rem;
   text-decoration: none;
 
   svg {
     margin-right: 10px;
+
+    &,
+    path {
+      fill: currentColor;
+    }
   }
 
   &:hover,
   &.active {
-    background-color: rgb(245, 245, 245);
+    background-color: ${props => props.theme.dark.secondaryBackground};
   }
 `;
