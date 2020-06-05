@@ -5,7 +5,7 @@
 4. Open the cloned repo on your computer.
 5. Install root dependencies with `npm install`.
 6. Run `lerna bootstrap` **in the project root** to install the monorepo's dependencies and `npm install` also in the project root to install eslint and others.
-7. Download the environment files and secrets from here: https://gofile.io/d/z6eiiw
+7. Download the environment files and secrets from here: https://gofile.io/d/EXN1Jn
 8. Once downloaded, place them in the cloned repo following the zip's folder structure. Now replace the APOLLO_KEY environment variable of the **services** and **NOT** the api gateway for your own user key which you can get in [AGM](https://engine.apollographql.com)
 9. Now you can start up the application (dev environment) with `docker-compose up`
 10. Nginx reverse proxy listening on `http://localhost:8080/` 🚀
