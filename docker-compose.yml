@@ -12,7 +12,8 @@ services:
       context: ./packages/accounts-service
       dockerfile: Dockerfile.dev
     volumes:
-      - ./packages/accounts-service:/dev-accounts-service
+      - ./packages/accounts-service:/dev-accounts-service/service
+      - ./packages/common:/dev-accounts-service/common
     ports:
       - '5000:5000'
     env_file:
@@ -24,7 +25,8 @@ services:
       context: ./packages/environments-service
       dockerfile: Dockerfile.dev
     volumes:
-      - ./packages/environments-service:/dev-environments-service
+      - ./packages/environments-service:/dev-environments-service/service
+      - ./packages/common:/dev-environments-service/common
     ports:
       - '5001:5001'
     env_file:
@@ -36,7 +38,8 @@ services:
       context: ./packages/api-gateway
       dockerfile: Dockerfile.dev
     volumes:
-      - ./packages/api-gateway:/dev-api-gateway
+      - ./packages/api-gateway:/dev-api-gateway/service
+      - ./packages/common:/dev-api-gateway/common
     ports:
       - '7000:7000'
     env_file:
@@ -50,7 +53,8 @@ services:
       context: ./packages/client
       dockerfile: Dockerfile.dev
     volumes:
-      - ./packages/client:/dev-app
+      - ./packages/client:/dev-app/client
+      - ./packages/common:/dev-app/common
     ports:
       - '3000:3000'
     environment:

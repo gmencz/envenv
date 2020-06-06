@@ -1,10 +1,12 @@
-FROM node:alpine
+FROM node:lts
 
 WORKDIR /dev-app
 
-COPY ./package.json .
-RUN npm install
+RUN mkdir client
+RUN cd ./client
 
+COPY ./package*.json ./
+RUN npm install
 COPY . .
 
 CMD ["npm", "run", "start"]

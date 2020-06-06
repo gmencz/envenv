@@ -1,5 +1,9 @@
 FROM node:lts
+
 WORKDIR /dev-accounts-service
+
+RUN mkdir service
+RUN cd ./service
 
 COPY ./package*.json ./
 RUN npm install

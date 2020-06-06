@@ -13,7 +13,11 @@
     "noFallthroughCasesInSwitch": true,
     "forceConsistentCasingInFileNames": true,
     "allowSyntheticDefaultImports": true,
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "paths": {
+      "@envenv/*": ["./*/src"]
+    }
   },
-  "include": ["src"]
+  "exclude": ["node_modules"],
+  "include": ["./src/**/*.tsx", "./src/**/*.ts"]
 }
