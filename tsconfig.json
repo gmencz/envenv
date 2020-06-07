@@ -3,6 +3,17 @@
     "target": "es2018",
     "module": "commonjs",
     "esModuleInterop": true,
-    "lib": ["esnext"]
+    "lib": ["esnext"],
+    "strict": true,
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+    "composite": true,
+    "moduleResolution": "node",
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true,
+    "forceConsistentCasingInFileNames": true,
+    "allowSyntheticDefaultImports": true
   }
 }

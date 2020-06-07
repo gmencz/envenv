@@ -13,18 +13,8 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
-    "jsx": "react",
-    "paths": {
-      "@envenv/*": ["./*/src"]
-    }
+    "jsx": "react"
   },
-  "exclude": [
-    "node_modules",
-    "build",
-    "scripts",
-    "webpack",
-    "jest",
-    "src/setupTests.ts"
-  ],
+  "exclude": ["node_modules", "build"],
   "include": ["src"]
 }
