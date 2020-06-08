@@ -9,12 +9,14 @@ import { CSSProperties } from 'styled-components';
 export interface ButtonProps
   extends Omit<ButtonHTMLAttributes<any>, 'style' | 'children'>,
     Omit<CSSProperties, 'translate'> {
+  fit?: boolean;
   padding?: string;
   margin?: string;
   component?: 'a' | 'button' | 'internalLink';
   href?: string;
   to?: string;
   primary?: boolean;
+  class?: string;
 }
 
 export const Button: React.FC<ButtonProps> = ({

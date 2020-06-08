@@ -108,7 +108,7 @@ export const AuthScreenInfoContainer = styled.div`
     color: ${props => props.theme.textPrimary};
   }
 
-  button[type='submit'] {
+  button[type='submit']:not(.fit) {
     margin-bottom: 1rem;
   }
 

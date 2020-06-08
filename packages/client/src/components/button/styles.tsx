@@ -20,7 +20,10 @@ const DefaultButtonStyling = css`
   }
 `;
 
-export const DefaultStyledButton = styled.button<{ primary?: boolean }>`
+export const DefaultStyledButton = styled.button<{
+  primary?: boolean;
+  fit?: boolean;
+}>`
   padding: 0.85rem;
   display: flex;
   border-radius: 4px;
@@ -50,6 +53,13 @@ export const DefaultStyledButton = styled.button<{ primary?: boolean }>`
         background-color: #d8d8d8;
         cursor: not-allowed;
       }
+    `}
+
+  ${({ fit }) =>
+    fit &&
+    css`
+      margin-right: 1rem;
+      width: auto;
     `}
 `;
 
