@@ -7,6 +7,8 @@ async function main(): Promise<void> {
     process.env.APOLLO_KEY = undefined;
   }
 
+  console.log('hello');
+
   const app = initExpress();
   const prisma = new PrismaClient();
   await initApolloFederatedService(app, prisma);

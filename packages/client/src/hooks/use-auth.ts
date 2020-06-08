@@ -10,7 +10,12 @@ import {
   SignUpMutation,
   LoginOnClientMutationFn,
 } from '../generated/graphql';
-import { QueryLazyOptions, ApolloError, NetworkStatus } from '@apollo/client';
+import {
+  QueryLazyOptions,
+  ApolloError,
+  NetworkStatus,
+  useApolloClient,
+} from '@apollo/client';
 
 interface UseAuthHook {
   whoAmI: {
@@ -41,17 +46,11 @@ interface UseAuthHook {
     execute: LoginOnClientMutationFn;
     loading: boolean;
   };
-  logoutAsync: {
-    execute: () => Promise<void>;
-    loading: boolean;
-    error: {
-      onClient: ApolloError | undefined;
-      onAPI: ApolloError | undefined;
-    };
-  };
 }
 
 export function useAuth(): UseAuthHook {
+  const client = useApolloClient();
+
   const [
     whoAmI,
     {
@@ -71,12 +70,20 @@ export function useAuth(): UseAuthHook {
   const [
     logoutOnAPI,
     { loading: logoutOnAPILoadingStatus, error: logoutOnAPIError },
-  ] = useLogoutMutation();
+  ] = useLogoutMutation({
+    onCompleted: () => {
+      logoutOnClient();
+    },
+  });
 
   const [
     logoutOnClient,
     { loading: logoutOnClientLoadingStatus, error: logoutOnClientError },
-  ] = useLogoutOnClientMutation();
+  ] = useLogoutOnClientMutation({
+    onCompleted: async () => {
+      await client.resetStore();
+    },
+  });
 
   const [
     signup,
@@ -91,16 +98,6 @@ export function useAuth(): UseAuthHook {
     },
   });
 
-  const logout = () => {
-    logoutOnAPI();
-    logoutOnClient();
-  };
-
-  const logoutAsync = async () => {
-    await logoutOnAPI();
-    await logoutOnClient();
-  };
-
   return {
     whoAmI: {
       execute: whoAmI,
@@ -111,7 +108,7 @@ export function useAuth(): UseAuthHook {
       called: whoAmICalled,
     },
     logout: {
-      execute: logout,
+      execute: logoutOnAPI,
       loading: logoutOnAPILoadingStatus || logoutOnClientLoadingStatus,
       error: {
         onAPI: logoutOnAPIError,
@@ -127,14 +124,6 @@ export function useAuth(): UseAuthHook {
     updateClientCacheForUserLogin: {
       execute: updateClientCacheForAuthentication,
       loading: updateClientCacheForAuthenticationLoading,
-    },
-    logoutAsync: {
-      execute: logoutAsync,
-      loading: logoutOnAPILoadingStatus || logoutOnClientLoadingStatus,
-      error: {
-        onAPI: logoutOnAPIError,
-        onClient: logoutOnClientError,
-      },
     },
   };
 }

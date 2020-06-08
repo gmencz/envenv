@@ -39,6 +39,7 @@ const AuthenticatedApp: React.FC = () => {
   React.useEffect(() => {
     if (mounted.current) {
       whoAmI.execute();
+      mounted.current = false;
     }
     return () => {
       mounted.current = false;

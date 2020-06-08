@@ -2,55 +2,59 @@ version: '3.7'
 services:
   dev-nginx:
     restart: always
-    build:
-      context: ./packages/nginx/dev
-      dockerfile: Dockerfile.dev
+    build: ./docker/nginx/dev
     ports:
       - '8080:80'
   dev-accounts-service:
     build:
-      context: ./packages/accounts-service
-      dockerfile: Dockerfile.dev
+      context: .
+      dockerfile: ./docker/accounts-service/Dockerfile.dev
     volumes:
-      - ./packages/accounts-service:/dev-accounts-service
+      - /usr/src/app/packages/accounts-service/node_modules
+      - /usr/src/app/packages/common/node_modules
+      - ./packages/accounts-service:/usr/src/app/packages/packages/service
+      - ./packages/common:/usr/src/app/packages/common
     ports:
       - '5000:5000'
     env_file:
       - ./packages/accounts-service/development.env
-    environment:
-      - NODE_ENV=development
   dev-environments-service:
     build:
-      context: ./packages/environments-service
-      dockerfile: Dockerfile.dev
+      context: .
+      dockerfile: ./docker/environments-service/Dockerfile.dev
     volumes:
-      - ./packages/environments-service:/dev-environments-service
+      - /usr/src/app/packages/environments-service/node_modules
+      - /usr/src/app/packages/common/node_modules
+      - ./packages/environments-service:/usr/src/app/packages/service
+      - ./packages/common:/usr/src/app/packages/common
     ports:
       - '5001:5001'
     env_file:
       - ./packages/environments-service/development.env
-    environment:
-      - NODE_ENV=development
   dev-api-gateway:
     build:
-      context: ./packages/api-gateway
-      dockerfile: Dockerfile.dev
+      context: .
+      dockerfile: ./docker/api-gateway/Dockerfile.dev
     volumes:
-      - ./packages/api-gateway:/dev-api-gateway
+      - /usr/src/app/packages/api-gateway/node_modules
+      - /usr/src/app/packages/common/node_modules
+      - ./packages/api-gateway:/usr/src/app/packages/service
+      - ./packages/common:/usr/src/app/packages/common
     ports:
       - '7000:7000'
     env_file:
       - ./packages/api-gateway/development.env
-    environment:
-      - NODE_ENV=development
     restart: on-failure
   dev-client:
     restart: always
     build:
-      context: ./packages/client
-      dockerfile: Dockerfile.dev
+      context: .
+      dockerfile: ./docker/client/Dockerfile.dev
     volumes:
-      - ./packages/client:/dev-app
+      - /usr/src/app/packages/client/node_modules
+      - /usr/src/app/packages/common/node_modules
+      - ./packages/client:/usr/src/app/packages/client
+      - ./packages/common:/usr/src/app/packages/common
     ports:
       - '3000:3000'
     environment:

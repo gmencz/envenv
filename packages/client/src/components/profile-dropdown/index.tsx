@@ -93,6 +93,7 @@ export const ProfileDropdown: React.FC<ProfileDropdownProps> = ({
         component='button'
         onClick={() => {
           logout.execute();
+          // Add loading indicator next to the button if we're loading...
         }}
       >
         <svg

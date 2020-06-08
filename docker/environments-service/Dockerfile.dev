@@ -1,0 +1,15 @@
+FROM      node:lts
+
+COPY      ./package*.json                     /usr/src/app/
+COPY      ./lerna.json                        /usr/src/app/lerna.json
+COPY      ./tsconfig.json                     /usr/src/app/tsconfig.json
+RUN       cd /usr/src/app && npm install       
+
+COPY      ./packages/common                   /usr/src/app/packages/common
+COPY      ./packages/api-gateway              /usr/src/app/packages/service
+
+RUN       cd /usr/src/app && npx lerna bootstrap && npx lerna add @envenv/common
+
+WORKDIR   /usr/src/app/packages/service
+
+CMD       [ "npm", "run", "dev" ]
