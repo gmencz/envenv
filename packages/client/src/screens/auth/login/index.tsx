@@ -36,7 +36,7 @@ export const LoginScreen: React.FC = () => {
         <Logo margin='0 .75rem 0 0' size='30px' />
         <Title>Envenv</Title>
       </FlexContainer>
-      <h2> Log in with your credentials</h2>
+      <h2>Log in</h2>
       <FlexContainer flexDirection='column'>
         <Formik
           initialValues={{
