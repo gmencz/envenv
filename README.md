@@ -1,4 +1,4 @@
-### Collaborating
+### Contributing
 1. Make sure you have [Docker](https://www.docker.com/get-started) installed.
 2. Fork the repo.
 3. Clone the repo.
