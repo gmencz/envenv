@@ -12,9 +12,9 @@
    1. `npm run containers:dev` **(wait for this to finish)**, _whenever both the database and the redis instance display they're ready to accept connections this should be finished._
    2. `npm run dev`.
 10. 🚀 App up and running on the following endpoints:
-    - GraphQL API Gateway -> [http://localhost:7000](http://localhost:7000)
-    - GraphQL Accounts microservice -> [http://localhost:5000](http://localhost:5000)
-    - GraphQL Environments microservice -> [http://localhost:5001](http://localhost:5001)
+    - GraphQL API Gateway -> [http://localhost:7000/graphql](http://localhost:7000/graphql)
+    - GraphQL Accounts microservice -> [http://localhost:5000/graphql](http://localhost:5000/graphql)
+    - GraphQL Environments microservice -> [http://localhost:5001/graphql](http://localhost:5001/graphql)
     - React client -> [http://localhost:3000](http://localhost:3000)
 
 ### Branch naming convention
