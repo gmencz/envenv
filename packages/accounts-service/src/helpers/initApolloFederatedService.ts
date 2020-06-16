@@ -46,7 +46,7 @@ const buildContext = (
 
 export default async function initApolloFederatedService(
   app: Express,
-  prismaClient: PrismaClient
+  prismaClient: PrismaClient | null
 ): Promise<ApolloServer> {
   const spreadServiceSchemas = await loadFiles(
     join(__dirname, '../graphql/schemas')
@@ -61,9 +61,11 @@ export default async function initApolloFederatedService(
   ]);
   const server = new ApolloServer({
     schema: applyMiddleware(schema, permissions),
-    context: ({ req, res }: ApolloContext): ApolloContext => {
-      return buildContext(req, res, prismaClient);
-    },
+    context: prismaClient
+      ? ({ req, res }: ApolloContext): ApolloContext => {
+          return buildContext(req, res, prismaClient);
+        }
+      : {},
   });
 
   server.applyMiddleware({ app });

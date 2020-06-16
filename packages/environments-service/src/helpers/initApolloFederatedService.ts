@@ -5,9 +5,10 @@ import { buildFederatedSchema } from '@apollo/federation';
 import resolvers from '../graphql/resolvers';
 import { ApolloContext, Auth } from '../typings';
 import { PrismaClient } from '@prisma/client';
-import { Express, Request, Response } from 'express';
+import { Express } from 'express';
 import { applyMiddleware } from 'graphql-middleware';
 import permissions from '../graphql/permissions';
+import { Request, Response } from 'express';
 
 const buildContext = (
   req: Request,
@@ -45,7 +46,7 @@ const buildContext = (
 
 export default async function initApolloFederatedService(
   app: Express,
-  prismaClient: PrismaClient
+  prismaClient: PrismaClient | null
 ): Promise<ApolloServer> {
   const spreadServiceSchemas = await loadFiles(
     join(__dirname, '../graphql/schemas')
@@ -60,9 +61,11 @@ export default async function initApolloFederatedService(
   ]);
   const server = new ApolloServer({
     schema: applyMiddleware(schema, permissions),
-    context: ({ req, res }: ApolloContext): ApolloContext => {
-      return buildContext(req, res, prismaClient);
-    },
+    context: prismaClient
+      ? ({ req, res }: ApolloContext): ApolloContext => {
+          return buildContext(req, res, prismaClient);
+        }
+      : {},
   });
 
   server.applyMiddleware({ app });
