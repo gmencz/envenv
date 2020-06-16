@@ -19,12 +19,14 @@ jobs:
         run: |
           npm install
           npx lerna bootstrap
+          npm install -g forever
+          npm install -g wait-port
       - name: Run services
         run: |
           cd packages/accounts-service
-          npm run run:ci
+          forever start -v -c npm run run:ci
           cd ../environments-service
-          npm run run:ci
+          forever start -v -c npm run run:ci
       - name: Push running services to AGM
         run: |
           wait-port -t 60000 localhost:5000
