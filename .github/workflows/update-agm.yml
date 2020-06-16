@@ -12,9 +12,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@master
-        name: Run external services
-        run: docker-compose up -d
-      - run: |
+      - name: Run external services
+        run: |
+          docker-compose up -d
           echo "Waiting for PostgreSQL database to launch..."
           while ! nc -z localhost:5432; do
             sleep 0.1
@@ -26,11 +26,28 @@ jobs:
           done
           echo "Redis instance launched"
       - name: Install dependencies
-        run: cd packages/accounts-service && npm install
-      - run: cd packages/environments-service && npm install
+        run: |
+          cd packages/accounts-service
+          npm install
+          cd ../environments-service
+          npm install
       - name: Run services
-        run: cd packages/accounts-service && npm run dev
-      - run: cd packages/environments-service && npm run dev
+        run: |
+          cd packages/accounts-service
+          npm run dev
+          cd ../environments-service
+          npm run dev
       - name: Push running services to AGM
-        run: cd packages/accounts-service && npm run apollo-push:dev
-      - run: cd packages/environments-service && npm run apollo-push:dev
+        run: |
+          echo "Waiting for accounts service to startup..."
+          while ! nc -z localhost:5000; do
+            sleep 0.1
+          done
+          cd packages/accounts-service
+          npm run apollo-push:dev
+          echo "Waiting for environments service to startup..."
+          while ! nc -z localhost:5001; do
+            sleep 0.1
+          done
+          cd ../environments-service
+          npm run apollo-push:dev
