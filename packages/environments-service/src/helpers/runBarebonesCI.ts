@@ -23,7 +23,7 @@ async function main(): Promise<void> {
   });
 
   server.applyMiddleware({ app });
-  app.listen(5000);
+  app.listen(5001);
 }
 
 main();
