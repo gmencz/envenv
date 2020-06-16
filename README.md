@@ -18,5 +18,5 @@
 
 ### Branch naming convention
 - New feature -> feature/name-of-the-new-feature
-- Bug fixes -> hotfix/name-of-the-bug
-- Chores (changes which don't affect production code, e.g modifying .gitignore) -> chore/name-of-the-chore
+- Bug fixes -> bug/name-of-the-bug
+- Hotfixes -> hotfix/name-of-the-hotfix
