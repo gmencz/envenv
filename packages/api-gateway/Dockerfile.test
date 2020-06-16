@@ -1,9 +1,0 @@
-FROM buildkite/puppeteer
-
-WORKDIR /test-api-gateway
-
-COPY ./package*.json ./
-RUN npm install
-COPY . .
-
-CMD ["npm", "run", "dev"]
