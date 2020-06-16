@@ -1,0 +1,14 @@
+name: update-agm
+
+on:
+  push:
+    branches:
+      - '*'
+      - '*/*'
+      - '!master'
+
+jobs:
+  update-accounts-service:
+    runs-on: ubuntu-latest
+  update-environments-service:
+    runs-on: ubuntu-latest
