@@ -12,8 +12,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@master
-      - name: Run external services
-      - run: docker-compose up -d
+        name: Run external services
+        run: docker-compose up -d
       - run: |
           echo "Waiting for PostgreSQL database to launch..."
           while ! nc -z localhost:5432; do
@@ -26,11 +26,11 @@ jobs:
           done
           echo "Redis instance launched"
       - name: Install dependencies
-      - run: cd packages/accounts-service && npm install
+        run: cd packages/accounts-service && npm install
       - run: cd packages/environments-service && npm install
       - name: Run services
-      - run: cd packages/accounts-service && npm run dev
+        run: cd packages/accounts-service && npm run dev
       - run: cd packages/environments-service && npm run dev
       - name: Push running services to AGM
-      - run: cd packages/accounts-service && npm run apollo-push:dev
+        run: cd packages/accounts-service && npm run apollo-push:dev
       - run: cd packages/environments-service && npm run apollo-push:dev
