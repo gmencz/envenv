@@ -80,7 +80,7 @@ export const callbackGithubAuth = async (
         return res.redirect(
           process.env.NODE_ENV === 'production'
             ? 'https://envenv.com/'
-            : 'http://localhost:8080/'
+            : 'http://localhost:3000/'
         );
       }
     }
@@ -257,6 +257,7 @@ export const callbackGithubAuth = async (
         : 'http://localhost:3000/auth/flow/error?reason=unknown'
     );
   } catch (error) {
+    console.log(error);
     return res.redirect(
       process.env.NODE_ENV === 'production'
         ? 'https://envenv.com/auth/flow/error?reason=unknown'

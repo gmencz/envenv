@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "Team collaboration made a breeze, share critical information without breaking a sweat.",
   "scripts": {
-    "dev": "concurrently \" npm run accounts-service:dev\" \"npm run environments-service:dev\" \"npm run api-gateway:dev\" \"npm run client:dev\"",
+    "dev": "concurrently \"npm run accounts-service:dev\" \"npm run environments-service:dev\" \"npm run api-gateway:dev\" \"npm run client:dev\"",
     "containers:dev": "docker-compose up",
     "accounts-service:dev": "cd ./packages/accounts-service && npm run dev",
     "environments-service:dev": "cd ./packages/environments-service && npm run dev",
