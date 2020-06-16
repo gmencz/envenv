@@ -18,10 +18,20 @@ export default function initGateway(app: Express): ApolloServer {
       apiKey: process.env.APOLLO_KEY,
       graphVariant: process.env.APOLLO_GRAPH_VARIANT,
     },
+
     context: ({ req, res }: GatewayContext): GatewayContext => ({ req, res }),
   });
   console.log(`Loaded Envenv graph from AGM ✔️`);
 
-  server.applyMiddleware({ app });
+  server.applyMiddleware({
+    app,
+    cors: {
+      origin:
+        process.env.NODE_ENV === 'production'
+          ? 'https://envenv.es'
+          : 'http://localhost:3000',
+      credentials: true,
+    },
+  });
   return server;
 }

@@ -35,7 +35,7 @@ export default function initExpress(): Express {
       failureRedirect:
         process.env.NODE_ENV === 'production'
           ? 'https://envenv.com/auth/flow/error?reason=unknown'
-          : 'http://localhost:8080/auth/flow/error?reason=unknown',
+          : 'http://localhost:3000/auth/flow/error?reason=unknown',
     }),
     callbackGithubAuth
   );

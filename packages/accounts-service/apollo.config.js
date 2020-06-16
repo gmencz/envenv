@@ -1,3 +1,4 @@
+require('dotenv').config();
 /*
   Whenever we want to push our service to AGM, we have to do it in the running container
   because we're making use of its environment variables, so bash into the container and run
