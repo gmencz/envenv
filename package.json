@@ -2,7 +2,9 @@
   "name": "envenv",
   "version": "1.0.0",
   "description": "Team collaboration made a breeze, share critical information without breaking a sweat.",
-  "scripts": {},
+  "scripts": {
+    "dev": "docker-compose up && lerna run dev"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/gabrielmendezc/envenv.git"

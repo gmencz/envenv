@@ -28,7 +28,7 @@
     "yup": "^0.29.1"
   },
   "scripts": {
-    "start": "concurrently \"react-scripts start\" \"npm run gen-graphql-watch\"",
+    "dev": "concurrently \"react-scripts start\" \"npm run gen-graphql-watch\"",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
