@@ -3,7 +3,7 @@ import { Request, Response } from 'express';
 import getSession from '../../helpers/getSession';
 import redisClient from '../../helpers/redisClient';
 import { AccountProvider } from '../../graphql/generated';
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient, User } from '@prisma/client';
 import createSession from '../../helpers/createSession';
 import { generate } from 'generate-password';
 import { hash } from 'bcryptjs';
@@ -52,7 +52,7 @@ export const callbackGithubAuth = async (
       return res.redirect(
         process.env.NODE_ENV === 'production'
           ? 'https://envenv.com/auth/flow/error?reason=unknown'
-          : 'http://localhost:8080/auth/flow/error?reason=unknown'
+          : 'http://localhost:3000/auth/flow/error?reason=unknown'
       );
     }
 
@@ -66,7 +66,7 @@ export const callbackGithubAuth = async (
       return res.redirect(
         process.env.NODE_ENV === 'production'
           ? 'https://envenv.com/auth/flow/error?reason=unknown'
-          : 'http://localhost:8080/auth/flow/error?reason=unknown'
+          : 'http://localhost:3000/auth/flow/error?reason=unknown'
       );
     }
 
@@ -124,7 +124,7 @@ export const callbackGithubAuth = async (
         return res.redirect(
           process.env.NODE_ENV === 'production'
             ? `https://envenv.com/auth/flow/success?csrfToken=${newSession.csrfToken}`
-            : `http://localhost:8080/auth/flow/success?csrfToken=${newSession.csrfToken}`
+            : `http://localhost:3000/auth/flow/success?csrfToken=${newSession.csrfToken}`
         );
       }
 
@@ -132,14 +132,14 @@ export const callbackGithubAuth = async (
         return res.redirect(
           process.env.NODE_ENV === 'production'
             ? `https://envenv.com/auth/flow/error?reason=notRegistered`
-            : `http://localhost:8080/auth/flow/error?reason=notRegistered`
+            : `http://localhost:3000/auth/flow/error?reason=notRegistered`
         );
       }
 
       return res.redirect(
         process.env.NODE_ENV === 'production'
           ? 'https://envenv.com/auth/flow/error?reason=unknown'
-          : 'http://localhost:8080/auth/flow/error?reason=unknown'
+          : 'http://localhost:3000/auth/flow/error?reason=unknown'
       );
     }
 
@@ -165,7 +165,7 @@ export const callbackGithubAuth = async (
         return res.redirect(
           process.env.NODE_ENV === 'production'
             ? `https://envenv.com/auth/flow/success?csrfToken=${newSession.csrfToken}`
-            : `http://localhost:8080/auth/flow/success?csrfToken=${newSession.csrfToken}`
+            : `http://localhost:3000/auth/flow/success?csrfToken=${newSession.csrfToken}`
         );
       }
 
@@ -175,9 +175,12 @@ export const callbackGithubAuth = async (
           where: { username: addAtToUsername(username) },
         });
 
-        const takenEmail = await prisma.user.findOne({
-          where: { email },
-        });
+        let takenEmail: boolean | User | null = false;
+        if (email) {
+          takenEmail = await prisma.user.findOne({
+            where: { email },
+          });
+        }
 
         const duplicateFields = [];
         const userData = { id, name, provider, picture, email, username };
@@ -187,7 +190,7 @@ export const callbackGithubAuth = async (
           delete userData.username;
         }
 
-        if (takenEmail) {
+        if (takenEmail || !email) {
           duplicateFields.push('email');
           delete userData.email;
         }
@@ -206,7 +209,7 @@ export const callbackGithubAuth = async (
               ? `https://envenv.com/auth/flow/success/lastStep?fill=${consumableDuplicateFields}&newUserData=${encodeURIComponent(
                   consumableNewUserData
                 )}`
-              : `http://localhost:8080/auth/flow/success/lastStep?fill=${consumableDuplicateFields}&newUserData=${encodeURIComponent(
+              : `http://localhost:3000/auth/flow/success/lastStep?fill=${consumableDuplicateFields}&newUserData=${encodeURIComponent(
                   consumableNewUserData
                 )}`
           );
@@ -222,7 +225,7 @@ export const callbackGithubAuth = async (
             id,
             name,
             username: addAtToUsername(username),
-            email,
+            email: email as string,
             picture,
             provider: provider as AccountProvider,
             password,
@@ -243,7 +246,7 @@ export const callbackGithubAuth = async (
         return res.redirect(
           process.env.NODE_ENV === 'production'
             ? `https://envenv.com/auth/flow/success?csrfToken=${newSession.csrfToken}`
-            : `http://localhost:8080/auth/flow/success?csrfToken=${newSession.csrfToken}`
+            : `http://localhost:3000/auth/flow/success?csrfToken=${newSession.csrfToken}`
         );
       }
     }
@@ -251,13 +254,13 @@ export const callbackGithubAuth = async (
     return res.redirect(
       process.env.NODE_ENV === 'production'
         ? 'https://envenv.com/auth/flow/error?reason=unknown'
-        : 'http://localhost:8080/auth/flow/error?reason=unknown'
+        : 'http://localhost:3000/auth/flow/error?reason=unknown'
     );
   } catch (error) {
     return res.redirect(
       process.env.NODE_ENV === 'production'
         ? 'https://envenv.com/auth/flow/error?reason=unknown'
-        : 'http://localhost:8080/auth/flow/error?reason=unknown'
+        : 'http://localhost:3000/auth/flow/error?reason=unknown'
     );
   } finally {
     await prisma.disconnect();

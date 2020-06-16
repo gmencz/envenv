@@ -1,10 +1,5 @@
 version: '3.7'
 services:
-  dev-nginx:
-    restart: always
-    build: ./docker/nginx/dev
-    ports:
-      - '8080:80'
   dev-postgres-service:
     image: postgres:11.6-alpine
     restart: always

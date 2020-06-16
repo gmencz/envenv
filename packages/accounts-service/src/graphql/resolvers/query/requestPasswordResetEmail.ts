@@ -5,14 +5,14 @@ import { sign } from 'jsonwebtoken';
 import { createTransport } from 'nodemailer';
 import {
   QueryResolvers,
-  RequestPasswordResetEmailResult,
+  RequestPasswordResetEmailPayload,
 } from '../../generated';
 
 const requestPasswordResetEmail: QueryResolvers['requestPasswordResetEmail'] = async (
   _,
   { email },
-  { prisma, req }
-): Promise<RequestPasswordResetEmailResult> => {
+  { prisma }
+): Promise<RequestPasswordResetEmailPayload> => {
   try {
     await reach(createUserSchema, 'email').validate(email);
 
@@ -52,7 +52,7 @@ const requestPasswordResetEmail: QueryResolvers['requestPasswordResetEmail'] = a
     const resetPasswordUrl =
       process.env.NODE_ENV === 'production'
         ? `https://envenv.com/auth/resetPassword?token=${token}`
-        : `http://localhost:8080/auth/resetPassword?token=${token}`;
+        : `http://localhost:3000/auth/resetPassword?token=${token}`;
 
     await transporter.sendMail({
       from: 'Envenv <noreply@envenv.com>',

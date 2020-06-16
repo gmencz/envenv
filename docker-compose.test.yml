@@ -1,12 +1,5 @@
 version: '3.7'
 services:
-  test-nginx:
-    restart: always
-    build:
-      context: ./packages/nginx/test
-      dockerfile: Dockerfile.test
-    ports:
-      - '8080:80'
   test-redis-service:
     image: redis
     restart: always

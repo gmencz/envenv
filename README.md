@@ -1,4 +1,5 @@
 ### Contributing
+
 1. Make sure you have [Docker](https://www.docker.com/get-started) installed.
 2. Fork the repo.
 3. Clone the repo.
@@ -11,12 +12,13 @@
 10. Nginx reverse proxy listening on `http://localhost:8080/` 🚀
 11. Nginx proxying endpoints:
     - GraphQL API Gateway -> `http://localhost:8080/graphql`
-    - OAuth -> `http://localhost:8080/oauth/...`
+    - OAuth -> `http://localhost:5000/...`
     - React app -> Every other route (`http://localhost:8080/...`)
 12. Make changes and commit them.
 13. Submit a PR (Pull Request), the PR will be reviewed as soon as possible and if valid merged into master.
 
 ### Branch naming convention
+
 - New feature -> feature/name-of-the-new-feature
 - Bug fixes -> bug/name-of-the-bug
 - Hotfixes -> hotfix/name-of-the-hotfix
