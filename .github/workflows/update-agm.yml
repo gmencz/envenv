@@ -12,6 +12,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@master
+      - uses: actions/setup-node@v2-beta
+        with:
+          node-version: '12'
       - name: Set up external services
         env:
           POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
@@ -27,16 +30,9 @@ jobs:
       - name: Run external services
         run: |
           docker-compose up -d
-          echo "Waiting for PostgreSQL database to launch..."
-          while ! nc -z localhost:5432; do
-            sleep 0.1
-          done
-          echo "PostgreSQL database launched"     
-          echo "Waiting for Redis instance to launch..."
-          while ! nc -z localhost:6379; do
-            sleep 0.1
-          done
-          echo "Redis instance launched"
+          npm install -g wait-port
+          wait-port -t 60000 localhost:5432
+          wait-port -t 60000 localhost:6379
       - name: Install dependencies
         run: |
           cd packages/accounts-service
