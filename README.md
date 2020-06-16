@@ -9,7 +9,7 @@
 7. Download the environment files and secrets from here: https://gofile.io/d/ulVoX5
 8. Once downloaded, place them in the cloned repo following the zip's folder structure. Now replace the APOLLO_KEY environment variable of the **services** and **NOT** the api gateway for your own user key which you can get in [AGM](https://engine.apollographql.com)
 9. Now you can start up the application (dev environment) by running the following:
-   1. `npm run containers:dev` **(wait for this to finish)**, _whenever both the database and the redis instance display they're ready to accept containers this should be finished._
+   1. `npm run containers:dev` **(wait for this to finish)**, _whenever both the database and the redis instance display they're ready to accept connections this should be finished._
    2. `npm run dev`.
 10. 🚀 App up and running on the following endpoints:
     - GraphQL API Gateway -> [http://localhost:7000](http://localhost:7000)
