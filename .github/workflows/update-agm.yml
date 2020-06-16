@@ -35,10 +35,8 @@ jobs:
           wait-port -t 60000 localhost:6379
       - name: Install dependencies
         run: |
-          cd packages/accounts-service
           npm install
-          cd ../environments-service
-          npm install
+          npx lerna bootstrap
       - name: Run services
         run: |
           cd packages/accounts-service
@@ -47,15 +45,9 @@ jobs:
           npm run dev
       - name: Push running services to AGM
         run: |
-          echo "Waiting for accounts service to startup..."
-          while ! nc -z localhost:5000; do
-            sleep 0.1
-          done
+          wait-port -t 60000 localhost:5000
           cd packages/accounts-service
           npm run apollo-push:dev
-          echo "Waiting for environments service to startup..."
-          while ! nc -z localhost:5001; do
-            sleep 0.1
-          done
+          wait-port -t 60000 localhost:5001
           cd ../environments-service
           npm run apollo-push:dev
