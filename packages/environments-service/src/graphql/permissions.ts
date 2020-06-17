@@ -16,7 +16,7 @@ const isAuthenticated = rule({ cache: 'contextual' })(
   }
 );
 
-const hasRole = (...roles: string[]): Rule =>
+const hasRole = (...roles: Array<'USER' | 'ADMIN'>): Rule =>
   rule({ cache: 'contextual' })((_, __, { auth }: ApolloContext) => {
     if (!roles.includes(auth.user.role)) {
       return new ForbiddenError(`You don't have access to this resource!`);
