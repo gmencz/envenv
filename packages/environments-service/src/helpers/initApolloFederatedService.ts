@@ -3,50 +3,16 @@ import { loadFiles, mergeTypeDefs } from 'graphql-tools';
 import { join } from 'path';
 import { buildFederatedSchema } from '@apollo/federation';
 import resolvers from '../graphql/resolvers';
-import { ApolloContext, Auth } from '../typings';
+import { ApolloContext } from '../typings';
 import { PrismaClient } from '@prisma/client';
 import { Express } from 'express';
 import { applyMiddleware } from 'graphql-middleware';
 import permissions from '../graphql/permissions';
-import { Request, Response } from 'express';
-
-const buildContext = (
-  req: Request,
-  res: Response,
-  prismaClient: PrismaClient
-): ApolloContext => {
-  try {
-    const isAuthenticated = !!req.headers['user'];
-    const user = req.headers['user']
-      ? JSON.parse(req.headers['user'] as string)
-      : null;
-
-    return {
-      req,
-      res,
-      prisma: prismaClient,
-      auth: {
-        isAuthenticated,
-        user,
-      },
-    };
-  } catch (error) {
-    console.error(error);
-    return {
-      req,
-      res,
-      prisma: prismaClient,
-      auth: {
-        isAuthenticated: false,
-        user: (null as unknown) as Auth['user'],
-      },
-    };
-  }
-};
+import { buildContext } from '@envenv/common';
 
 export default async function initApolloFederatedService(
   app: Express,
-  prismaClient: PrismaClient | null
+  prismaClient: PrismaClient
 ): Promise<ApolloServer> {
   const spreadServiceSchemas = await loadFiles(
     join(__dirname, '../graphql/schemas')
@@ -59,13 +25,12 @@ export default async function initApolloFederatedService(
       resolvers: resolvers as any,
     },
   ]);
+
   const server = new ApolloServer({
     schema: applyMiddleware(schema, permissions),
-    context: prismaClient
-      ? ({ req, res }: ApolloContext): ApolloContext => {
-          return buildContext(req, res, prismaClient);
-        }
-      : {},
+    context: ({ req, res }: ApolloContext): ApolloContext => {
+      return buildContext(req, res, prismaClient);
+    },
   });
 
   server.applyMiddleware({ app });

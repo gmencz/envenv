@@ -52,7 +52,7 @@ export default function initExpress(): Express {
 }
 
 export function start(app: Express): Server {
-  const PORT = process.env.SERVICE_PORT || 5000;
+  const PORT = process.env.SERVICE_PORT;
 
   return app.listen(PORT, () => {
     console.log(

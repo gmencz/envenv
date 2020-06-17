@@ -5,9 +5,9 @@ import {
   AccountProvider,
   UserRole,
 } from '../../generated';
-import { createUserSchema } from '../../../validation/createUser';
 import { reach } from 'yup';
 import { getCachedUser, cacheUser } from '../../../helpers/cache/user';
+import { newUserSchema } from '@envenv/common';
 
 const user: QueryResolvers['user'] = async (
   _,
@@ -16,11 +16,11 @@ const user: QueryResolvers['user'] = async (
 ): Promise<UserResult> => {
   try {
     if (args.username) {
-      await reach(createUserSchema, 'username').validate(args.username);
+      await reach(newUserSchema, 'username').validate(args.username);
     }
 
     if (args.email) {
-      await reach(createUserSchema, 'email').validate(args.email);
+      await reach(newUserSchema, 'email').validate(args.email);
     }
 
     if (args.id) {

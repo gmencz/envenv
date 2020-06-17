@@ -1,7 +1,6 @@
 import { ApolloError } from 'apollo-server-express';
 import { verify } from 'jsonwebtoken';
 import { reach } from 'yup';
-import { createUserSchema } from '../../../validation/createUser';
 import { compare, hash } from 'bcryptjs';
 import { PrismaClient } from '@prisma/client';
 import { ResetPasswordResult, MutationResolvers } from '../../generated';
@@ -10,6 +9,7 @@ import {
   cacheUser,
   evictCachedUser,
 } from '../../../helpers/cache/user';
+import { newUserSchema } from '@envenv/common';
 
 const updateUserPassword = async (
   prisma: PrismaClient,
@@ -18,7 +18,7 @@ const updateUserPassword = async (
   newPassword: string,
   userId: string
 ): Promise<ResetPasswordResult> => {
-  await reach(createUserSchema, 'password').validate(newPassword);
+  await reach(newUserSchema, 'password').validate(newPassword);
   const validCurrentPassword = await compare(
     currentSuggestedPassword,
     currentValidPassword

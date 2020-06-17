@@ -1,6 +1,5 @@
 import { ApolloError } from 'apollo-server-express';
 import { reach } from 'yup';
-import { createUserSchema } from '../../../validation/createUser';
 import addAtToUsername from '../../../helpers/addAtToUsername';
 import { compare } from 'bcryptjs';
 import {
@@ -11,7 +10,7 @@ import {
 import createSession from '../../../helpers/createSession';
 import redisClient from '../../../helpers/redisClient';
 import getSession from '../../../helpers/getSession';
-import { addYears } from 'date-fns';
+import { newUserSchema } from '@envenv/common';
 
 const login: MutationResolvers['login'] = async (
   _,
@@ -19,8 +18,8 @@ const login: MutationResolvers['login'] = async (
   { prisma, res, req }
 ): Promise<LoginResult> => {
   try {
-    await reach(createUserSchema, 'username').validate(username);
-    await reach(createUserSchema, 'password').validate(password);
+    await reach(newUserSchema, 'username').validate(username);
+    await reach(newUserSchema, 'password').validate(password);
 
     const consumableUsername = addAtToUsername(username);
 
