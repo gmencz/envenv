@@ -27,7 +27,7 @@ export const SignupScreen: React.FC = () => {
       <FlexContainer className='responsive' marginBottom='2rem'>
         <Button
           component='a'
-          href='http://localhost:8080/oauth/auth/github?operation=signup'
+          href='http://localhost:5000/auth/github?operation=signup'
         >
           <svg
             xmlns='http://www.w3.org/2000/svg'

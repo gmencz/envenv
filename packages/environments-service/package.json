@@ -1,5 +1,5 @@
 {
-  "name": "environments-service",
+  "name": "@envenv/environments-service",
   "version": "1.0.0",
   "description": "",
   "main": "src/index.ts",
@@ -7,14 +7,16 @@
     "gen-graphql": "graphql-codegen --config codegen.yml",
     "sync-db-migrations": "prisma migrate up --experimental && prisma generate",
     "gen-graphql-watch": "graphql-codegen --config codegen.yml --watch src/graphql/schemas/*.graphql",
-    "dev": "concurrently \"ts-node-dev --respawn --transpileOnly --poll --interval 1000 --watch src/graphql/generated.ts src/index.ts\" \"npm run gen-graphql-watch\" \"npm run sync-db-migrations\"",
-    "apollo-push:dev": "apollo service:push --serviceURL=http://dev-environments-service:5001/graphql --serviceName=Environments --variant=development"
+    "dev": "concurrently \"ts-node-dev --respawn --transpileOnly --watch src/graphql/generated.ts src/index.ts\" \"npm run gen-graphql-watch\" \"npm run sync-db-migrations\"",
+    "apollo-push:dev": "apollo service:push --key=$APOLLO_KEY --serviceURL=http://localhost:5001/graphql --serviceName=Environments --variant=development",
+    "run:ci": "ts-node-dev src/helpers/runBarebonesCI.ts"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
     "@apollo/federation": "^0.16.0",
+    "@envenv/common": "^1.0.0",
     "@prisma/client": "^2.0.0-beta.5",
     "apollo-server-express": "^2.13.1",
     "cookie-parser": "^1.4.5",
@@ -35,6 +37,7 @@
     "@types/node": "^14.0.5",
     "apollo": "^2.28.0",
     "concurrently": "^5.2.0",
+    "dotenv": "^8.2.0",
     "ts-node-dev": "^1.0.0-pre.44",
     "typescript": "^3.9.3"
   }

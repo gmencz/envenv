@@ -1,3 +1,5 @@
+import dotenv from 'dotenv';
+dotenv.config();
 import initExpress, { start } from './helpers/express';
 import initGateway from './helpers/gateway';
 

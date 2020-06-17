@@ -2,7 +2,15 @@
   "name": "envenv",
   "version": "1.0.0",
   "description": "Team collaboration made a breeze, share critical information without breaking a sweat.",
-  "scripts": {},
+  "scripts": {
+    "dev": "npm run start-services:dev",
+    "containers:dev": "docker-compose up",
+    "start-services:dev": "concurrently \"npm run accounts-service:dev\" \"npm run environments-service:dev\" \"npm run api-gateway:dev\" \"npm run client:dev\"",
+    "accounts-service:dev": "cd ./packages/accounts-service && npm run dev",
+    "environments-service:dev": "cd ./packages/environments-service && npm run dev",
+    "api-gateway:dev": "cd ./packages/api-gateway && npm run dev",
+    "client:dev": "cd ./packages/client && npm run dev"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/gabrielmendezc/envenv.git"

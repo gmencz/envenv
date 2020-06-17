@@ -1,0 +1,12 @@
+{
+  "name": "@envenv/common",
+  "version": "1.0.0",
+  "description": "Common code which can be shared across the monorepo",
+  "main": "src/index.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Gabriel Méndez & Nicolás Tarragona & Blas Santomé",
+  "license": "MIT",
+  "dependencies": {}
+}

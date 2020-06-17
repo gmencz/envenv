@@ -35,7 +35,7 @@ export default function initExpress(): Express {
       failureRedirect:
         process.env.NODE_ENV === 'production'
           ? 'https://envenv.com/auth/flow/error?reason=unknown'
-          : 'http://localhost:8080/auth/flow/error?reason=unknown',
+          : 'http://localhost:3000/auth/flow/error?reason=unknown',
     }),
     callbackGithubAuth
   );
@@ -52,16 +52,15 @@ export default function initExpress(): Express {
 }
 
 export function start(app: Express): Server {
-  return app.listen(process.env.SERVICE_PORT, () => {
+  const PORT = process.env.SERVICE_PORT || 5000;
+
+  return app.listen(PORT, () => {
     console.log(
       `
   Accounts GraphQL service is up and running! 
 
   - Locally (accessible via your browser): ✔️
-    http://localhost:${process.env.SERVICE_PORT}/graphql 
-
-  - Inside Docker network: ✔️
-    ${process.env.GRAPHQL_ENDPOINT} 
+    http://localhost:${PORT}/graphql 
     `
     );
   });

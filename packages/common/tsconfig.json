@@ -4,7 +4,5 @@
     "rootDir": "src",
     "outDir": "dist"
   },
-  "files": [],
-  "references": [{ "path": "../common" }],
   "include": ["src"]
 }
