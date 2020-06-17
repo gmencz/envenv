@@ -1,4 +1,4 @@
-import { ApolloContext } from '../../typings';
+import { ApolloContext } from '../typings';
 import { GraphQLResolveInfo } from 'graphql';
 export type Maybe<T> = T | null;
 export type RequireFields<T, K extends keyof T> = {

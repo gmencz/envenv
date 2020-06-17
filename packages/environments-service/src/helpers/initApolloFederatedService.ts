@@ -8,7 +8,8 @@ import { PrismaClient } from '@prisma/client';
 import { Express } from 'express';
 import { applyMiddleware } from 'graphql-middleware';
 import permissions from '../graphql/permissions';
-import { buildContext } from '@envenv/common';
+import { buildContext, keyByModelField } from '@envenv/common';
+import DataLoader from 'dataloader';
 
 export default async function initApolloFederatedService(
   app: Express,
@@ -26,10 +27,38 @@ export default async function initApolloFederatedService(
     },
   ]);
 
+  const environmentLoader = new DataLoader(async ids => {
+    const environments = await prismaClient.environment.findMany({
+      where: {
+        id: { in: ids as string[] },
+      },
+    });
+
+    const environmentsById = keyByModelField(environments, 'id');
+
+    return (ids as string[]).map(id => environmentsById[id]);
+  });
+
+  const environmentMemberLoader = new DataLoader(async ids => {
+    const environmentMembers = await prismaClient.environmentMember.findMany({
+      where: {
+        id: { in: ids as string[] },
+      },
+    });
+
+    const environmentMembersById = keyByModelField(environmentMembers, 'id');
+
+    return (ids as string[]).map(id => environmentMembersById[id]);
+  });
+
   const server = new ApolloServer({
     schema: applyMiddleware(schema, permissions),
-    context: ({ req, res }: ApolloContext): ApolloContext => {
-      return buildContext(req, res, prismaClient);
+    context: ({ req, res }): ApolloContext => {
+      return {
+        ...buildContext(req, res, prismaClient),
+        environmentLoader,
+        environmentMemberLoader,
+      };
     },
   });
 
