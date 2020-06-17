@@ -1,12 +1,11 @@
 import { ApolloError } from 'apollo-server-express';
-import { createUserSchema } from '../../../validation/createUser';
 import createSession from '../../../helpers/createSession';
 import redisClient from '../../../helpers/redisClient';
 import { hash } from 'bcryptjs';
 import addAtToUsername from '../../../helpers/addAtToUsername';
 import { MutationResolvers, SignupResult } from '../../generated';
-import { addYears } from 'date-fns';
 import { cacheUser } from '../../../helpers/cache/user';
+import { newUserSchema } from '@envenv/common';
 
 const signup: MutationResolvers['signup'] = async (
   _,
@@ -14,7 +13,7 @@ const signup: MutationResolvers['signup'] = async (
   { prisma, res }
 ): Promise<SignupResult> => {
   try {
-    await createUserSchema.validate({ ...data });
+    await newUserSchema.validate({ ...data });
     const consumableUsername = addAtToUsername(data.username);
 
     const duplicateUsers = await prisma.user.findMany({
