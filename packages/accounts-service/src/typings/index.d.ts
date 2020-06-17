@@ -1,12 +1,12 @@
 import { Request, Response } from 'express';
-import { PrismaClient, User } from '@prisma/client';
+import { PrismaClient, User, UserRole } from '@prisma/client';
 import DataLoader from 'dataloader';
 
 interface Auth {
   isAuthenticated: boolean;
   user: {
     id: string;
-    role: string;
+    role: UserRole;
   };
 }
 
