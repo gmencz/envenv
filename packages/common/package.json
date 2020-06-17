@@ -8,5 +8,10 @@
   },
   "author": "Gabriel Méndez & Nicolás Tarragona & Blas Santomé",
   "license": "MIT",
-  "dependencies": {}
+  "dependencies": {
+    "@apollo/federation": "^0.16.7",
+    "apollo-server-express": "^2.14.5",
+    "express": "^4.17.1",
+    "graphql-tools": "^6.0.10"
+  }
 }
