@@ -19,6 +19,8 @@ export type Scalars = {
   Float: number;
   Date: Date;
   DateTime: Date;
+  Str: any;
+  Integer: any;
   _FieldSet: any;
 };
 
@@ -43,11 +45,11 @@ export type CreateUserInput = {
   /** The URL of the new user's picture/profile picture. */
   picture?: Maybe<Scalars['String']>;
   /** The username of the new user. */
-  username: Scalars['String'];
+  username: Scalars['Str'];
   /** The email of the new user. */
-  email: Scalars['String'];
+  email: Scalars['Str'];
   /** The name of the new user. */
-  name: Scalars['String'];
+  name: Scalars['Str'];
   /** The plain password of the new user. */
   password: Scalars['String'];
 };
@@ -229,13 +231,13 @@ export type Query = {
 };
 
 export type QueryRequestPasswordResetEmailArgs = {
-  email: Scalars['String'];
+  email: Scalars['Str'];
 };
 
 export type QueryUserArgs = {
-  id?: Maybe<Scalars['String']>;
-  username?: Maybe<Scalars['String']>;
-  email?: Maybe<Scalars['String']>;
+  id: Scalars['ID'];
+  username?: Maybe<Scalars['Str']>;
+  email?: Maybe<Scalars['Str']>;
 };
 
 /** A user is an individual's account on Envenv that owns environments and can make new content. */
@@ -248,11 +250,11 @@ export type User = {
   /** The provider of the account. */
   provider: AccountProvider;
   /** The username of the user. */
-  username: Scalars['String'];
+  username: Scalars['Str'];
   /** The email of the user. */
-  email?: Maybe<Scalars['String']>;
+  email?: Maybe<Scalars['Str']>;
   /** The name of the user. */
-  name: Scalars['String'];
+  name: Scalars['Str'];
   /** The encrypted password of the user. */
   password: Scalars['String'];
   /** The role of the user. */
@@ -404,6 +406,8 @@ export type DirectiveResolverFn<
 export type ResolversTypes = {
   Date: ResolverTypeWrapper<Scalars['Date']>;
   DateTime: ResolverTypeWrapper<Scalars['DateTime']>;
+  Str: ResolverTypeWrapper<Scalars['Str']>;
+  Integer: ResolverTypeWrapper<Scalars['Integer']>;
   ResetPasswordInput: ResetPasswordInput;
   String: ResolverTypeWrapper<Scalars['String']>;
   CreateUserInput: CreateUserInput;
@@ -462,6 +466,8 @@ export type ResolversTypes = {
 export type ResolversParentTypes = {
   Date: Scalars['Date'];
   DateTime: Scalars['DateTime'];
+  Str: Scalars['Str'];
+  Integer: Scalars['Integer'];
   ResetPasswordInput: ResetPasswordInput;
   String: Scalars['String'];
   CreateUserInput: CreateUserInput;
@@ -524,6 +530,16 @@ export interface DateScalarConfig
 export interface DateTimeScalarConfig
   extends GraphQLScalarTypeConfig<ResolversTypes['DateTime'], any> {
   name: 'DateTime';
+}
+
+export interface StrScalarConfig
+  extends GraphQLScalarTypeConfig<ResolversTypes['Str'], any> {
+  name: 'Str';
+}
+
+export interface IntegerScalarConfig
+  extends GraphQLScalarTypeConfig<ResolversTypes['Integer'], any> {
+  name: 'Integer';
 }
 
 export type MutationResolvers<
@@ -765,7 +781,7 @@ export type QueryResolvers<
     ResolversTypes['UserResult'],
     ParentType,
     ContextType,
-    RequireFields<QueryUserArgs, never>
+    RequireFields<QueryUserArgs, 'id'>
   >;
   me?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
 };
@@ -786,9 +802,9 @@ export type UserResolvers<
     ParentType,
     ContextType
   >;
-  username?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  email?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  username?: Resolver<ResolversTypes['Str'], ParentType, ContextType>;
+  email?: Resolver<Maybe<ResolversTypes['Str']>, ParentType, ContextType>;
+  name?: Resolver<ResolversTypes['Str'], ParentType, ContextType>;
   password?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   role?: Resolver<ResolversTypes['UserRole'], ParentType, ContextType>;
   lastPasswordChange?: Resolver<
@@ -802,6 +818,8 @@ export type UserResolvers<
 export type Resolvers<ContextType = ApolloContext> = {
   Date?: GraphQLScalarType;
   DateTime?: GraphQLScalarType;
+  Str?: GraphQLScalarType;
+  Integer?: GraphQLScalarType;
   Mutation?: MutationResolvers<ContextType>;
   DeleteAllUsersResult?: DeleteAllUsersResultResolvers;
   UserResult?: UserResultResolvers;

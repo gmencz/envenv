@@ -1,4 +1,5 @@
 import { Express } from 'express';
+import depthLimit from 'graphql-depth-limit';
 import { ApolloGateway } from '@apollo/gateway';
 import AuthenticatedDataSource from '../datasources/AuthenticatedDataSource';
 import { ApolloServer } from 'apollo-server-express';
@@ -18,7 +19,7 @@ export default function initGateway(app: Express): ApolloServer {
       apiKey: process.env.APOLLO_KEY,
       graphVariant: process.env.APOLLO_GRAPH_VARIANT,
     },
-
+    validationRules: [depthLimit(10)],
     context: ({ req, res }: GatewayContext): GatewayContext => ({ req, res }),
   });
   console.log(`Loaded Envenv graph from AGM ✔️`);

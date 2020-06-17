@@ -2,6 +2,7 @@ import express, { Express } from 'express';
 import cookieParser from 'cookie-parser';
 import { Server } from 'http';
 import helmet from 'helmet';
+import rateLimit from 'express-rate-limit';
 
 export default function initExpress(): Express {
   const app = express();
@@ -12,6 +13,14 @@ export default function initExpress(): Express {
       },
     })
   );
+
+  app.use(
+    rateLimit({
+      windowMs: 15 * 60 * 1000,
+      max: 125,
+    })
+  );
+
   app.use(cookieParser());
 
   return app;

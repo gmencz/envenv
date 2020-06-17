@@ -5,7 +5,7 @@ interface Auth {
   isAuthenticated: boolean;
   user: {
     id: string;
-    role: string;
+    role: 'USER' | 'ADMIN';
   };
 }
 
