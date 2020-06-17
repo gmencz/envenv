@@ -27,7 +27,7 @@ export default async function initApolloFederatedService(
     },
   ]);
 
-  const getUserLoader = new DataLoader(async ids => {
+  const userLoader = new DataLoader(async ids => {
     const users = await prismaClient.user.findMany({
       where: {
         id: { in: ids as string[] },
@@ -44,7 +44,7 @@ export default async function initApolloFederatedService(
     context: ({ req, res }): ApolloContext => {
       return {
         ...buildContext(req, res, prismaClient),
-        userLoader: getUserLoader,
+        userLoader,
       };
     },
   });

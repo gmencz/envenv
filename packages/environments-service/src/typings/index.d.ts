@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient, Environment, EnvironmentMember } from '@prisma/client';
+import DataLoader from 'dataloader';
 
 interface Auth {
   isAuthenticated: boolean;
@@ -14,4 +15,10 @@ export interface ApolloContext {
   res: Response;
   prisma: PrismaClient;
   auth: Auth;
+  environmentLoader: DataLoader<unknown, Pick<Environment, never>, unknown>;
+  environmentMemberLoader: DataLoader<
+    unknown,
+    Pick<EnvironmentMember, never>,
+    unknown
+  >;
 }
