@@ -12,6 +12,7 @@ export default function initExpress(): Express {
       },
     })
   );
+
   app.use(cookieParser());
 
   return app;
