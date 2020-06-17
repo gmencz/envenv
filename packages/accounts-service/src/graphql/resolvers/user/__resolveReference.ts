@@ -3,7 +3,7 @@ import { getCachedUser } from '../../../helpers/cache/user';
 
 const __resolveReference: UserResolvers['__resolveReference'] = async (
   { id },
-  { prisma }
+  { userLoader }
 ) => {
   const cachedUser = await getCachedUser(id);
 
@@ -11,8 +11,8 @@ const __resolveReference: UserResolvers['__resolveReference'] = async (
     return cachedUser as User;
   }
 
-  const wantedUser = await prisma.user.findOne({ where: { id } });
-  return wantedUser as User;
+  const user = userLoader.load(id);
+  return (user as unknown) as User;
 };
 
 export default __resolveReference;
