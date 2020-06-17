@@ -23,9 +23,11 @@ export const LoginScreen: React.FC = () => {
     data,
     'SuccessfulLogin'
   );
+
   if (data?.login.__typename === 'SuccessfulLogin') {
     return <Redirect to='/' />;
   }
+
   return (
     <AuthScreenInfoContainer>
       <FlexContainer
@@ -82,13 +84,7 @@ export const LoginScreen: React.FC = () => {
                 error={touched.password ? errors.password : undefined}
               />
               <FlexContainer marginBottom='2rem'>
-                <Button
-                  disabled={loging}
-                  type='submit'
-                  primary
-                  fit
-                  className='fit'
-                >
+                <Button disabled={loging} type='submit' primary fit>
                   Submit
                 </Button>
                 <Button

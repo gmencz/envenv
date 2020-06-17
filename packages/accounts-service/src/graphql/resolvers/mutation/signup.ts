@@ -86,6 +86,7 @@ const signup: MutationResolvers['signup'] = async (
       csrfToken: newSession.csrfToken,
     };
   } catch (error) {
+    console.log(error);
     if (error.name === 'ValidationError') {
       return {
         __typename: 'InvalidDataFormat',

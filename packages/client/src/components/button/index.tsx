@@ -16,13 +16,14 @@ export interface ButtonProps
   href?: string;
   to?: string;
   primary?: boolean;
-  class?: string;
+  className?: string;
 }
 
 export const Button: React.FC<ButtonProps> = ({
   children,
   to,
   component = 'button',
+  fit,
   ...props
 }) => {
   if (component === 'a') {
@@ -36,6 +37,12 @@ export const Button: React.FC<ButtonProps> = ({
   if (component === 'internalLink' && to) {
     return <StyledLink to={to}>{children}</StyledLink>;
   }
-
+  if (fit) {
+    return (
+      <DefaultStyledButton {...props} className='fit' fit>
+        {children}
+      </DefaultStyledButton>
+    );
+  }
   return <DefaultStyledButton {...props}>{children}</DefaultStyledButton>;
 };
