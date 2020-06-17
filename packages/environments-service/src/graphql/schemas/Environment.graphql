@@ -4,7 +4,7 @@ type Environment @key(fields: "id") {
   id: ID!
 
   "The name of the environment."
-  name: String!
+  name: Str!
 
   "The owner of the environment."
   owner: User!

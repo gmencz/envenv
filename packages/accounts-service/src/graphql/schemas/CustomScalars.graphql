@@ -1,2 +1,4 @@
 scalar Date
 scalar DateTime
+scalar Str
+scalar Integer

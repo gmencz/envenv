@@ -1,5 +1,9 @@
 import { ApolloContext } from '../typings';
-import { GraphQLResolveInfo } from 'graphql';
+import {
+  GraphQLResolveInfo,
+  GraphQLScalarType,
+  GraphQLScalarTypeConfig,
+} from 'graphql';
 export type Maybe<T> = T | null;
 export type RequireFields<T, K extends keyof T> = {
   [X in Exclude<keyof T, K>]?: T[X];
@@ -13,6 +17,8 @@ export type Scalars = {
   Boolean: boolean;
   Int: number;
   Float: number;
+  Integer: any;
+  Str: any;
   _FieldSet: any;
 };
 
@@ -22,7 +28,7 @@ export type Environment = {
   /** The unique id of the environment. */
   id: Scalars['ID'];
   /** The name of the environment. */
-  name: Scalars['String'];
+  name: Scalars['Str'];
   /** The owner of the environment. */
   owner: User;
   /** The members of the environment. */
@@ -73,7 +79,7 @@ export type User = {
 /** The data required to create an environment. */
 export type CreateEnvironmentInput = {
   /** The name of the environment. */
-  name: Scalars['String'];
+  name: Scalars['Str'];
   /** The id of the user creating the environment. */
   userCreatingEnvironmentId: Scalars['ID'];
 };
@@ -202,29 +208,43 @@ export type DirectiveResolverFn<
 
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = {
+  Integer: ResolverTypeWrapper<Scalars['Integer']>;
+  Str: ResolverTypeWrapper<Scalars['Str']>;
   Environment: ResolverTypeWrapper<Environment>;
   ID: ResolverTypeWrapper<Scalars['ID']>;
-  String: ResolverTypeWrapper<Scalars['String']>;
   EnvironmentMember: ResolverTypeWrapper<EnvironmentMember>;
   EnvironmentRole: EnvironmentRole;
   User: ResolverTypeWrapper<User>;
   CreateEnvironmentInput: CreateEnvironmentInput;
   Mutation: ResolverTypeWrapper<{}>;
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
+  String: ResolverTypeWrapper<Scalars['String']>;
 };
 
 /** Mapping between all available schema types and the resolvers parents */
 export type ResolversParentTypes = {
+  Integer: Scalars['Integer'];
+  Str: Scalars['Str'];
   Environment: Environment;
   ID: Scalars['ID'];
-  String: Scalars['String'];
   EnvironmentMember: EnvironmentMember;
   EnvironmentRole: EnvironmentRole;
   User: User;
   CreateEnvironmentInput: CreateEnvironmentInput;
   Mutation: {};
   Boolean: Scalars['Boolean'];
+  String: Scalars['String'];
 };
+
+export interface IntegerScalarConfig
+  extends GraphQLScalarTypeConfig<ResolversTypes['Integer'], any> {
+  name: 'Integer';
+}
+
+export interface StrScalarConfig
+  extends GraphQLScalarTypeConfig<ResolversTypes['Str'], any> {
+  name: 'Str';
+}
 
 export type EnvironmentResolvers<
   ContextType = ApolloContext,
@@ -236,7 +256,7 @@ export type EnvironmentResolvers<
     ContextType
   >;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
-  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  name?: Resolver<ResolversTypes['Str'], ParentType, ContextType>;
   owner?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
   members?: Resolver<
     Maybe<Array<Maybe<ResolversTypes['EnvironmentMember']>>>,
@@ -296,6 +316,8 @@ export type MutationResolvers<
 };
 
 export type Resolvers<ContextType = ApolloContext> = {
+  Integer?: GraphQLScalarType;
+  Str?: GraphQLScalarType;
   Environment?: EnvironmentResolvers<ContextType>;
   EnvironmentMember?: EnvironmentMemberResolvers<ContextType>;
   User?: UserResolvers<ContextType>;
