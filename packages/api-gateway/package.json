@@ -13,7 +13,7 @@
   "dependencies": {
     "@apollo/gateway": "^0.16.0",
     "@envenv/common": "^1.0.0",
-    "apollo-server-express": "^2.13.1",
+    "apollo-server-express": "^2.14.5",
     "cookie-parser": "^1.4.5",
     "crypto-js": "^4.0.0",
     "cryptr": "^6.0.2",
