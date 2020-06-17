@@ -402,11 +402,10 @@ export type DirectiveResolverFn<
 
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = {
-  String: ResolverTypeWrapper<Scalars['String']>;
-  Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
   Date: ResolverTypeWrapper<Scalars['Date']>;
   DateTime: ResolverTypeWrapper<Scalars['DateTime']>;
   ResetPasswordInput: ResetPasswordInput;
+  String: ResolverTypeWrapper<Scalars['String']>;
   CreateUserInput: CreateUserInput;
   ID: ResolverTypeWrapper<Scalars['ID']>;
   Mutation: ResolverTypeWrapper<{}>;
@@ -456,15 +455,15 @@ export type ResolversTypes = {
   User: ResolverTypeWrapper<User>;
   UserRole: UserRole;
   AccountProvider: AccountProvider;
+  Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
 };
 
 /** Mapping between all available schema types and the resolvers parents */
 export type ResolversParentTypes = {
-  String: Scalars['String'];
-  Boolean: Scalars['Boolean'];
   Date: Scalars['Date'];
   DateTime: Scalars['DateTime'];
   ResetPasswordInput: ResetPasswordInput;
+  String: Scalars['String'];
   CreateUserInput: CreateUserInput;
   ID: Scalars['ID'];
   Mutation: {};
@@ -514,6 +513,7 @@ export type ResolversParentTypes = {
   User: User;
   UserRole: UserRole;
   AccountProvider: AccountProvider;
+  Boolean: Scalars['Boolean'];
 };
 
 export interface DateScalarConfig

@@ -2,10 +2,7 @@ import dotenv from 'dotenv';
 dotenv.config();
 import initExpress, { start } from './helpers/express';
 import { PrismaClient } from '@prisma/client';
-import { initApolloFederatedService } from '@envenv/common';
-import resolvers from './graphql/resolvers';
-import { join } from 'path';
-import permissions from './graphql/permissions';
+import initApolloFederatedService from './helpers/initApolloFederatedService';
 
 async function main(): Promise<void> {
   if (process.env.APOLLO_KEY) {
@@ -14,15 +11,7 @@ async function main(): Promise<void> {
 
   const app = initExpress();
   const prisma = new PrismaClient();
-  console.log(__dirname);
-  await initApolloFederatedService(
-    app,
-    prisma,
-    resolvers,
-    join(__dirname, 'graphql/schemas'),
-    permissions
-  );
-
+  await initApolloFederatedService(app, prisma);
   start(app);
 }
 

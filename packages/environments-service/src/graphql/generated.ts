@@ -202,28 +202,28 @@ export type DirectiveResolverFn<
 
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = {
-  String: ResolverTypeWrapper<Scalars['String']>;
-  Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
   Environment: ResolverTypeWrapper<Environment>;
   ID: ResolverTypeWrapper<Scalars['ID']>;
+  String: ResolverTypeWrapper<Scalars['String']>;
   EnvironmentMember: ResolverTypeWrapper<EnvironmentMember>;
   EnvironmentRole: EnvironmentRole;
   User: ResolverTypeWrapper<User>;
   CreateEnvironmentInput: CreateEnvironmentInput;
   Mutation: ResolverTypeWrapper<{}>;
+  Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
 };
 
 /** Mapping between all available schema types and the resolvers parents */
 export type ResolversParentTypes = {
-  String: Scalars['String'];
-  Boolean: Scalars['Boolean'];
   Environment: Environment;
   ID: Scalars['ID'];
+  String: Scalars['String'];
   EnvironmentMember: EnvironmentMember;
   EnvironmentRole: EnvironmentRole;
   User: User;
   CreateEnvironmentInput: CreateEnvironmentInput;
   Mutation: {};
+  Boolean: Scalars['Boolean'];
 };
 
 export type EnvironmentResolvers<
