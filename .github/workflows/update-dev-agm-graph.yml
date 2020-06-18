@@ -1,4 +1,4 @@
-name: update-agm
+name: update-dev-agm-graph
 
 on:
   push:
