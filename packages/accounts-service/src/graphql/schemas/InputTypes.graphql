@@ -23,13 +23,13 @@ input CreateUserInput {
   picture: String
 
   "The username of the new user."
-  username: Str!
+  username: String!
 
   "The email of the new user."
-  email: Str!
+  email: String!
 
   "The name of the new user."
-  name: Str!
+  name: String!
 
   "The plain password of the new user."
   password: String!

@@ -9,6 +9,8 @@ export type Scalars = {
   Boolean: boolean;
   Int: number;
   Float: number;
+  Integer: any;
+  Str: any;
   Date: Date;
   DateTime: Date;
 };
@@ -16,7 +18,7 @@ export type Scalars = {
 /** The data required to create an environment. */
 export type CreateEnvironmentInput = {
   /** The name of the environment. */
-  name: Scalars['String'];
+  name: Scalars['Str'];
   /** The id of the user creating the environment. */
   userCreatingEnvironmentId: Scalars['ID'];
 };
@@ -30,7 +32,7 @@ export type Environment = {
   /** The unique id of the environment. */
   id: Scalars['ID'];
   /** The name of the environment. */
-  name: Scalars['String'];
+  name: Scalars['Str'];
   /** The owner of the environment. */
   owner: User;
   /** The members of the environment. */
@@ -90,11 +92,11 @@ export type CreateUserInput = {
   /** The URL of the new user's picture/profile picture. */
   picture?: Maybe<Scalars['String']>;
   /** The username of the new user. */
-  username: Scalars['String'];
+  username: Scalars['Str'];
   /** The email of the new user. */
-  email: Scalars['String'];
+  email: Scalars['Str'];
   /** The name of the new user. */
-  name: Scalars['String'];
+  name: Scalars['Str'];
   /** The plain password of the new user. */
   password: Scalars['String'];
 };
@@ -243,11 +245,11 @@ export type User = {
   /** The provider of the account. */
   provider: AccountProvider;
   /** The username of the user. */
-  username: Scalars['String'];
+  username: Scalars['Str'];
   /** The email of the user. */
-  email?: Maybe<Scalars['String']>;
+  email?: Maybe<Scalars['Str']>;
   /** The name of the user. */
-  name: Scalars['String'];
+  name: Scalars['Str'];
   /** The encrypted password of the user. */
   password: Scalars['String'];
   /** The role of the user. */
@@ -307,13 +309,13 @@ export type Query = {
 };
 
 export type QueryRequestPasswordResetEmailArgs = {
-  email: Scalars['String'];
+  email: Scalars['Str'];
 };
 
 export type QueryUserArgs = {
-  id?: Maybe<Scalars['String']>;
-  username?: Maybe<Scalars['String']>;
-  email?: Maybe<Scalars['String']>;
+  id: Scalars['ID'];
+  username?: Maybe<Scalars['Str']>;
+  email?: Maybe<Scalars['Str']>;
 };
 
 export type Mutation = {
