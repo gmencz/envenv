@@ -9,41 +9,8 @@ export type Scalars = {
   Boolean: boolean;
   Int: number;
   Float: number;
-  BigInt: any;
-  Byte: any;
-  Currency: any;
+  Date: Date;
   DateTime: Date;
-  EmailAddress: any;
-  GUID: any;
-  HexColorCode: any;
-  HSL: any;
-  HSLA: any;
-  IPv4: any;
-  IPv6: any;
-  ISBN: any;
-  JSON: any;
-  JSONObject: any;
-  Long: any;
-  MAC: any;
-  NegativeFloat: any;
-  NegativeInt: any;
-  NonNegativeFloat: any;
-  NonNegativeInt: any;
-  NonPositiveFloat: any;
-  NonPositiveInt: any;
-  ObjectID: any;
-  PhoneNumber: any;
-  Port: any;
-  PositiveFloat: any;
-  PositiveInt: any;
-  PostalCode: any;
-  RGB: any;
-  RGBA: any;
-  UnsignedFloat: any;
-  UnsignedInt: any;
-  URL: any;
-  USCurrency: any;
-  UtcOffset: any;
 };
 
 /** The data required to create an environment. */
@@ -121,11 +88,11 @@ export type CreateUserInput = {
    */
   id?: Maybe<Scalars['ID']>;
   /** The URL of the new user's picture/profile picture. */
-  picture?: Maybe<Scalars['URL']>;
+  picture?: Maybe<Scalars['String']>;
   /** The username of the new user. */
   username: Scalars['String'];
   /** The email of the new user. */
-  email: Scalars['EmailAddress'];
+  email: Scalars['String'];
   /** The name of the new user. */
   name: Scalars['String'];
   /** The plain password of the new user. */
@@ -248,7 +215,7 @@ export type SuccessfulLogout = {
 export type SuccessfulRemoval = {
   __typename?: 'SuccessfulRemoval';
   /** The amount of resources removed. */
-  count: Scalars['PositiveInt'];
+  count: Scalars['Int'];
 };
 
 /** Represents a successful user signup. */
@@ -272,13 +239,13 @@ export type User = {
   /** The unique id of the user. */
   id: Scalars['ID'];
   /** The picture / profile picture of the user. */
-  picture?: Maybe<Scalars['URL']>;
+  picture?: Maybe<Scalars['String']>;
   /** The provider of the account. */
   provider: AccountProvider;
   /** The username of the user. */
   username: Scalars['String'];
   /** The email of the user. */
-  email?: Maybe<Scalars['EmailAddress']>;
+  email?: Maybe<Scalars['String']>;
   /** The name of the user. */
   name: Scalars['String'];
   /** The encrypted password of the user. */
@@ -340,13 +307,13 @@ export type Query = {
 };
 
 export type QueryRequestPasswordResetEmailArgs = {
-  email: Scalars['EmailAddress'];
+  email: Scalars['String'];
 };
 
 export type QueryUserArgs = {
-  id: Scalars['ID'];
+  id?: Maybe<Scalars['String']>;
   username?: Maybe<Scalars['String']>;
-  email?: Maybe<Scalars['EmailAddress']>;
+  email?: Maybe<Scalars['String']>;
 };
 
 export type Mutation = {
