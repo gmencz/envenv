@@ -74,11 +74,11 @@ export type CreateUserInput = {
    */
   id?: Maybe<Scalars['ID']>;
   /** The URL of the new user's picture/profile picture. */
-  picture?: Maybe<Scalars['String']>;
+  picture?: Maybe<Scalars['URL']>;
   /** The username of the new user. */
   username: Scalars['String'];
   /** The email of the new user. */
-  email: Scalars['String'];
+  email: Scalars['EmailAddress'];
   /** The name of the new user. */
   name: Scalars['String'];
   /** The plain password of the new user. */
@@ -223,7 +223,7 @@ export type NotInTestingEnvironment = {
 export type SuccessfulRemoval = {
   __typename?: 'SuccessfulRemoval';
   /** The amount of resources removed. */
-  count: Scalars['Int'];
+  count: Scalars['PositiveInt'];
 };
 
 /** Represents the result of an operation in which a password was attempted to be changed to the current password. */
@@ -262,13 +262,13 @@ export type Query = {
 };
 
 export type QueryRequestPasswordResetEmailArgs = {
-  email: Scalars['String'];
+  email: Scalars['EmailAddress'];
 };
 
 export type QueryUserArgs = {
   id: Scalars['ID'];
   username?: Maybe<Scalars['String']>;
-  email?: Maybe<Scalars['String']>;
+  email?: Maybe<Scalars['EmailAddress']>;
 };
 
 /** A user is an individual's account on Envenv that owns environments and can make new content. */
@@ -277,13 +277,13 @@ export type User = {
   /** The unique id of the user. */
   id: Scalars['ID'];
   /** The picture / profile picture of the user. */
-  picture?: Maybe<Scalars['String']>;
+  picture?: Maybe<Scalars['URL']>;
   /** The provider of the account. */
   provider: AccountProvider;
   /** The username of the user. */
   username: Scalars['String'];
   /** The email of the user. */
-  email?: Maybe<Scalars['String']>;
+  email?: Maybe<Scalars['EmailAddress']>;
   /** The name of the user. */
   name: Scalars['String'];
   /** The encrypted password of the user. */
@@ -513,7 +513,6 @@ export type ResolversTypes = {
   EmailMayHaveBeenSent: ResolverTypeWrapper<EmailMayHaveBeenSent>;
   NotInTestingEnvironment: ResolverTypeWrapper<NotInTestingEnvironment>;
   SuccessfulRemoval: ResolverTypeWrapper<SuccessfulRemoval>;
-  Int: ResolverTypeWrapper<Scalars['Int']>;
   WantsSamePassword: ResolverTypeWrapper<WantsSamePassword>;
   NoCurrentSession: ResolverTypeWrapper<NoCurrentSession>;
   SuccessfulLogout: ResolverTypeWrapper<SuccessfulLogout>;
@@ -604,7 +603,6 @@ export type ResolversParentTypes = {
   EmailMayHaveBeenSent: EmailMayHaveBeenSent;
   NotInTestingEnvironment: NotInTestingEnvironment;
   SuccessfulRemoval: SuccessfulRemoval;
-  Int: Scalars['Int'];
   WantsSamePassword: WantsSamePassword;
   NoCurrentSession: NoCurrentSession;
   SuccessfulLogout: SuccessfulLogout;
@@ -987,7 +985,7 @@ export type SuccessfulRemovalResolvers<
   ContextType = ApolloContext,
   ParentType extends ResolversParentTypes['SuccessfulRemoval'] = ResolversParentTypes['SuccessfulRemoval']
 > = {
-  count?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  count?: Resolver<ResolversTypes['PositiveInt'], ParentType, ContextType>;
   __isTypeOf?: isTypeOfResolverFn<ParentType>;
 };
 
@@ -1044,14 +1042,18 @@ export type UserResolvers<
     ContextType
   >;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
-  picture?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  picture?: Resolver<Maybe<ResolversTypes['URL']>, ParentType, ContextType>;
   provider?: Resolver<
     ResolversTypes['AccountProvider'],
     ParentType,
     ContextType
   >;
   username?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  email?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  email?: Resolver<
+    Maybe<ResolversTypes['EmailAddress']>,
+    ParentType,
+    ContextType
+  >;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   password?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   role?: Resolver<ResolversTypes['UserRole'], ParentType, ContextType>;

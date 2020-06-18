@@ -66,7 +66,7 @@ type NotInTestingEnvironment {
 "Represents the successful removal of a resource."
 type SuccessfulRemoval {
   "The amount of resources removed."
-  count: Int!
+  count: PositiveInt!
 }
 
 "Represents the result of an operation in which a password was attempted to be changed to the current password."
