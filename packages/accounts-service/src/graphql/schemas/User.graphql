@@ -4,7 +4,7 @@ type User @key(fields: "id") {
   id: ID!
 
   "The picture / profile picture of the user."
-  picture: String
+  picture: URL
 
   "The provider of the account."
   provider: AccountProvider!
@@ -13,7 +13,7 @@ type User @key(fields: "id") {
   username: String!
 
   "The email of the user."
-  email: String
+  email: EmailAddress
 
   "The name of the user."
   name: String!

@@ -1,12 +1,12 @@
 import { reach } from 'yup';
 import { ApolloError } from 'apollo-server-express';
-import { createUserSchema } from '../../../validation/createUser';
 import { sign } from 'jsonwebtoken';
 import { createTransport } from 'nodemailer';
 import {
   QueryResolvers,
   RequestPasswordResetEmailPayload,
 } from '../../generated';
+import { newUserSchema } from '@envenv/common';
 
 const requestPasswordResetEmail: QueryResolvers['requestPasswordResetEmail'] = async (
   _,
@@ -14,7 +14,7 @@ const requestPasswordResetEmail: QueryResolvers['requestPasswordResetEmail'] = a
   { prisma }
 ): Promise<RequestPasswordResetEmailPayload> => {
   try {
-    await reach(createUserSchema, 'email').validate(email);
+    await reach(newUserSchema, 'email').validate(email);
 
     const user = await prisma.user.findOne({ where: { email } });
 

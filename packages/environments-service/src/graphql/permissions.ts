@@ -1,7 +1,10 @@
 import { AuthenticationError, ForbiddenError } from 'apollo-server-express';
 import { ApolloContext } from '../typings';
-import { rule, shield, allow } from 'graphql-shield';
+import { rule, shield, allow, and } from 'graphql-shield';
 import { Rule } from 'graphql-shield/dist/rules';
+import { createRateLimitRule } from 'graphql-rate-limit';
+
+const rateLimitRule = createRateLimitRule({ identifyContext: ctx => ctx.id });
 
 const isAuthenticated = rule({ cache: 'contextual' })(
   (_, __, { auth }: ApolloContext) => {
@@ -13,7 +16,7 @@ const isAuthenticated = rule({ cache: 'contextual' })(
   }
 );
 
-const hasRole = (...roles: string[]): Rule =>
+const hasRole = (...roles: Array<'USER' | 'ADMIN'>): Rule =>
   rule({ cache: 'contextual' })((_, __, { auth }: ApolloContext) => {
     if (!roles.includes(auth.user.role)) {
       return new ForbiddenError(`You don't have access to this resource!`);
@@ -33,7 +36,10 @@ const permissions = shield({
     _service: allow,
   },
   Mutation: {
-    '*': isAuthenticated,
+    createEnvironment: and(
+      isAuthenticated,
+      rateLimitRule({ window: '10m', max: 5 })
+    ),
   },
 });
 

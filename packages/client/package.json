@@ -16,7 +16,7 @@
     "@types/react-dom": "^16.9.8",
     "formik": "^2.1.4",
     "generate-password": "^1.5.1",
-    "graphql": "^15.0.0",
+    "graphql": "^15.1.0",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-router-dom": "^5.2.0",
@@ -24,7 +24,6 @@
     "shortid": "^2.2.15",
     "styled-components": "^5.1.0",
     "typescript": "^3.9.3",
-    "uuid": "^8.1.0",
     "yup": "^0.29.1"
   },
   "scripts": {
@@ -51,15 +50,15 @@
     ]
   },
   "devDependencies": {
-    "@graphql-codegen/cli": "^1.14.0",
-    "@graphql-codegen/typescript": "^1.14.0",
+    "@graphql-codegen/cli": "^1.15.3",
+    "@graphql-codegen/typescript": "^1.15.3",
     "@graphql-codegen/typescript-operations": "^1.14.0",
     "@graphql-codegen/typescript-react-apollo": "^1.14.0",
     "@types/react-router-dom": "^5.1.5",
     "@types/shortid": "^0.0.29",
     "@types/styled-components": "^5.1.0",
     "@types/uuid": "^8.0.0",
-    "@types/yup": "^0.29.1",
+    "@types/yup": "^0.29.3",
     "concurrently": "^5.2.0"
   }
 }

@@ -1,6 +1,6 @@
-import { object, string } from 'yup';
+import { object, string, boolean } from 'yup';
 
-export const createUserSchema = object().shape({
+export const newUserSchema = object().shape({
   username: string()
     .min(3, 'That username is too short!')
     .max(30, 'That username is too long!')
@@ -17,4 +17,11 @@ export const createUserSchema = object().shape({
     .max(255, 'That password is too long!')
     .required('Please, provide a password!'),
   picture: string().url('That profile picture is invalid!'),
+});
+
+export const newUserSchemaClient = newUserSchema.shape({
+  agreedToTos: boolean().oneOf(
+    [true],
+    'You must agree to our terms of service and privacy policy.'
+  ),
 });
