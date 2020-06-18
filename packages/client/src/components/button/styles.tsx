@@ -1,6 +1,11 @@
 import styled, { css } from 'styled-components';
 import { Link } from 'react-router-dom';
 
+interface DefaultStyledButtonInterface {
+  primary?: boolean;
+  fit?: boolean;
+}
+
 const DefaultButtonStyling = css`
   padding: 0.75rem;
   display: flex;
@@ -20,7 +25,7 @@ const DefaultButtonStyling = css`
   }
 `;
 
-export const DefaultStyledButton = styled.button<{ primary?: boolean }>`
+export const DefaultStyledButton = styled.button<DefaultStyledButtonInterface>`
   padding: 0.85rem;
   display: flex;
   border-radius: 4px;
@@ -50,6 +55,13 @@ export const DefaultStyledButton = styled.button<{ primary?: boolean }>`
         background-color: #d8d8d8;
         cursor: not-allowed;
       }
+    `}
+
+  ${({ fit }) =>
+    fit &&
+    css`
+      margin-right: 1rem;
+      width: auto;
     `}
 `;
 

@@ -9,6 +9,9 @@ import {
   useLoginOnClientMutation,
   SignUpMutation,
   LoginOnClientMutationFn,
+  LoginMutation,
+  LoginMutationFn,
+  useLoginMutation,
 } from '../generated/graphql';
 import {
   QueryLazyOptions,
@@ -41,6 +44,12 @@ interface UseAuthHook {
     loading: boolean;
     error: ApolloError | undefined;
     data: SignUpMutation | null | undefined;
+  };
+  login: {
+    execute: LoginMutationFn;
+    loading: boolean;
+    error: ApolloError | undefined;
+    data: LoginMutation | null | undefined;
   };
   updateClientCacheForUserLogin: {
     execute: LoginOnClientMutationFn;
@@ -86,6 +95,19 @@ export function useAuth(): UseAuthHook {
   });
 
   const [
+    login,
+    { loading: loginLoadingStatus, error: loginError, data: loginData },
+  ] = useLoginMutation({
+    onCompleted: data => {
+      if (data.login.__typename === 'SuccessfulLogin') {
+        updateClientCacheForAuthentication({
+          variables: { csrfToken: data.login.csrfToken },
+        });
+      }
+    },
+  });
+
+  const [
     signup,
     { loading: signupLoadingStatus, error: signupError, data: signupData },
   ] = useSignUpMutation({
@@ -114,6 +136,12 @@ export function useAuth(): UseAuthHook {
         onAPI: logoutOnAPIError,
         onClient: logoutOnClientError,
       },
+    },
+    login: {
+      execute: login,
+      loading: loginLoadingStatus,
+      error: loginError,
+      data: loginData,
     },
     signup: {
       execute: signup,

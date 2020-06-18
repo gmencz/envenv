@@ -27,7 +27,12 @@ const Routes: React.FC = () => (
       <Redirect to='/register' />
     </Route>
     <Route path='/login'>
-      <LoginScreen />
+      <AuthScreenContainer>
+        <AuthScreenInfoOuterContainer centerOnSmHeights fullScreenOnSm>
+          <LoginScreen />
+        </AuthScreenInfoOuterContainer>
+        <AuthScreenHero />
+      </AuthScreenContainer>
     </Route>
     <Route path='/register'>
       <AuthScreenContainer>
@@ -37,6 +42,7 @@ const Routes: React.FC = () => (
         <AuthScreenHero />
       </AuthScreenContainer>
     </Route>
+
     <Route path='/auth/flow/success' exact>
       <AuthFlowSuccess />
     </Route>
