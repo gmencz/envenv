@@ -17,7 +17,7 @@ import { AppLink } from '../../../components/link';
 export const LoginScreen: React.FC = () => {
   const {
     login,
-    login: { data, loading: loging, error },
+    login: { data, loading: loggingIn, error },
   } = useAuth();
   const { failedOperationMessage } = useUnexpectedTypename(
     data,
@@ -84,7 +84,7 @@ export const LoginScreen: React.FC = () => {
                 error={touched.password ? errors.password : undefined}
               />
               <FlexContainer marginBottom='2rem'>
-                <Button disabled={loging} type='submit' primary fit>
+                <Button disabled={loggingIn} type='submit' primary fit>
                   Submit
                 </Button>
                 <Button
