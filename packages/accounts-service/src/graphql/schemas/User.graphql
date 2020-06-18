@@ -4,19 +4,19 @@ type User @key(fields: "id") {
   id: ID!
 
   "The picture / profile picture of the user."
-  picture: String
+  picture: URL
 
   "The provider of the account."
   provider: AccountProvider!
 
   "The username of the user."
-  username: Str!
+  username: String!
 
   "The email of the user."
-  email: Str
+  email: EmailAddress
 
   "The name of the user."
-  name: Str!
+  name: String!
 
   "The encrypted password of the user."
   password: String!

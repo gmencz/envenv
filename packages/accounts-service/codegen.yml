@@ -1,6 +1,5 @@
 overwrite: true
 schema: './src/graphql/schemas/*.graphql'
-documents: null
 generates:
   src/graphql/generated.ts:
     plugins:
@@ -11,5 +10,4 @@ generates:
       federation: true
       contextType: ApolloContext
       scalars:
-        Date: Date
         DateTime: Date

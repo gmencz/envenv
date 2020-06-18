@@ -2,7 +2,7 @@ extend type Query {
   "Request an email with the instructions to reset an account's password."
   requestPasswordResetEmail(
     "The email address of the account for which we want to reset the password."
-    email: Str!
+    email: EmailAddress!
   ): RequestPasswordResetEmailPayload!
 
   "Look up an user by id, username or email."
@@ -18,14 +18,14 @@ extend type Query {
     by id is not possible since lazy-loading cache only works when
     using id query for now.
     """
-    username: Str
+    username: String
 
     """
     The email of the user, only use this when querying
     by id is not possible since lazy-loading cache only works when
     using id query for now.
     """
-    email: Str
+    email: EmailAddress
   ): UserResult!
 
   "Look up the currently logged in user."

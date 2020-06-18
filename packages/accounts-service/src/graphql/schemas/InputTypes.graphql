@@ -20,16 +20,16 @@ input CreateUserInput {
   id: ID
 
   "The URL of the new user's picture/profile picture."
-  picture: String
+  picture: URL
 
   "The username of the new user."
-  username: Str!
+  username: String!
 
   "The email of the new user."
-  email: Str!
+  email: EmailAddress!
 
   "The name of the new user."
-  name: Str!
+  name: String!
 
   "The plain password of the new user."
   password: String!
